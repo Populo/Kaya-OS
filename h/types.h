@@ -87,4 +87,13 @@ typedef struct state_t {
 #define s_LO	s_reg[30]
 
 
+typedef struct pcb_t
+{
+	struct pcb_t *pcb_next,
+				 *pcb_child,
+				 *pcb_parent,
+				 *pcb_sibling;
+				 
+} pcb_t, *pcb_PTR;
+
 #endif

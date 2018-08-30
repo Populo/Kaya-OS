@@ -90,6 +90,8 @@ typedef struct state_t {
 typedef struct pcb_t
 {
 	struct pcb_t *pcb_next,
+				 *pcb_prev,
+				 
 				 *pcb_child,
 				 *pcb_parent,
 				 *pcb_sibling;

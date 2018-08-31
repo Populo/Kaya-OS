@@ -68,8 +68,17 @@ pcb_PTR outProcQ (pcb_PTR *tp, pcb_PTR p)
     {
         if (tp == p) 
         {
-            // delete p
-            // move tp
+            if((*tp)->pcb_next == (*tp))
+            {
+                returnMe = (*tp);
+                (*tp) = mkEmptyProcQ();
+            }
+            else
+            {
+                (*tp) -> pcb_prev -> pcb_next = (*tp) -> pcb_next;
+                (*tp) -> pcb_next -> pcb_prev = (*tp) -> pcb_prev;
+                *tp = (*tp) -> pcb_prev;
+            }
             returnMe = p;
         }
         else 
@@ -78,15 +87,22 @@ pcb_PTR outProcQ (pcb_PTR *tp, pcb_PTR p)
 
             if (foundP != NULL) 
             {
-                // delete p
+                foundP -> pcb_prev -> pcb_next = foundP -> pcb_next;
+                foundP -> pcb_next -> pcb_prev = foundP -> pcb_prev;
                 returnMe = foundP;
             }
             else
             {
-                return NULL;
+                returnMe = NULL;
             }
         }
     }
+    else
+    {
+        returnMe = NULL;
+    }
+    
+    return returnMe;
 }
 
 static pcb_PTR findP(pcb_PTR check, pcb_PTR find, pcb_PTR tail)

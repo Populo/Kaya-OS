@@ -1,6 +1,14 @@
 #include "../h/types.h"
 #include "../h/const.h"
 
+
+// two separate queues with one that has twenty items and the other has zero items
+// they point to each other and are single lengthed.
+extern void freePcb (pcb_PTR p);
+extern pcb_PTR allocPcb ();
+extern void initPcbs ();
+
+
 pcb_PTR mkEmptyProcQ ()
 {
     return NULL;
@@ -123,17 +131,94 @@ static pcb_PTR findP(pcb_PTR check, pcb_PTR find, pcb_PTR tail)
 
 int emptyChild (pcb_PTR p)
 {
-
+    return p -> pcb_child == NULL;
 }
+
 void insertChild (pcb_PTR prnt, pcb_PTR p)
 {
-
+    if(emptyChild(prnt))
+    {
+        prnt -> pcb_child = p;
+        p -> pcb_parent = prnt;
+    }
+    else
+    {
+        p -> pcb_parent = prnt;
+        pcb_PTR lastChild = findLastChild(prnt-> pcb_child);
+        lastChild -> pcb_sibling = p;
+    }
 }
+static pcb_PTR findLastChild(pcb_PTR p)
+{
+    if(p -> pcb_sibling = NULL)
+    {
+        return p;
+    }
+    else
+    {
+        findChild(p -> pcb_sibling);
+    }
+}
+
 pcb_PTR removeChild (pcb_PTR p)
 {
-
+    if(emptyChild(p))
+    {
+        return NULL;
+    }
+    else
+    {
+        if(p -> pcb_child -> pcb_sibling ==  NULL)
+        {
+            pcb_PTR temp = p -> pcb_child;
+            p -> pcb_child = NULL;
+            return temp;
+        }
+        else
+        {
+            pcb_PTR temp = p -> pcb_child;
+            p -> pcb_child = p-> pcb_child -> pcb_sibling;
+            return temp;
+        }
+    }
 }
 pcb_PTR outChild (pcb_PTR p)
 {
+    pcb_PTR returnMe;
+    if(emptyChild(p))
+    {
+        returnMe = NULL;
+    }
+    else
+    {
+        if(p -> pcb_parent = NULL)
+        {
+            returnMe = NULL;
+        }
+        else if(p -> pcb_parent -> pcb_child = p)
+        {
+            returnMe = p -> pcb_parent -> pcb_child;
+            p -> pcb_parent ->  pcb_child = p -> pcb_parent -> pcb_child -> pcb_sibling; 
+        }
+        else
+        {
+            pcb_PTR prnt = p -> pcb_parent;           
+            pcb_PTR prevSib = helpOut(prnt->pcb_child, p);
+            returnMe = prevSib -> pcb_sibling;
+            prevSib -> pcb_sibling = p -> pcb_sibling;    
+        }
+    }
+    return returnMe;
+}
 
+pcb_PTR helpOut(pcb_PTR p, pcb_PTR looking)
+{
+    if(p -> pcb_sibling = looking)
+    {
+        return p;
+    }
+    else
+    {
+        helpOut(p -> pcb_sibling, looking);
+    }
 }

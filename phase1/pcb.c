@@ -35,15 +35,14 @@ pcb_PTR removeProcQ (pcb_PTR *tp)
     }    
     else if((*tp)-> pcb_next == (*tp))
     { 
-        (*tp) -> pcb_next = tp;
         returnMe = tp;
+        (*tp) = mkEmptyProcQ();
     }
     else
     {
-        pcb_PTR temp;
         returnMe = (*tp) -> pcb_next;
         (*tp) -> pcb_next = (*tp) -> pcb_next -> pcb_next;
-        (*tp) -> pcb_next -> pcb_next -> pcb_prev = (*tp);     
+        (*tp) -> pcb_next -> pcb_next -> pcb_prev = (*tp);
     }
     
 

@@ -4,9 +4,20 @@
 
 // two separate queues with one that has twenty items and the other has zero items
 // they point to each other and are single lengthed.
-extern void freePcb (pcb_PTR p);
-extern pcb_PTR allocPcb ();
-extern void initPcbs ();
+void freePcb (pcb_PTR p)
+{
+
+}
+
+pcb_PTR allocPcb ()
+{
+
+}
+
+void initPcbs ()
+{
+    
+}
 
 
 pcb_PTR mkEmptyProcQ ()

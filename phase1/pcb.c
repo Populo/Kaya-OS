@@ -37,15 +37,13 @@ pcb_PTR removeProcQ (pcb_PTR *tp)
     { 
         (*tp) -> pcb_next = tp;
         returnMe = tp;
-        tp = NULL;
     }
     else
     {
         pcb_PTR temp;
+        returnMe = (*tp) -> pcb_next;
         (*tp) -> pcb_next = (*tp) -> pcb_next -> pcb_next;
-        temp = (*tp) -> pcb_next;
-        (*tp) -> pcb_next = NULL;
-        returnMe = temp;
+        (*tp) -> pcb_next -> pcb_next -> pcb_prev = (*tp);     
     }
     
 

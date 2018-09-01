@@ -86,15 +86,26 @@ typedef struct state_t {
 #define s_HI	s_reg[29]
 #define s_LO	s_reg[30]
 
-
+/* process block type */
 typedef struct pcb_t
 {
-	struct pcb_t *pcb_next,
-				 *pcb_prev,				 
-				 *pcb_child,
-				 *pcb_parent,
-				 *pcb_sibling;
-				 
+	struct pcb_t 	*pcb_next, 		/* pointer to the next process in the queue */
+				 	*pcb_prev,		/* pointer to the previous process in the queue */
+				 	*pcb_child,		/* pointer to the first child process of this process */
+				 	*pcb_parent,	/* pointer to this process's parent process */
+				 	*pcb_sibling;	/* pointer to the next child node of this node's parent */
+
+	state_t			p_s;			/* processor state */
+	int				*p_semAdd;		/* pointer to semaphore on which process is blocked */
+
 } pcb_t, *pcb_PTR;
+
+/* semaphore descriptor type */
+typedef struct semd_t 
+{
+	struct semd_t 	*s_next; 		/* next element on the ASL */
+	int				*s_semAdd;		/* pointer to the semaphore */
+	pcb_PTR			s_procQ;		/* tail pointer to a process queue */
+} semd_t;
 
 #endif

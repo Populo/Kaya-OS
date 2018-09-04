@@ -11,7 +11,8 @@ void freePcb (pcb_PTR p)
 
 pcb_PTR allocPcb ()
 {
-
+    // no parameter to find tp of free pcbs. constant memory location?
+    
 }
 
 void initPcbs ()

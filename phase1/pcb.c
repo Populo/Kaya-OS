@@ -23,7 +23,7 @@ void freePcb (pcb_PTR p)
 
 pcb_PTR allocPcb ()
 {
-    removeProcQ(pcb_FREE_h);
+    return removeProcQ(pcb_FREE_h);
 }
 
 pcb_PTR mkEmptyProcQ ()
@@ -32,7 +32,7 @@ pcb_PTR mkEmptyProcQ ()
 }
 int emptyProcQ (pcb_PTR tp)
 {
-    return tp == NULL;
+    return (tp == NULL);
 }
 void insertProcQ (pcb_PTR *tp, pcb_PTR p)
 {
@@ -148,7 +148,7 @@ static pcb_PTR findP(pcb_PTR check, pcb_PTR find, pcb_PTR tail)
 
 int emptyChild (pcb_PTR p)
 {
-    return p -> pcb_child == NULL;
+    return (p -> pcb_child == NULL);
 }
 
 void insertChild (pcb_PTR prnt, pcb_PTR p)

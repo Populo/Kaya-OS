@@ -4,22 +4,27 @@
 
 // two separate queues with one that has twenty items and the other has zero items
 // they point to each other and are single lengthed.
+pcb_PTR pcb_FREE_h;
+
+void initPcbs ()
+{
+    pcb_FREE_h = mkEmptyProcQ();
+    static pcb_t array[MAXPROC];
+    for(int i=0; i<MAXPROC; i++)
+    {
+        freePcb(&(array[i]));
+    }
+}
+
 void freePcb (pcb_PTR p)
 {
-
+    insertProcQ(pcb_FREE_h, p);
 }
 
 pcb_PTR allocPcb ()
 {
-    // no parameter to find tp of free pcbs. constant memory location?
-    
+    removeProcQ(pcb_FREE_h);
 }
-
-void initPcbs ()
-{
-    
-}
-
 
 pcb_PTR mkEmptyProcQ ()
 {

@@ -17,8 +17,10 @@ int emptyProcQ (pcb_PTR tp)
 void initPcbs ()
 {
     pcb_FREE_h = mkEmptyProcQ();
+
+    int it = 0;
     static pcb_t array[MAXPROC];
-    for(int i=0; i<MAXPROC; i++)
+    for(it; i<MAXPROC; it++)
     {
         freePcb(&(array[i]));
     }

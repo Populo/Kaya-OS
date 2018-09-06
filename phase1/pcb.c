@@ -4,7 +4,7 @@
 
 // two separate queues with one that has twenty items and the other has zero items
 // they point to each other and are single lengthed.
-pcb_PTR pcb_FREE_h;
+HIDDEN pcb_PTR pcb_FREE_h;
 
 void initPcbs ()
 {
@@ -130,7 +130,7 @@ pcb_PTR outProcQ (pcb_PTR *tp, pcb_PTR p)
     return returnMe;
 }
 
-static pcb_PTR findP(pcb_PTR check, pcb_PTR find, pcb_PTR tail)
+HIDDEN pcb_PTR findP(pcb_PTR check, pcb_PTR find, pcb_PTR tail)
 {
     if (check == find) 
     {
@@ -165,7 +165,7 @@ void insertChild (pcb_PTR prnt, pcb_PTR p)
         lastChild -> pcb_sibling = p;
     }
 }
-static pcb_PTR findLastChild(pcb_PTR p)
+HIDDEN pcb_PTR findLastChild(pcb_PTR p)
 {
     if(p -> pcb_sibling = NULL)
     {
@@ -228,7 +228,7 @@ pcb_PTR outChild (pcb_PTR p)
     return returnMe;
 }
 
-pcb_PTR helpOut(pcb_PTR p, pcb_PTR looking)
+HIDDEN pcb_PTR helpOut(pcb_PTR p, pcb_PTR looking)
 {
     if(p -> pcb_sibling = looking)
     {

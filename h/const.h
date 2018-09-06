@@ -88,4 +88,7 @@
 /* Maximum number of ProcBLK allowed to be allocated */
 #define MAXPROC 20
 
+/* Quality of Life Constants */
+#define HIDDEN      static
+
 #endif

@@ -2,8 +2,6 @@
 #include "../h/const.h"
 
 
-// two separate queues with one that has twenty items and the other has zero items
-// they point to each other and are single lengthed.
 HIDDEN pcb_PTR pcb_FREE_h;
 
 void initPcbs ()

@@ -1,6 +1,7 @@
 #include "../h/types.h"
 #include "../h/const.h"
 
+#include "../e/pcb.e"
 
 HIDDEN pcb_PTR pcb_FREE_h;
 
@@ -18,9 +19,9 @@ void initPcbs ()
 {
     pcb_FREE_h = mkEmptyProcQ();
 
-    int it = 0;
+    int it;
     static pcb_t array[MAXPROC];
-    for(it; it<MAXPROC; it++)
+    for(it = 0; it<MAXPROC; it++)
     {
         freePcb(&(array[it]));
     }

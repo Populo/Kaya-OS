@@ -4,6 +4,16 @@
 
 HIDDEN pcb_PTR pcb_FREE_h;
 
+pcb_PTR mkEmptyProcQ ()
+{
+    return NULL;
+}
+
+int emptyProcQ (pcb_PTR tp)
+{
+    return (tp == NULL);
+}
+
 void initPcbs ()
 {
     pcb_FREE_h = mkEmptyProcQ();
@@ -24,14 +34,6 @@ pcb_PTR allocPcb ()
     return removeProcQ(pcb_FREE_h);
 }
 
-pcb_PTR mkEmptyProcQ ()
-{
-    return NULL;
-}
-int emptyProcQ (pcb_PTR tp)
-{
-    return (tp == NULL);
-}
 void insertProcQ (pcb_PTR *tp, pcb_PTR p)
 {
     if(emptyProcQ(*tp))

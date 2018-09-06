@@ -20,9 +20,9 @@ void initPcbs ()
 
     int it = 0;
     static pcb_t array[MAXPROC];
-    for(it; i<MAXPROC; it++)
+    for(it; it<MAXPROC; it++)
     {
-        freePcb(&(array[i]));
+        freePcb(&(array[it]));
     }
 }
 

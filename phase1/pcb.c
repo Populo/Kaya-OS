@@ -36,7 +36,7 @@ int emptyProcQ (pcb_PTR tp)
 }
 void insertProcQ (pcb_PTR *tp, pcb_PTR p)
 {
-    if(emptyProcQ(tp))
+    if(emptyProcQ(*tp))
     {
         p -> pcb_next = p;
         p -> pcb_prev = p;
@@ -54,7 +54,7 @@ void insertProcQ (pcb_PTR *tp, pcb_PTR p)
 pcb_PTR removeProcQ (pcb_PTR *tp)
 {
     pcb_PTR returnMe;
-    if(emptyProcQ(tp))
+    if(emptyProcQ(*tp))
     {
         returnMe = NULL;
     }    
@@ -105,7 +105,7 @@ pcb_PTR outProcQ (pcb_PTR *tp, pcb_PTR p)
 {
     pcb_PTR returnMe;
 
-    if (!emptyProcQ(tp)) 
+    if (!emptyProcQ(*tp)) 
     {
         if (tp == p) 
         {

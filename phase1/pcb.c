@@ -7,13 +7,13 @@ HIDDEN pcb_PTR *pcb_FREE_h;
 
 HIDDEN pcb_PTR helpOut(pcb_PTR p, pcb_PTR looking)
 {
-    if(p -> pcb_sibling == looking)
+    if(p -> pcb_nextSib == looking)
     {
         return p;
     }
     else
     {
-       return helpOut(p -> pcb_sibling, looking);
+       return helpOut(p -> pcb_nextSib, looking);
     }
 }
 
@@ -35,13 +35,13 @@ HIDDEN pcb_PTR findP(pcb_PTR check, pcb_PTR find, pcb_PTR tail)
 
 HIDDEN pcb_PTR findLastChild(pcb_PTR p)
 {
-    if(p -> pcb_sibling == NULL)
+    if(p -> pcb_nextSib == NULL)
     {
         return p;
     }
     else
     {
-        return findLastChild(p -> pcb_sibling);
+        return findLastChild(p -> pcb_nextSib);
     }
 }
 
@@ -84,7 +84,29 @@ void freePcb (pcb_PTR p)
 
 pcb_PTR allocPcb ()
 {
-    return removeProcQ(pcb_FREE_h);
+    pcb_PTR returnME;
+    if (emptyProcQ(pcb_FREE_h))
+    {
+        returnME = NULL;
+    }
+    else
+    {
+        returnME = pcb_FREE_h;
+        pcb_FREE_h = (*pcb_FREE_h) -> pcb_next;
+
+        /* break references to queue */
+        returnME -> pcb_next = NULL;
+
+        /* break references to children */
+        returnME -> pcb_child = NULL;
+        returnME -> pcb_prevSib = NULL;
+        returnME -> pcb_nextSib = NULL;
+
+        /* semaphore values to null */
+        returnME -> pcb_semAdd = NULL;
+    }
+
+    return returnME;
 }
 
 void insertProcQ (pcb_PTR *tp, pcb_PTR p)
@@ -202,7 +224,7 @@ void insertChild (pcb_PTR prnt, pcb_PTR p)
         pcb_PTR lastChild;
         p -> pcb_parent = prnt;
         lastChild = findLastChild(prnt-> pcb_child);
-        lastChild -> pcb_sibling = p;
+        lastChild -> pcb_nextSib = p;
     }
 }
 
@@ -214,7 +236,7 @@ pcb_PTR removeChild (pcb_PTR p)
     }
     else
     {
-        if(p -> pcb_child -> pcb_sibling ==  NULL)
+        if(p -> pcb_child -> pcb_nextSib ==  NULL)
         {
             pcb_PTR temp = p -> pcb_child;
             p -> pcb_child = NULL;
@@ -223,7 +245,7 @@ pcb_PTR removeChild (pcb_PTR p)
         else
         {
             pcb_PTR temp = p -> pcb_child;
-            p -> pcb_child = p-> pcb_child -> pcb_sibling;
+            p -> pcb_child = p-> pcb_child -> pcb_nextSib;
             return temp;
         }
     }
@@ -245,14 +267,14 @@ pcb_PTR outChild (pcb_PTR p)
         else if(p -> pcb_parent -> pcb_child == p)
         {
             returnMe = p -> pcb_parent -> pcb_child;
-            p -> pcb_parent ->  pcb_child = p -> pcb_parent -> pcb_child -> pcb_sibling; 
+            p -> pcb_parent ->  pcb_child = p -> pcb_parent -> pcb_child -> pcb_nextSib; 
         }
         else
         {
             pcb_PTR prnt = p -> pcb_parent;           
             pcb_PTR prevSib = helpOut(prnt->pcb_child, p);
-            returnMe = prevSib -> pcb_sibling;
-            prevSib -> pcb_sibling = p -> pcb_sibling;    
+            returnMe = prevSib -> pcb_nextSib;
+            prevSib -> pcb_nextSib = p -> pcb_nextSib;    
         }
     }
     return returnMe;

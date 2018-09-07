@@ -93,10 +93,11 @@ typedef struct pcb_t
 				 	*pcb_prev,		/* pointer to the previous process in the queue */
 				 	*pcb_child,		/* pointer to the first child process of this process */
 				 	*pcb_parent,	/* pointer to this process's parent process */
-				 	*pcb_sibling;	/* pointer to the next child node of this node's parent */
+				 	*pcb_prevSib,	/* pointer to the previous sibling */
+					*pcb_nextSib;	/* pointer to the next sibling */
 
-	state_t			p_s;			/* processor state */
-	int				*p_semAdd;		/* pointer to semaphore on which process is blocked */
+	state_t			pcb_s;			/* processor state */
+	int				*pcb_semAdd;		/* pointer to semaphore on which process is blocked */
 
 } pcb_t, *pcb_PTR;
 

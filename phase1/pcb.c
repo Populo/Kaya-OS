@@ -45,7 +45,7 @@ HIDDEN pcb_PTR findLastChild(pcb_PTR p)
     }
 }
 
-void debugA(pcb_PTR p) 
+void debugA(int p) 
 {
     int i;
     i = 0;
@@ -92,7 +92,7 @@ pcb_PTR allocPcb ()
     else
     {
         returnME = pcb_FREE_h;
-        pcb_FREE_h = (*pcb_FREE_h) -> pcb_next;
+        pcb_FREE_h = pcb_FREE_h -> pcb_next;
 
         /* break references to queue */
         returnME -> pcb_next = NULL;

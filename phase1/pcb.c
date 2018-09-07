@@ -198,8 +198,9 @@ void insertChild (pcb_PTR prnt, pcb_PTR p)
     }
     else
     {
+        pcb_PTR lastChild;
         p -> pcb_parent = prnt;
-        pcb_PTR lastChild = findLastChild(prnt-> pcb_child);
+        lastChild = findLastChild(prnt-> pcb_child);
         lastChild -> pcb_sibling = p;
     }
 }

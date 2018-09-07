@@ -129,7 +129,7 @@ pcb_PTR outProcQ (pcb_PTR *tp, pcb_PTR p)
         }
         else 
         {
-            pcb_PTR foundP = findP((*tp)->pcb_next, p, (*tp);
+            pcb_PTR foundP = findP((*tp)->pcb_next, p, (*tp));
 
             if (foundP != NULL) 
             {
@@ -160,13 +160,14 @@ int emptyChild (pcb_PTR p)
 
 HIDDEN pcb_PTR findLastChild(pcb_PTR p)
 {
-    if(p -> pcb_sibling = NULL)
+    if(p -> pcb_sibling == NULL)
     {
         return p;
     }
     else
     {
         findChild(p -> pcb_sibling);
+        return NULL;
     }
 }
 

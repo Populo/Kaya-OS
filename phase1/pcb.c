@@ -85,7 +85,7 @@ void freePcb (pcb_PTR p)
 pcb_PTR allocPcb ()
 {
     pcb_PTR returnME;
-    if (emptyProcQ(pcb_FREE_h))
+    if (pcb_FREE_h == NULL)
     {
         returnME = NULL;
     }

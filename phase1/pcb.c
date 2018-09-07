@@ -41,7 +41,7 @@ HIDDEN pcb_PTR findLastChild(pcb_PTR p)
     }
     else
     {
-        return findChild(p -> pcb_sibling);
+        return findLastChild(p -> pcb_sibling);
     }
 }
 

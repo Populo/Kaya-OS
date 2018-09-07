@@ -70,7 +70,7 @@ void initPcbs ()
 
     
     
-    for(it = 0; it<=MAXPROC; it++)
+    for(it = 0; it<MAXPROC; it++)
     {
         freePcb(&array[it]);
     }
@@ -91,7 +91,7 @@ pcb_PTR allocPcb ()
     }
     else
     {
-        returnME = pcb_FREE_h;
+        returnME = (*pcb_FREE_h);
         pcb_FREE_h = (*pcb_FREE_h) -> pcb_next;
 
         /* break references to queue */

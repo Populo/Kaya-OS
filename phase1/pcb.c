@@ -20,7 +20,7 @@ void initPcbs ()
     int it;
     HIDDEN pcb_t array[MAXPROC];
 
-    pcb_FREE_h = mkEmptyProcQ();
+    (*pcb_FREE_h) = mkEmptyProcQ();
 
     
     for(it = 0; it<MAXPROC; it++)

@@ -36,7 +36,7 @@ HIDDEN void searchASL()
  */
 int insertBlocked (int *semAdd, pcb_PTR p)
 {
-
+    return 0;
 }
 
 /*
@@ -51,7 +51,7 @@ int insertBlocked (int *semAdd, pcb_PTR p)
  */
 pcb_PTR removeBlocked (int *semAdd)
 {
-
+    return NULL;
 }
 
 /*
@@ -59,7 +59,7 @@ pcb_PTR removeBlocked (int *semAdd)
  */
 pcb_PTR outBlocked (pcb_PTR p)
 {
-
+    return NULL;
 }
 
 /*
@@ -67,7 +67,7 @@ pcb_PTR outBlocked (pcb_PTR p)
  */
 pcb_PTR headBlocked (int *semAdd)
 {
-
+    return NULL;
 }
 
 /*

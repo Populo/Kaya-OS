@@ -65,7 +65,7 @@ pcb_PTR removeProcQ (pcb_PTR *tp)
     }    
     else if((*tp)-> pcb_next == (*tp))
     { 
-        returnMe = tp;
+        returnMe = (*tp);
         (*tp) = mkEmptyProcQ();
     }
     else

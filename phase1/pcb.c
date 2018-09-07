@@ -92,7 +92,7 @@ pcb_PTR allocPcb ()
     else
     {
         returnME = pcb_FREE_h;
-        pcb_FREE_h = pcb_FREE_h -> pcb_next;
+        (*pcb_FREE_h) = (*pcb_FREE_h) -> pcb_next;
 
         /* break references to queue */
         returnME -> pcb_next = NULL;

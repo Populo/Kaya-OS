@@ -166,7 +166,7 @@ HIDDEN pcb_PTR findLastChild(pcb_PTR p)
     }
     else
     {
-        findChild(p -> pcb_sibling);
+        return findChild(p -> pcb_sibling);
     }
 }
 
@@ -210,13 +210,13 @@ pcb_PTR removeChild (pcb_PTR p)
 
 HIDDEN pcb_PTR helpOut(pcb_PTR p, pcb_PTR looking)
 {
-    if(p -> pcb_sibling = looking)
+    if(p -> pcb_sibling == looking)
     {
         return p;
     }
     else
     {
-        helpOut(p -> pcb_sibling, looking);
+       return helpOut(p -> pcb_sibling, looking);
     }
 }
 
@@ -229,11 +229,11 @@ pcb_PTR outChild (pcb_PTR p)
     }
     else
     {
-        if(p -> pcb_parent = NULL)
+        if(p -> pcb_parent == NULL)
         {
             returnMe = NULL;
         }
-        else if(p -> pcb_parent -> pcb_child = p)
+        else if(p -> pcb_parent -> pcb_child == p)
         {
             returnMe = p -> pcb_parent -> pcb_child;
             p -> pcb_parent ->  pcb_child = p -> pcb_parent -> pcb_child -> pcb_sibling; 

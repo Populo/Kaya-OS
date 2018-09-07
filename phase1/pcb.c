@@ -3,7 +3,7 @@
 
 #include "../e/pcb.e"
 
-HIDDEN pcb_PTR pcb_FREE_h;
+HIDDEN pcb_PTR *pcb_FREE_h;
 
 pcb_PTR mkEmptyProcQ ()
 {
@@ -17,10 +17,12 @@ int emptyProcQ (pcb_PTR tp)
 
 void initPcbs ()
 {
+    int it;
+    HIDDEN pcb_t array[MAXPROC];
+
     pcb_FREE_h = mkEmptyProcQ();
 
-    int it;
-    static pcb_t array[MAXPROC];
+    
     for(it = 0; it<MAXPROC; it++)
     {
         freePcb(&(array[it]));
@@ -46,7 +48,7 @@ void insertProcQ (pcb_PTR *tp, pcb_PTR p)
     }   
     else
     {
-        p -> pcb_prev = tp;
+        p -> pcb_prev = (*tp);
         p -> pcb_next = (*tp) -> pcb_next;
         (*tp) -> pcb_next = p;
         p -> pcb_next -> pcb_prev = p;

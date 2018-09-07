@@ -45,6 +45,12 @@ HIDDEN pcb_PTR findLastChild(pcb_PTR p)
     }
 }
 
+void debugA(pcb_PTR p) 
+{
+    int i;
+    i = 0;
+}
+
 pcb_PTR mkEmptyProcQ ()
 {
     return NULL;
@@ -62,6 +68,7 @@ void initPcbs ()
 
     (*pcb_FREE_h) = mkEmptyProcQ();
 
+    debugA(pcb_FREE_h);
     
     for(it = 0; it<MAXPROC; it++)
     {

@@ -63,12 +63,10 @@ int emptyProcQ (pcb_PTR tp)
 
 void initPcbs ()
 {
-    debugA(pcb_FREE_h);
-
     int it;
     HIDDEN pcb_t array[MAXPROC];
 
-    (*pcb_FREE_h) = mkEmptyProcQ();
+    pcb_FREE_h = NULL;
 
     
     

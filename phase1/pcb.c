@@ -78,12 +78,12 @@ void initPcbs ()
 
 void freePcb (pcb_PTR p)
 {
-    insertProcQ(&pcb_FREE_h, p);
+    insertProcQ(pcb_FREE_h, p);
 }
 
 pcb_PTR allocPcb ()
 {
-    return removeProcQ(&pcb_FREE_h);
+    return removeProcQ(pcb_FREE_h);
 }
 
 void insertProcQ (pcb_PTR *tp, pcb_PTR p)

@@ -5,6 +5,46 @@
 
 HIDDEN pcb_PTR *pcb_FREE_h;
 
+HIDDEN pcb_PTR helpOut(pcb_PTR p, pcb_PTR looking)
+{
+    if(p -> pcb_sibling == looking)
+    {
+        return p;
+    }
+    else
+    {
+       return helpOut(p -> pcb_sibling, looking);
+    }
+}
+
+HIDDEN pcb_PTR findP(pcb_PTR check, pcb_PTR find, pcb_PTR tail)
+{
+    if (check == find) 
+    {
+        return find;
+    }
+    else if (check == tail) 
+    {
+        return NULL;
+    } 
+    else
+    {
+        return findP(check->pcb_next, find, tail);
+    }
+}
+
+HIDDEN pcb_PTR findLastChild(pcb_PTR p)
+{
+    if(p -> pcb_sibling == NULL)
+    {
+        return p;
+    }
+    else
+    {
+        return findChild(p -> pcb_sibling);
+    }
+}
+
 pcb_PTR mkEmptyProcQ ()
 {
     return NULL;
@@ -90,22 +130,6 @@ pcb_PTR headProcQ (pcb_PTR tp)
     }
 }
 
-HIDDEN pcb_PTR findP(pcb_PTR check, pcb_PTR find, pcb_PTR tail)
-{
-    if (check == find) 
-    {
-        return find;
-    }
-    else if (check == tail) 
-    {
-        return NULL;
-    } 
-    else
-    {
-        return findP(check->pcb_next, find, tail);
-    }
-}
-
 pcb_PTR outProcQ (pcb_PTR *tp, pcb_PTR p) 
 {
     pcb_PTR returnMe;
@@ -158,18 +182,6 @@ int emptyChild (pcb_PTR p)
     return (p -> pcb_child == NULL);
 }
 
-HIDDEN pcb_PTR findLastChild(pcb_PTR p)
-{
-    if(p -> pcb_sibling == NULL)
-    {
-        return p;
-    }
-    else
-    {
-        return findChild(p -> pcb_sibling);
-    }
-}
-
 void insertChild (pcb_PTR prnt, pcb_PTR p)
 {
     if(emptyChild(prnt))
@@ -205,18 +217,6 @@ pcb_PTR removeChild (pcb_PTR p)
             p -> pcb_child = p-> pcb_child -> pcb_sibling;
             return temp;
         }
-    }
-}
-
-HIDDEN pcb_PTR helpOut(pcb_PTR p, pcb_PTR looking)
-{
-    if(p -> pcb_sibling == looking)
-    {
-        return p;
-    }
-    else
-    {
-       return helpOut(p -> pcb_sibling, looking);
     }
 }
 

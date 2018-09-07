@@ -72,7 +72,7 @@ void initPcbs ()
     
     for(it = 0; it<MAXPROC; it++)
     {
-        freePcb(&(array[it]));
+        freePcb(&array[it]);
     }
 }
 

@@ -228,6 +228,7 @@ void main() {
 	else
 		adderrbuf("successful middle child   ");
 	q = outChild(procp[0]);
+	addokbuf("successful call of out   ");
 	if (q != NULL)
 		addokbuf("outChild failed on nonexistent child   ");
 	else

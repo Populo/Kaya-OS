@@ -23,13 +23,13 @@
 #define MAXPROC	20
 #define	MAXSEM	MAXPROC
 
-char okbuf[2048];			/* sequence of progress messages */
+/*char okbuf[2048];			/* sequence of progress messages */
 char errbuf[128];			/* contains reason for failing */
 char msgbuf[128];			/* nonrecoverable error message before shut down */
 int sem[MAXSEM];
 int onesem;
 pcb_t	*procp[MAXPROC], *p, *qa, *q, *firstproc, *lastproc, *midproc;
-char *mp = okbuf;
+/*char *mp = okbuf;*/
 
 
 #define TRANSMITTED	5

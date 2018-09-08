@@ -222,11 +222,17 @@ void main() {
 	q = outChild(procp[1]);
 	if (q == NULL || q != procp[1])
 		adderrbuf("outChild failed on first child   ");
+	else
+		addokbuf("passed on first child   \n");
 	q = outChild(procp[4]);
 	if (q == NULL || q != procp[4])
 		adderrbuf("outChild failed on middle child   ");
+	else
+		addokbuf("passed on middle child   \n");
 	if (outChild(procp[0]) != NULL)
 		adderrbuf("outChild failed on nonexistent child   ");
+	else
+		addokbuf("passed on nonexistant child   \n")
 	addokbuf("outChild ok   \n");
 
 	/* Check removeChild */

@@ -253,18 +253,18 @@ pcb_PTR removeChild (pcb_PTR p)
 
 pcb_PTR outChild (pcb_PTR p)
 {
-    pcb_PTR returnMe;
+    pcb_PTR returnMe = NULL;
 
     debugA(p);
 
     if((p == NULL) || (p -> pcb_parent == NULL)) /* not a child */
     {
         debugB(p);
-        return  NULL;
+        return NULL;
     }
     else if(p == (p -> pcb_parent -> pcb_child)) /* first child */
     {
-        return removeChild(p);
+        return removeChild(p -> pcb_parent);
     }
     else
     {

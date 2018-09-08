@@ -258,24 +258,15 @@ pcb_PTR outChild (pcb_PTR p)
     {
         returnMe = NULL;
     }
+    else if(p == p -> pcb_parent -> pcb_child)
+    {
+        p -> pcb_parent -> pcb_child = p -> pcb_nextSib;
+        p -> pcb_nextSib -> pcb_prevSib = NULL;
+    }
     else
     {
-        if(p -> pcb_parent == NULL)
-        {
-            returnMe = NULL;
-        }
-        else if(p -> pcb_parent -> pcb_child == p)
-        {
-            returnMe = p -> pcb_parent -> pcb_child;
-            p -> pcb_parent ->  pcb_child = p -> pcb_parent -> pcb_child -> pcb_nextSib; 
-        }
-        else
-        {
-            pcb_PTR prnt = p -> pcb_parent;           
-            pcb_PTR prevSib = helpOut(prnt->pcb_child, p);
-            returnMe = prevSib -> pcb_nextSib;
-            prevSib -> pcb_nextSib = p -> pcb_nextSib;    
-        }
+        p -> pcb_prevSib -> pcb_nextSib = p -> pcb_nextSib;
+        p-> pcb_nextSib -> pcb_prevSib = p -> pcb_prevSib;
     }
     return returnMe;
 }

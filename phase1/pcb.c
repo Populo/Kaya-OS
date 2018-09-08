@@ -3,7 +3,7 @@
 
 #include "../e/pcb.e"
 
-HIDDEN pcb_PTR *pcb_FREE_h;
+HIDDEN pcb_PTR pcb_FREE_h;
 
 HIDDEN pcb_PTR helpOut(pcb_PTR p, pcb_PTR looking)
 {
@@ -91,8 +91,8 @@ pcb_PTR allocPcb ()
     }
     else
     {
-        returnME = (*pcb_FREE_h);
-        pcb_FREE_h = (*pcb_FREE_h) -> pcb_next;
+        returnME = &pcb_FREE_h;
+        pcb_FREE_h = pcb_FREE_h -> pcb_next;
 
         /* break references to queue */
         returnME -> pcb_next = NULL;

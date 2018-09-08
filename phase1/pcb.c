@@ -260,7 +260,7 @@ pcb_PTR outChild (pcb_PTR p)
     if((p == NULL) || (p -> pcb_parent == NULL)) /* not a child */
     {
         debugB(p);
-        returnME = NULL;
+        returnMe = NULL;
     }
     else if(p == (p -> pcb_parent -> pcb_child)) /* first child */
     {

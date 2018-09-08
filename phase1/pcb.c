@@ -304,6 +304,8 @@ pcb_PTR outChild (pcb_PTR p)
         p -> pcb_prevSib -> pcb_nextSib = p -> pcb_nextSib;       
         p -> pcb_parent = NULL;
 
+        return NULL;
+
         returnMe = p;
     }
     

@@ -253,7 +253,7 @@ pcb_PTR removeChild (pcb_PTR p)
 
 pcb_PTR outChild (pcb_PTR p)
 {
-    pcb_PTR returnMe;
+    pcb_PTR returnMe = NULL;
 
     debugA(p);
 

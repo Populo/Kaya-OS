@@ -5,6 +5,9 @@
 
 HIDDEN pcb_PTR pcb_FREE_h;
 
+char okbuf[2048];			/* sequence of progress messages */
+char *mp = okbuf;
+
 HIDDEN pcb_PTR helpOut(pcb_PTR p, pcb_PTR looking)
 {
     if(p -> pcb_nextSib == looking)
@@ -31,6 +34,16 @@ HIDDEN pcb_PTR findP(pcb_PTR check, pcb_PTR find, pcb_PTR tail)
     {
         return findP(check->pcb_next, find, tail);
     }
+}
+
+/* This function placess the specified character string in okbuf and
+*	causes the string to be written out to terminal0 */
+void addokbuf(char *strp) {
+	char *tstrp = strp;
+	while ((*mp++ = *strp++) != '\0')
+		;
+	mp--;
+	termprint(tstrp, 0);
 }
 
 void debugA(pcb_PTR p) 
@@ -261,6 +274,9 @@ pcb_PTR outChild (pcb_PTR p)
     pcb_PTR returnMe;
 
      debugA(p);
+
+    addokbuf(p -> pcb_parent);
+
     if(!emptyChild(p))
     {
         debugB(returnMe);

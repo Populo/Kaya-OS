@@ -288,8 +288,7 @@ pcb_PTR outChild (pcb_PTR p)
     }
     else if(p == ((p -> pcb_parent) -> pcb_child)) /* first child */
     {
-        return NULL;
-        /* returnMe = removeChild(p -> pcb_parent); */
+         returnMe = removeChild(p -> pcb_parent); 
         
     }
     else if (p -> pcb_nextSib == NULL) /* last child */

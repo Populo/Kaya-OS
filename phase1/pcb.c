@@ -33,18 +33,6 @@ HIDDEN pcb_PTR findP(pcb_PTR check, pcb_PTR find, pcb_PTR tail)
     }
 }
 
-HIDDEN pcb_PTR findLastChild(pcb_PTR p)
-{
-    if(p -> pcb_nextSib == NULL)
-    {
-        return p;
-    }
-    else
-    {
-        return findLastChild(p -> pcb_nextSib);
-    }
-}
-
 void debugA(pcb_PTR p) 
 {
     int i;
@@ -262,9 +250,10 @@ pcb_PTR removeChild (pcb_PTR p)
 
 pcb_PTR outChild (pcb_PTR p)
 {
+    pcb_PTR returnMe;
+
     debugA(p);
 
-    pcb_PTR *returnMe;
     if((p == NULL) || (p -> pcb_parent == NULL)) /* not a child */
     {
         debugB(p);
@@ -275,7 +264,7 @@ pcb_PTR outChild (pcb_PTR p)
         p -> pcb_parent -> pcb_child = p -> pcb_nextSib;
         p -> pcb_nextSib -> pcb_prevSib = NULL;
         p -> pcb_parent = NULL;
-        returnMe = (*p);
+        returnMe = p;
     }
     else
     {
@@ -284,7 +273,7 @@ pcb_PTR outChild (pcb_PTR p)
             p -> pcb_prevSib -> pcb_nextSib = NULL;
             p -> pcb_parent = NULL;
 
-            returnMe = (*p);
+            returnMe = p;
         }
         else
         {
@@ -292,7 +281,7 @@ pcb_PTR outChild (pcb_PTR p)
             p -> pcb_nextSib -> pcb_prevSib = p -> pcb_prevSib;
             p -> pcb_parent = NULL;
 
-            returnMe = (*p);
+            returnMe = p;
         }
     }
     return returnMe;

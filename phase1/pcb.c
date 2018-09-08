@@ -264,7 +264,7 @@ pcb_PTR outChild (pcb_PTR p)
 {
     debugA(p);
 
-    pcb_PTR returnMe = NULL;
+    pcb_PTR *returnMe;
     if((p == NULL) || (p -> pcb_parent == NULL)) /* not a child */
     {
         debugB(p);

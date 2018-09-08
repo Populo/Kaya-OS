@@ -218,13 +218,15 @@ void insertChild (pcb_PTR prnt, pcb_PTR p)
     {
         prnt -> pcb_child = p;
         p -> pcb_parent = prnt;
+        p-> pcb_nextSib = NULL;
+        p -> pcb_prevSib = NULL;
     }
     else
     {
-        pcb_PTR lastChild;
-        p -> pcb_parent = prnt;
-        lastChild = findLastChild(prnt-> pcb_child);
-        lastChild -> pcb_nextSib = p;
+        prnt -> pcb_child -> pcb_prevSib = p;
+        p ->pcb_nextSib = prnt ->pcb_child;
+        prnt ->pcb_child = p;
+        p ->pcb_prevSib =NULL;
     }
 }
 

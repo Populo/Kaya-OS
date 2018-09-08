@@ -98,13 +98,13 @@ unsigned int termprint(char * str, unsigned int term) {
 
 /* This function placess the specified character string in okbuf and
 *	causes the string to be written out to terminal0 */
-void addokbuf(char *strp) {
+/*void addokbuf(char *strp) {
 	char *tstrp = strp;
 	while ((*mp++ = *strp++) != '\0')
 		;
 	mp--;
 	termprint(tstrp, 0);
-}
+}*/
 
 
 /* This function placess the specified character string in errbuf and

@@ -208,21 +208,24 @@ int emptyChild (pcb_PTR p)
 
 void insertChild (pcb_PTR prnt, pcb_PTR p)
 {
-    if(emptyChild(prnt))
-    {
-        prnt -> pcb_child = p;
-        p -> pcb_parent = prnt;
-        p-> pcb_nextSib = NULL;
-        p -> pcb_prevSib = NULL;
+    if (!emptyProcQ(prnt)) {
+         if(emptyChild(prnt))
+        {
+            prnt -> pcb_child = p;
+            p -> pcb_parent = prnt;
+            p-> pcb_nextSib = NULL;
+            p -> pcb_prevSib = NULL;
+        }
+        else
+        {
+            prnt -> pcb_child -> pcb_prevSib = p;
+            p -> pcb_nextSib = prnt ->pcb_child;
+            p -> pcb_parent = prnt;
+            prnt -> pcb_child = p;
+            p -> pcb_prevSib = NULL;  
+        }
     }
-    else
-    {
-        prnt -> pcb_child -> pcb_prevSib = p;
-        p ->pcb_nextSib = prnt ->pcb_child;
-        p -> pcb_parent = prnt;
-        prnt ->pcb_child = p;
-        p ->pcb_prevSib = NULL;  
-    }
+   
 }
 
 pcb_PTR removeChild (pcb_PTR p)
@@ -233,16 +236,18 @@ pcb_PTR removeChild (pcb_PTR p)
     }
     else
     {
-        if(p -> pcb_child -> pcb_nextSib ==  NULL)
+        if(p -> pcb_child -> pcb_nextSib ==  NULL) /* only child */
         {
-            pcb_PTR temp = p -> pcb_child;
+            pcb_PTR temp;
+            temp = p -> pcb_child;
             p -> pcb_child = NULL;
             p -> pcb_parent = NULL;
             return temp;
         }
         else
         {
-            pcb_PTR temp = p -> pcb_child;
+            pcb_PTR temp;
+            temp = p -> pcb_child;
             p -> pcb_child = p-> pcb_child -> pcb_nextSib;
             p -> pcb_child -> pcb_prevSib = NULL;
             p -> pcb_child -> pcb_parent = p;

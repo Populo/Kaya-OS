@@ -256,7 +256,7 @@ pcb_PTR removeChild (pcb_PTR p)
 pcb_PTR outChild (pcb_PTR p)
 {
     pcb_PTR returnMe;
-    if(p -> pcb_parent == NULL)
+    if((p == NULL) || (p -> pcb_parent == NULL))
     {
         returnMe = NULL;
     }

@@ -220,7 +220,7 @@ int emptyChild (pcb_PTR p)
 
 void insertChild (pcb_PTR prnt, pcb_PTR p)
 {
-    if(emptyChild(prnt))
+    if(prnt -> pcb_child == NULL)
     {
         prnt -> pcb_child = p;
         p -> pcb_parent = prnt;
@@ -232,7 +232,8 @@ void insertChild (pcb_PTR prnt, pcb_PTR p)
         prnt -> pcb_child -> pcb_prevSib = p;
         p ->pcb_nextSib = prnt ->pcb_child;
         prnt ->pcb_child = p;
-        p ->pcb_prevSib =NULL;  
+        p -> pcb_parent = prnt;
+        p ->pcb_prevSib = NULL;  
     }
 }
 
@@ -261,28 +262,39 @@ pcb_PTR removeChild (pcb_PTR p)
 
 pcb_PTR outChild (pcb_PTR p)
 {
-    if((p == NULL) || (p -> pcb_parent == NULL)){
-		/* p is not a child */
-		return NULL;
-	}
-	if((p -> pcb_parent -> pcb_child) == p){
-		/* am newest child */
-		return removeChild(p -> pcb_parent);
-	}
-	if ((p -> pcb_nextSib) == NULL){
-		/* p is at the end of child list */
-		p -> pcb_prevSib -> pcb_nextSib = NULL;
-		p -> pcb_parent = NULL;
-		return p;
-	}
-	if (((p -> pcb_prevSib) != NULL) && ((p -> pcb_nextSib) != NULL)){ 
-		/* p is is a middle child */
-		p -> pcb_nextSib -> pcb_prevSib = p -> pcb_prevSib;
-		p -> pcb_prevSib -> pcb_nextSib = p -> pcb_nextSib;
-		p -> pcb_parent = NULL;
-		return p;
-	}
-	/* should never get to this */
-	return NULL;
+    debugA(p);
+
+    pcb_PTR returnMe;
+    if((p == NULL) || (p -> pcb_parent == NULL)) /* not a child */
+    {
+        debugB(p);
+        returnMe = NULL;
+    }
+    else if(p == (p -> pcb_parent -> pcb_child)) /* first child */
+    {
+        p -> pcb_parent -> pcb_child = p -> pcb_nextSib;
+        p -> pcb_nextSib -> pcb_prevSib = NULL;
+        p -> pcb_parent = NULL;
+        returnMe = p;
+    }
+    else
+    {
+        if (p -> pcb_nextSib == NULL) /* last child */
+        {
+            p -> pcb_prevSib -> pcb_nextSib = NULL;
+            p -> pcb_parent = NULL;
+
+            returnMe = p;
+        }
+        else
+        {
+            p -> pcb_prevSib -> pcb_nextSib = p -> pcb_nextSib;
+            p -> pcb_nextSib -> pcb_prevSib = p -> pcb_prevSib;
+            p -> pcb_parent = NULL;
+
+            returnMe = p;
+        }
+    }
+    return returnMe;
 }
 

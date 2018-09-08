@@ -139,23 +139,6 @@ pcb_PTR removeProcQ (pcb_PTR *tp)
 
     returnMe = outProcQ(tp, headProcQ(*tp));
 
-    /* if(emptyProcQ(*tp))
-    {
-        returnMe = NULL;
-    }    
-    else if((*tp)-> pcb_next == (*tp))
-    { 
-        returnMe = (*tp);
-        (*tp) = mkEmptyProcQ();
-    }
-    else
-    {
-        returnMe = (*tp) -> pcb_next;
-        (*tp) -> pcb_next = (*tp) -> pcb_next -> pcb_next;
-        (*tp) -> pcb_next -> pcb_next -> pcb_prev = (*tp);
-    }
-     */
-
     return returnMe;
 }
 pcb_PTR headProcQ (pcb_PTR tp)
@@ -244,73 +227,55 @@ void insertChild (pcb_PTR prnt, pcb_PTR p)
    
 }
 
-pcb_PTR removeChild (pcb_PTR p)
+/*
+ * remove first child in stack
+ */
+pcb_PTR removeChild (pcb_PTR parent)
 {
-    if(emptyChild(p))
-    {
-        return NULL;
-    }
-    else
-    {
-        if(p -> pcb_child -> pcb_nextSib ==  NULL) /* only child */
-        {
-            pcb_PTR temp;
-            temp = p -> pcb_child;
-            p -> pcb_child = NULL;
-            p -> pcb_parent = NULL;
-            return temp;
-        }
-        else
-        {
-            pcb_PTR temp;
-            temp = p -> pcb_child;
-            p -> pcb_child = p-> pcb_child -> pcb_nextSib;
-            p -> pcb_child -> pcb_prevSib = NULL;
-            p -> pcb_child -> pcb_parent = p;
-            return temp;
-        }
-    }
+    return outChild(parent->pcb_child);
 }
 
-pcb_PTR outChild (pcb_PTR p)
+/*
+ * remove given child from anywhere in the stack
+ */
+pcb_PTR outChild (pcb_PTR child)
 {
+    /* 4 cases:
+     *      not a child/null
+     *      only child
+     *      middle child
+     *      last child
+     */
+
     pcb_PTR returnMe;
 
-     debugA(p);
-
-    addokbuf(p -> pcb_parent);
-
-    if(!emptyChild(p))
+    if ((child == NULL) || (child -> pcb_parent == NULL)) /* not a child/null */
     {
-        debugB(returnMe);
+        returnMe = NULL;
     }
+    else if ((child -> pcb_nextSib == NULL) && (child -> pcb_prevSib == NULL)) /* only child */
+    {
+        child -> pcb_parent -> pcb_child = NULL;
+        child -> pcb_parent = NULL;
 
-    if((p == NULL) || (p -> pcb_parent == NULL)) /* not a child */
-    {
-        return NULL;
+        returnMe = child;
     }
-    else if(p == ((p -> pcb_parent) -> pcb_child)) /* first child */
+    else if ((child -> pcb_nextSib != NULL) && (child -> pcb_prevSib != NULL)) /* middle child */
     {
-         returnMe = removeChild(p -> pcb_parent); 
-        
-    }
-    else if (p -> pcb_nextSib == NULL) /* last child */
-    {
-        p -> pcb_prevSib -> pcb_nextSib = NULL;
-        p -> pcb_parent = NULL;
+        child -> pcb_prev -> pcb_next = child -> pcb_next;
+        child -> pcb_next -> pcb_prev = child -> pcb_prev;
+        child -> pcb_parent = NULL;
 
-        returnMe = p;
+        returnMe = child;
     }
-    else /* middle child */
+    else if ((child -> pcb_next == NULL) && (child -> pcb_prev != NULL)) /* last child */
     {
-        p -> pcb_nextSib -> pcb_prevSib = p -> pcb_prevSib;
-        p -> pcb_prevSib -> pcb_nextSib = p -> pcb_nextSib;       
-        p -> pcb_parent = NULL;
+        child -> pcb_prev -> pcb_next = NULL;
+        child -> pcb_parent = NULL;
 
-        returnMe = p;
+        returnMe = child;
     }
-    
 
     return returnMe;
-}
+} 
 

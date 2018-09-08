@@ -137,7 +137,7 @@ pcb_PTR removeProcQ (pcb_PTR *tp)
 {
     pcb_PTR returnMe;
 
-    returnMe = outProcQ(tp, (*tp)->pcb_next);
+    returnMe = outProcQ(tp, headProcQ(tp));
 
     /* if(emptyProcQ(*tp))
     {

@@ -254,19 +254,21 @@ pcb_PTR removeChild (pcb_PTR p)
 pcb_PTR outChild (pcb_PTR p)
 {
     pcb_PTR returnMe;
-    if(emptyChild(p))
+    if(emptyChild(p -> pcb_parent))
     {
         returnMe = NULL;
     }
-    else if(p == p -> pcb_parent -> pcb_child)
+    else if(p == (p -> pcb_parent) -> pcb_child)
     {
         p -> pcb_parent -> pcb_child = p -> pcb_nextSib;
         p -> pcb_nextSib -> pcb_prevSib = NULL;
+        returnMe = p;
     }
     else
     {
         p -> pcb_prevSib -> pcb_nextSib = p -> pcb_nextSib;
         p-> pcb_nextSib -> pcb_prevSib = p -> pcb_prevSib;
+        returnMe = p;
     }
     return returnMe;
 }

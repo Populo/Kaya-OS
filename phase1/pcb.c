@@ -250,7 +250,6 @@ pcb_PTR removeChild (pcb_PTR p)
             temp = p -> pcb_child;
             p -> pcb_child = p-> pcb_child -> pcb_nextSib;
             p -> pcb_child -> pcb_prevSib = NULL;
-            p -> pcb_child -> pcb_parent = p;
             return temp;
         }
     }

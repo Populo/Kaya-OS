@@ -261,39 +261,28 @@ pcb_PTR removeChild (pcb_PTR p)
 
 pcb_PTR outChild (pcb_PTR p)
 {
-    debugA(p);
-
-    pcb_PTR returnMe;
-    if((p == NULL) || (p -> pcb_parent == NULL)) /* not a child */
-    {
-        debugB(p);
-        returnMe = NULL;
-    }
-    else if(p == (p -> pcb_parent -> pcb_child)) /* first child */
-    {
-        p -> pcb_parent -> pcb_child = p -> pcb_nextSib;
-        p -> pcb_nextSib -> pcb_prevSib = NULL;
-        p -> pcb_parent = NULL;
-        returnMe = p;
-    }
-    else
-    {
-        if (p -> pcb_nextSib == NULL) /* last child */
-        {
-            p -> pcb_prevSib -> pcb_nextSib = NULL;
-            p -> pcb_parent = NULL;
-
-            returnMe = p;
-        }
-        else
-        {
-            p -> pcb_prevSib -> pcb_nextSib = p -> pcb_nextSib;
-            p -> pcb_nextSib -> pcb_prevSib = p -> pcb_prevSib;
-            p -> pcb_parent = NULL;
-
-            returnMe = p;
-        }
-    }
-    return returnMe;
+    if((p == NULL) || (p -> p_prnt == NULL)){
+		/* p is not a child */
+		return NULL;
+	}
+	if((p -> p_prnt -> p_child) == p){
+		/* am newest child */
+		return removeChild(p -> p_prnt);
+	}
+	if ((p -> p_sibNext) == NULL){
+		/* p is at the end of child list */
+		p -> p_sibPrev -> p_sibNext = NULL;
+		p -> p_prnt = NULL;
+		return p;
+	}
+	if (((p -> p_sibPrev) != NULL) && ((p -> p_sibNext) != NULL)){ 
+		/* p is is a middle child */
+		p -> p_sibNext -> p_sibPrev = p -> p_sibPrev;
+		p -> p_sibPrev -> p_sibNext = p -> p_sibNext;
+		p -> p_prnt = NULL;
+		return p;
+	}
+	/* should never get to this */
+	return NULL;
 }
 

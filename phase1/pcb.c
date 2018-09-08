@@ -226,7 +226,7 @@ void insertChild (pcb_PTR prnt, pcb_PTR p)
         prnt -> pcb_child -> pcb_prevSib = p;
         p ->pcb_nextSib = prnt ->pcb_child;
         prnt ->pcb_child = p;
-        p ->pcb_prevSib =NULL;
+        p ->pcb_prevSib =NULL;  
     }
 }
 
@@ -260,7 +260,7 @@ pcb_PTR outChild (pcb_PTR p)
     {
         returnMe = NULL;
     }
-    else if(p == (p -> pcb_parent) -> pcb_child)
+    else if(p == p -> pcb_parent -> pcb_child)
     {
         p -> pcb_parent -> pcb_child = p -> pcb_nextSib;
         p -> pcb_nextSib -> pcb_prevSib = NULL;

@@ -264,7 +264,7 @@ pcb_PTR outChild (pcb_PTR p)
     }
     else if(p == (p -> pcb_parent -> pcb_child)) /* first child */
     {
-        removeChild(p);
+        return removeChild(p);
     }
     else
     {

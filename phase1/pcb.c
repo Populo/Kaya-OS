@@ -264,16 +264,17 @@ pcb_PTR outChild (pcb_PTR p)
     {
         p -> pcb_parent -> pcb_child = p -> pcb_nextSib;
         p -> pcb_nextSib -> pcb_prevSib = NULL;
+        p -> pcb_parent = NULL;
         returnMe = p;
     }
     else
     {
         p -> pcb_prevSib -> pcb_nextSib = p -> pcb_nextSib;
-        if (p -> pcb_nextSib != NULL)  /* last child */
+        if (p -> pcb_nextSib != NULL)  /* not last child */
         {
             p-> pcb_nextSib -> pcb_prevSib = p -> pcb_prevSib;
         }
-        
+        p -> pcb_parent = NULL;
         returnMe = p;
     }
     return returnMe;

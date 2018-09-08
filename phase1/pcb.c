@@ -51,6 +51,12 @@ void debugA(pcb_PTR p)
     i = 0;
 }
 
+void debugB(pcb_PTR p)
+{
+    int i;
+    i = 0;
+}
+
 pcb_PTR mkEmptyProcQ ()
 {
     return NULL;
@@ -260,6 +266,7 @@ pcb_PTR outChild (pcb_PTR p)
     pcb_PTR returnMe;
     if(p == NULL || (p -> pcb_parent == NULL)) /* not a child */
     {
+        debugB(p);
         returnMe = NULL;
     }
     else if(p == (p -> pcb_parent -> pcb_child)) /* first child */

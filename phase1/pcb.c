@@ -256,11 +256,11 @@ pcb_PTR removeChild (pcb_PTR p)
 pcb_PTR outChild (pcb_PTR p)
 {
     pcb_PTR returnMe;
-    if((p == NULL) || (p -> pcb_parent == NULL))
+    if((p == NULL) || (p -> pcb_parent == NULL)) /* not a child */
     {
         returnMe = NULL;
     }
-    else if(p == p -> pcb_parent -> pcb_child) /* first child */
+    else if(p == (p -> pcb_parent -> pcb_child)) /* first child */
     {
         p -> pcb_parent -> pcb_child = p -> pcb_nextSib;
         p -> pcb_nextSib -> pcb_prevSib = NULL;

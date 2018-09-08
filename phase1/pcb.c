@@ -255,10 +255,10 @@ pcb_PTR removeChild (pcb_PTR p)
 
 pcb_PTR outChild (pcb_PTR p)
 {
-    debugA(p -> pcb_parent);
+    debugA(p);
 
     pcb_PTR returnMe;
-    if((p == NULL) || (p -> pcb_parent == NULL)) /* not a child */
+    if(p == NULL || (p -> pcb_parent == NULL)) /* not a child */
     {
         returnMe = NULL;
     }

@@ -220,7 +220,7 @@ int emptyChild (pcb_PTR p)
 
 void insertChild (pcb_PTR prnt, pcb_PTR p)
 {
-    if(prnt -> pcb_child == NULL)
+    if(emptyChild(prnt))
     {
         prnt -> pcb_child = p;
         p -> pcb_parent = prnt;
@@ -231,8 +231,8 @@ void insertChild (pcb_PTR prnt, pcb_PTR p)
     {
         prnt -> pcb_child -> pcb_prevSib = p;
         p ->pcb_nextSib = prnt ->pcb_child;
-        prnt ->pcb_child = p;
         p -> pcb_parent = prnt;
+        prnt ->pcb_child = p;
         p ->pcb_prevSib = NULL;  
     }
 }

@@ -253,18 +253,18 @@ pcb_PTR removeChild (pcb_PTR p)
 
 pcb_PTR outChild (pcb_PTR p)
 {
-    pcb_PTR returnMe = NULL;
+    pcb_PTR returnMe;
 
     debugA(p);
 
     if((p == NULL) || (p -> pcb_parent == NULL)) /* not a child */
     {
         debugB(p);
-        return NULL;
+        returnME = NULL;
     }
     else if(p == (p -> pcb_parent -> pcb_child)) /* first child */
     {
-        return removeChild(p -> pcb_parent);
+        returnMe = removeChild(p -> pcb_parent);
     }
     else
     {
@@ -273,7 +273,7 @@ pcb_PTR outChild (pcb_PTR p)
             p -> pcb_prevSib -> pcb_nextSib = NULL;
             p -> pcb_parent = NULL;
 
-            return  p;
+            returnMe = p;
         }
         else
         {
@@ -281,9 +281,11 @@ pcb_PTR outChild (pcb_PTR p)
             p -> pcb_nextSib -> pcb_prevSib = p -> pcb_prevSib;
             p -> pcb_parent = NULL;
 
-            return p;
+            returnMe = p;
         }
     }
+    debugB(returnMe);
+
     return returnMe;
 }
 

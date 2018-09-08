@@ -240,9 +240,10 @@ pcb_PTR removeChild (pcb_PTR parent)
  */
 pcb_PTR outChild (pcb_PTR child)
 {
-    /* 4 cases:
+    /* 5 cases:
      *      not a child/null
      *      only child
+     *      first child
      *      middle child
      *      last child
      */
@@ -260,17 +261,25 @@ pcb_PTR outChild (pcb_PTR child)
 
         returnMe = child;
     }
+    else if ((child -> pcb_prevSib == NULL) && (child == (child -> pcb_parent -> pcb_child))) /* first child */
+    {
+        child -> pcb_nextSib -> pcb_prevSib = NULL;
+        child -> pcb_parent -> pcb_child = child -> pcb_nextSib;
+        child -> pcb_parent = NULL;
+
+        returnMe = child;
+    }
     else if ((child -> pcb_nextSib != NULL) && (child -> pcb_prevSib != NULL)) /* middle child */
     {
-        child -> pcb_prev -> pcb_next = child -> pcb_next;
-        child -> pcb_next -> pcb_prev = child -> pcb_prev;
+        child -> pcb_prevSib -> pcb_nextSib = child -> pcb_nextSib;
+        child -> pcb_nextSib -> pcb_prevSib = child -> pcb_prevSib;
         child -> pcb_parent = NULL;
 
         returnMe = child;
     }
     else if ((child -> pcb_next == NULL) && (child -> pcb_prev != NULL)) /* last child */
     {
-        child -> pcb_prev -> pcb_next = NULL;
+        child -> pcb_prevSib -> pcb_nextSib = NULL;
         child -> pcb_parent = NULL;
 
         returnMe = child;

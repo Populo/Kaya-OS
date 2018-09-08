@@ -217,8 +217,8 @@ void main() {
 
 	if (emptyChild(procp[0]))
 	  adderrbuf("emptyChild: unexpected TRUE   ");
-
-	/* Check outChild */
+/*
+	/* Check outChild 
 	q = outChild(procp[1]);
 	if (q == NULL || q != procp[1])
 		adderrbuf("outChild failed on first child   ");
@@ -228,7 +228,7 @@ void main() {
 	if (outChild(procp[0]) != NULL)
 		adderrbuf("outChild failed on nonexistent child   ");
 	addokbuf("outChild ok   \n");
-
+*/
 	/* Check removeChild */
 	addokbuf("Removing...   \n");
 	for (i = 0; i < 7; i++) {

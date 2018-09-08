@@ -136,7 +136,10 @@ void insertProcQ (pcb_PTR *tp, pcb_PTR p)
 pcb_PTR removeProcQ (pcb_PTR *tp)
 {
     pcb_PTR returnMe;
-    if(emptyProcQ(*tp))
+
+    returnMe = outProcQ(tp, (*tp)->pcb_next);
+
+    /* if(emptyProcQ(*tp))
     {
         returnMe = NULL;
     }    
@@ -151,7 +154,7 @@ pcb_PTR removeProcQ (pcb_PTR *tp)
         (*tp) -> pcb_next = (*tp) -> pcb_next -> pcb_next;
         (*tp) -> pcb_next -> pcb_next -> pcb_prev = (*tp);
     }
-    
+     */
 
     return returnMe;
 }

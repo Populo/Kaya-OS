@@ -261,7 +261,14 @@ pcb_PTR outChild (pcb_PTR p)
     }
     else if(p == (p -> pcb_parent -> pcb_child)) /* first child */
     {
-        p -> pcb_parent -> pcb_child = p -> pcb_nextSib;
+        if(p -> pcb_nextSib == NULL)
+        {
+            p -> pcb_parent -> pcb_child = NULL;
+        }
+        else
+        {
+            p -> pcb_parent -> pcb_child = p -> pcb_nextSib;
+        } 
         p -> pcb_nextSib -> pcb_prevSib = NULL;
         p -> pcb_parent = NULL;
         returnMe = p;

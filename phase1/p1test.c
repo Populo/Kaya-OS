@@ -23,13 +23,13 @@
 #define MAXPROC	20
 #define	MAXSEM	MAXPROC
 
-/*char okbuf[2048];			/* sequence of progress messages */
+char okbuf[2048];			/* sequence of progress messages */
 char errbuf[128];			/* contains reason for failing */
 char msgbuf[128];			/* nonrecoverable error message before shut down */
 int sem[MAXSEM];
 int onesem;
 pcb_t	*procp[MAXPROC], *p, *qa, *q, *firstproc, *lastproc, *midproc;
-/*char *mp = okbuf;*/
+char *mp = okbuf;
 
 
 #define TRANSMITTED	5
@@ -98,13 +98,13 @@ unsigned int termprint(char * str, unsigned int term) {
 
 /* This function placess the specified character string in okbuf and
 *	causes the string to be written out to terminal0 */
-/*void addokbuf(char *strp) {
+void addokbuf(char *strp) {
 	char *tstrp = strp;
 	while ((*mp++ = *strp++) != '\0')
 		;
 	mp--;
 	termprint(tstrp, 0);
-}*/
+}
 
 
 /* This function placess the specified character string in errbuf and
@@ -222,17 +222,11 @@ void main() {
 	q = outChild(procp[1]);
 	if (q == NULL || q != procp[1])
 		adderrbuf("outChild failed on first child   ");
-	else
-		addokbuf("success on first child   \n");
 	q = outChild(procp[4]);
 	if (q == NULL || q != procp[4])
 		adderrbuf("outChild failed on middle child   ");
-	else
-		adderrbuf("successful middle child   \n");
 	if (outChild(procp[0]) != NULL)
-		addokbuf("outChild failed on nonexistent child   ");
-	else
-		adderrbuf("not here   ");
+		adderrbuf("outChild failed on nonexistent child   ");
 	addokbuf("outChild ok   \n");
 
 	/* Check removeChild */
@@ -254,11 +248,11 @@ void main() {
 		freePcb(procp[i]);
 
 
-	/* CHECK ASL */
+	/* check ASL */
 	initASL();
 	addokbuf("Initialized active semaphore list   \n");
 
-	/* check removeBlocked and insertBlocked */ 
+	/* check removeBlocked and insertBlocked */
 	addokbuf("insertBlocked test #1 started  \n");
 	for (i = 10; i < MAXPROC; i++) {
 		procp[i] = allocPcb();

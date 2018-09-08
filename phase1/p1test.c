@@ -232,7 +232,7 @@ void main() {
 	if (outChild(procp[0]) != NULL)
 		adderrbuf("outChild failed on nonexistent child   ");
 	else
-		addokbuf("passed on nonexistant child   \n")
+		addokbuf("passed on nonexistant child   \n");
 	addokbuf("outChild ok   \n");
 
 	/* Check removeChild */

@@ -72,8 +72,9 @@ void initPcbs ()
 
 void freePcb (pcb_PTR p)
 {
-    p -> pcb_next = pcb_FREE_h;
-    pcb_FREE_h = p;
+    /* p -> pcb_next = pcb_FREE_h;
+    pcb_FREE_h = p; */
+    insertProcQ(&pcb_FREE_h, p);
 }
 
 pcb_PTR allocPcb ()

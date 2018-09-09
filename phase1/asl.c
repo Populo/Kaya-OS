@@ -3,12 +3,16 @@
 
 #include "../e/asl.e"
 
-HIDDEN void allocSemd()
+semd_PTR semdFree_h, /* Head of free list */
+         semd_h;     /* Head of ASL */
+
+
+HIDDEN semd_PTR allocSemd()
 {
 
 }
 
-HIDDEN void freeSemd() 
+HIDDEN void freeSemd(semd_PTR s) 
 {
 
 }
@@ -20,7 +24,7 @@ HIDDEN void freeSemd()
  * searching for 30 returns 20
  * searching for 25 returns 20
  */
-HIDDEN void searchASL()
+HIDDEN void searchASL(int *semAdd)
 {
 
 }
@@ -76,4 +80,7 @@ pcb_PTR headBlocked (int *semAdd)
 void initASL()
 {
 
+
+    int i;
+    
 }

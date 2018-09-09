@@ -195,7 +195,7 @@ int emptyChild (pcb_PTR p)
 void insertChild (pcb_PTR prnt, pcb_PTR p)
 {
     if (!emptyProcQ(prnt)) {
-         if(emptyChild(prnt))
+        if(emptyChild(prnt))
         {
             prnt -> pcb_child = p;
             p -> pcb_parent = prnt;
@@ -270,6 +270,10 @@ pcb_PTR outChild (pcb_PTR child)
         child -> pcb_parent = NULL;
 
         returnMe = child;
+    }
+    else
+    {
+        returnMe = NULL;
     }
 
     return returnMe;

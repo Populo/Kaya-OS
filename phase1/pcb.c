@@ -239,7 +239,7 @@ pcb_PTR outChild (pcb_PTR child)
 
     if ((child == NULL)) /* not a child/null */
     {
-        returnMe = NULL;
+        return NULL;
     }
     else if(child -> pcb_parent == NULL)
     {

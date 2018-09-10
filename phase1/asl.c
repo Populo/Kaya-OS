@@ -8,6 +8,12 @@
 semd_PTR semdFree_h, /* Head of free list */
          semd_h;     /* Head of ASL */
 
+void debugA(int a)
+{
+    int i;
+    i = 1;
+}
+
 
 HIDDEN semd_PTR allocSemd(int *semAdd)
 {
@@ -192,6 +198,7 @@ void initASL()
     HIDDEN semd_t semdTable[MAXPROC];
     for(i=0;i<MAXPROC+2;i++)
     {
+        debugA(i);
         freeSemd(&semdTable[i]);
     }
 

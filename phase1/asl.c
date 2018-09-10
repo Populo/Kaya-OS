@@ -28,7 +28,7 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
         semdFree_h = semdFree_h -> s_next;
 
         returnMe -> s_next = NULL;
-        returnMe -> s_procQ = NULL;
+        returnMe -> s_procQ = mkEmptyProcQ();
         returnMe -> s_semAdd = semAdd;
     }
     return returnMe;
@@ -81,7 +81,7 @@ int insertBlocked (int *semAdd, pcb_PTR p)
 
     if(q -> s_next -> s_semAdd == semAdd)
     {
-        
+        p -> pcb_semAdd = semAdd;
         insertProcQ((pcb_PTR*) lol, p);
 
     }
@@ -195,7 +195,7 @@ pcb_PTR headBlocked (int *semAdd)
 void initASL()
 {
     int i;
-    HIDDEN semd_t semdTable[MAXPROC];
+    HIDDEN semd_t semdTable[MAXPROC + 2];
     for(i=0;i<MAXPROC;i++)
     {
         

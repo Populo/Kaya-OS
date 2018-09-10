@@ -198,7 +198,7 @@ void initASL()
     HIDDEN semd_t semdTable[MAXPROC];
     for(i=0;i<MAXPROC;i++)
     {
-        debugA(i);
+        
         freeSemd(&semdTable[i]);
     }
 
@@ -206,7 +206,7 @@ void initASL()
 
     dummyZero -> s_semAdd = (int*) 0;
     dummyMax -> s_semAdd = (int*) MAXINT;
-
+    debugA(i);
     semd_h = dummyZero;
     dummyZero -> s_next = dummyMax;
 }

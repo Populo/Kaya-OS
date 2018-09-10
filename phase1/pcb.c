@@ -236,13 +236,15 @@ pcb_PTR outChild (pcb_PTR child)
      */
 
     pcb_PTR returnMe;
-
+    adderbuf("1");
     if ((child == 0) || (child -> pcb_parent == NULL)) /* not a child/null */
     {
+        adderbuf("2");
         returnMe = NULL;
     }
     else if ((child -> pcb_nextSib == NULL) && (child -> pcb_prevSib == NULL)) /* only child */
     {
+        adderbuf("3");   
         child -> pcb_parent -> pcb_child = NULL;
         child -> pcb_parent = NULL;
 
@@ -250,6 +252,7 @@ pcb_PTR outChild (pcb_PTR child)
     }
     else if ((child -> pcb_prevSib == NULL) && (child == (child -> pcb_parent -> pcb_child))) /* first child */
     {
+        adderbuf("4");
         child -> pcb_nextSib -> pcb_prevSib = NULL;
         child -> pcb_parent -> pcb_child = child -> pcb_nextSib;
         child -> pcb_parent = NULL;
@@ -258,6 +261,7 @@ pcb_PTR outChild (pcb_PTR child)
     }
     else if ((child -> pcb_nextSib != NULL) && (child -> pcb_prevSib != NULL)) /* middle child */
     {
+        adderbuf("5");
         child -> pcb_prevSib -> pcb_nextSib = child -> pcb_nextSib;
         child -> pcb_nextSib -> pcb_prevSib = child -> pcb_prevSib;
         child -> pcb_parent = NULL;
@@ -266,6 +270,7 @@ pcb_PTR outChild (pcb_PTR child)
     }
     else if ((child -> pcb_next == NULL) && (child -> pcb_prev != NULL)) /* last child */
     {
+        adderbuf("6");
         child -> pcb_prevSib -> pcb_nextSib = NULL;
         child -> pcb_parent = NULL;
 
@@ -273,6 +278,7 @@ pcb_PTR outChild (pcb_PTR child)
     }
     else
     {
+        adderbuf("7");
         returnMe = NULL;
     }
 

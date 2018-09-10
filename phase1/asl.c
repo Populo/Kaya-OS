@@ -112,7 +112,7 @@ pcb_PTR removeBlocked (int *semAdd)
 {
     semd_PTR q;
     q = searchASL(semAdd, semd_h);
-    if((q -> s_next -> s_semAdd != semAdd)||(q -> s_next -> s_semAdd == MAXINT))
+    if((q -> s_next -> s_semAdd != semAdd)||(q -> s_next -> s_semAdd == (int*) MAXINT))
     {
         return NULL;
     }
@@ -120,7 +120,7 @@ pcb_PTR removeBlocked (int *semAdd)
     {
         q = q -> s_next;
         pcb_PTR p;
-        p = removeProcQ(q->s_procQ);
+        p = removeProcQ((pcb_PTR*)q->s_procQ);
         if(p == NULL)
         {
             freeSemd(q);
@@ -141,8 +141,11 @@ pcb_PTR outBlocked (pcb_PTR p)
 {
     semd_PTR q;
     pcb_PTR returnMe;
-    q = searchASL(p -> pcb_semAdd, semd_h);
-    if((q -> s_next -> s_semAdd != semAdd)||(q -> s_next -> s_semAdd == MAXINT))
+    int *semAdd;
+    semAdd = p -> pcb_semAdd;
+
+    q = searchASL(semAdd, semd_h);
+    if((q -> s_next -> s_semAdd != semAdd)||(q -> s_next -> s_semAdd == (int*)MAXINT))
     {
         returnMe = NULL;
     }
@@ -154,7 +157,7 @@ pcb_PTR outBlocked (pcb_PTR p)
         } 
         else
         {
-            returnMe = outProcQ(q -> s_next -> s_procQ, p);
+            returnMe = outProcQ((pcb_PTR*)q -> s_next -> s_procQ, p);
         }   
     }
     return returnMe;
@@ -168,7 +171,7 @@ pcb_PTR headBlocked (int *semAdd)
     semd_PTR q;
     q = searchASL(semAdd, semd_h);
     pcb_PTR returnMe;
-    if((q -> s_next -> s_semAdd != semAdd)||(q -> s_next -> s_semAdd == MAXINT))
+    if((q -> s_next -> s_semAdd != semAdd)||(q -> s_next -> s_semAdd == (int*)MAXINT))
     {
         returnMe = NULL;
     }
@@ -197,7 +200,7 @@ void initASL()
         else if(i == MAXPROC+1)
         {
             semd_PTR s;
-            s -> s_semAdd = MAXINT;
+            s -> s_semAdd = (int*)MAXINT;
             freeSemd(s);
         }
         else

@@ -4,6 +4,7 @@
 
 #include "../e/asl.e"
 
+
 semd_PTR semdFree_h, /* Head of free list */
          semd_h;     /* Head of ASL */
 
@@ -191,21 +192,14 @@ void initASL()
     HIDDEN semd_t semdTable[MAXPROC];
     for(i=0;i<MAXPROC+2;i++)
     {
-        if(i==0)
-        {
-            semd_PTR s;
-            s -> s_semAdd = 0;
-            freeSemd(s);
-        }
-        else if(i == MAXPROC+1)
-        {
-            semd_PTR s;
-            s -> s_semAdd = (int*)MAXINT;
-            freeSemd(s);
-        }
-        else
-        {
-            freeSemd(&semdTable[i]);
-        }
+        freeSemd(&semdTable[i]);
     }
+
+    semd_PTR dummyZero, dummyMax;
+
+    dummyZero -> s_semAdd = (int*) 0;
+    dummyMax -> s_semAdd = (int*) MAXINT;
+
+    semd_h -> s_next = dummyZero;
+    dummyZero -> s_next = dummyMax;
 }

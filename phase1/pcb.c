@@ -244,11 +244,10 @@ pcb_PTR outChild (pcb_PTR child)
     }
     else if ((child -> pcb_nextSib == NULL) && (child -> pcb_prevSib == NULL)) /* only child */
     {
-        addokbuf("3");   
+        addokbuf("3"); 
+        returnMe = child;  
         child -> pcb_parent -> pcb_child = NULL;
         child -> pcb_parent = NULL;
-
-        returnMe = child;
     }
     else if ((child -> pcb_prevSib == NULL) && (child == (child -> pcb_parent -> pcb_child))) /* first child */
     {

@@ -46,7 +46,7 @@ HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s)
     {
         return s;
     }
-    else if(&(s -> s_next -> s_semAdd) == MAXINT)
+    else if(s -> s_next -> s_semAdd == *(MAXINT)
     {
         return s;
     }

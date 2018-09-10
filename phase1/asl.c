@@ -73,7 +73,7 @@ int insertBlocked (int *semAdd, pcb_PTR p)
    {
         pcb_PTR lol;
         lol = q -> s_next -> s_procQ;
-        insertProcQ(*lol, p);
+        insertProcQ((pcb_PTR*) lol, p);
 
    }
    else

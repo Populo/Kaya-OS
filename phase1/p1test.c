@@ -253,6 +253,7 @@ void main() {
 	for (i = 0; i < 10; i++) 
 		freePcb(procp[i]);
 
+addokbuf("Fuck   ");
 
 	/* check ASL */
 	initASL();

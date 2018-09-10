@@ -201,7 +201,7 @@ void initASL()
         
         freeSemd(&semdTable[i]);
     }
-
+    /*
     semd_PTR dummyZero, dummyMax;
 
     dummyZero -> s_semAdd = 0;
@@ -209,4 +209,5 @@ void initASL()
     debugA(2);
     semd_h = dummyZero;
     dummyZero -> s_next = dummyMax;
+    */  
 }

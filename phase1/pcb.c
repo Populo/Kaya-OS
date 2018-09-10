@@ -33,18 +33,6 @@ HIDDEN pcb_PTR findP(pcb_PTR check, pcb_PTR find, pcb_PTR tail)
     }
 }
 
-void debugA(pcb_PTR p) 
-{
-    int i;
-    i = 0;
-}
-
-void debugB(pcb_PTR p)
-{
-    int i;
-    i = 0;
-}
-
 pcb_PTR mkEmptyProcQ ()
 {
     return NULL;

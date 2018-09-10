@@ -229,9 +229,7 @@ void main() {
 		adderrbuf("outChild failed on middle child   ");
 	else
 		addokbuf("passed on middle child   \n");
-	q = outChild(procp[0]);
-	adderrbuf("So this");
-	if (q != NULL)
+	if (outChild(procp[0] != NULL)
 		adderrbuf("outChild failed on nonexistent child   ");
 	else
 		addokbuf("passed on nonexistant child   \n");

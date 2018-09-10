@@ -207,6 +207,6 @@ void initASL()
     dummyZero -> s_semAdd = (int*) 0;
     dummyMax -> s_semAdd = (int*) MAXINT;
 
-    semd_h -> s_next = dummyZero;
+    semd_h = dummyZero;
     dummyZero -> s_next = dummyMax;
 }

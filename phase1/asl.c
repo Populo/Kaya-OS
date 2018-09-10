@@ -204,9 +204,9 @@ void initASL()
 
     semd_PTR dummyZero, dummyMax;
 
-    dummyZero -> s_semAdd = (int*) 0;
-    dummyMax -> s_semAdd = (int*) MAXINT;
-    debugA(i);
+    dummyZero -> s_semAdd = 0;
+    dummyMax -> s_semAdd = MAXINT;
+    debugA(2);
     semd_h = dummyZero;
     dummyZero -> s_next = dummyMax;
 }

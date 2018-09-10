@@ -236,49 +236,39 @@ pcb_PTR outChild (pcb_PTR child)
      */
 
     pcb_PTR returnMe;
-    addokbuf("1");
     if ((child == NULL) || (child -> pcb_parent == NULL)) /* not a child/null */
     {
-        addokbuf("2");
+        
         returnMe = NULL;
     }
     else if ((child -> pcb_nextSib == NULL) && (child -> pcb_prevSib == NULL) && (child == (child -> pcb_parent -> pcb_child))) /* only child */
-    {
-        addokbuf("3"); 
+    {        
         returnMe = child;  
         child -> pcb_parent -> pcb_child = NULL;
         child -> pcb_parent = NULL;
-
     }
     else if (child == (child -> pcb_parent -> pcb_child)) /* first child */
-    {
-        addokbuf("4");
+    {   
         child -> pcb_nextSib -> pcb_prevSib = NULL;
         child -> pcb_parent -> pcb_child = child -> pcb_nextSib;
         child -> pcb_parent = NULL;
-
         returnMe = child;
     }
     else if ((child -> pcb_nextSib != NULL) && (child -> pcb_prevSib != NULL)) /* middle child */
     {
-        addokbuf("5");
         child -> pcb_prevSib -> pcb_nextSib = child -> pcb_nextSib;
         child -> pcb_nextSib -> pcb_prevSib = child -> pcb_prevSib;
         child -> pcb_parent = NULL;
-
         returnMe = child;
     }
     else if ((child -> pcb_nextSib == NULL) && (child -> pcb_prevSib != NULL)) /* last child */
     {
-        addokbuf("6");
         child -> pcb_prevSib -> pcb_nextSib = NULL;
         child -> pcb_parent = NULL;
-
         returnMe = child;
     }
     else
     {
-        addokbuf("7");
         returnMe = NULL;
     }
 

@@ -262,6 +262,7 @@ void main() {
 	for (i = 10; i < MAXPROC; i++) {
 		addokbuf("1");
 		procp[i] = allocPcb();
+		addokbuf("2");
 		if (insertBlocked(&sem[i], procp[i]))
 			adderrbuf("insertBlocked(1): unexpected TRUE   ");
 	}

@@ -260,7 +260,6 @@ void main() {
 	/* check removeBlocked and insertBlocked */
 	addokbuf("insertBlocked test #1 started  \n");
 	for (i = 10; i < MAXPROC; i++) {
-		addokbuf("1");
 		procp[i] = allocPcb();
 		addokbuf("2");
 		if (insertBlocked(&sem[i], procp[i]))

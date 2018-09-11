@@ -41,7 +41,7 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
             if (semAdd == (int*) MAXINT)
             {
                 semd_PTR max;
-                max = &semAdd;
+                max = semAdd;
 
                 returnMe -> s_next = max -> s_next;
                 max -> s_next = returnMe;

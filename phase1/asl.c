@@ -125,8 +125,9 @@ int insertBlocked (int *semAdd, pcb_PTR p)
             q -> s_next = allocSemd(semAdd);
             addokbuf("8");
             q -> s_next -> s_next = temp;
+            addokbuf("a");
             lol = mkEmptyProcQ();
-            addokbuf("10");
+            addokbuf("*");
             q -> s_next -> s_semAdd = semAdd;
             insertProcQ((pcb_PTR*) lol, p);
             addokbuf("9");

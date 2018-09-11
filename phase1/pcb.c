@@ -109,6 +109,7 @@ void insertProcQ (pcb_PTR *tp, pcb_PTR p)
         p -> pcb_next -> pcb_prev = p; 
     }
     
+    addokbuf("fuck");
     *tp = p;
 }
 pcb_PTR removeProcQ (pcb_PTR *tp)

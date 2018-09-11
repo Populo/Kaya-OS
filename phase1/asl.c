@@ -77,7 +77,7 @@ HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s)
     if( s -> s_next-> s_semAdd < semAdd)
     {
         addokbuf("returned 0");
-        return s;
+        return s -> s_next;
     }
     else if(semAdd == NULL)
     {

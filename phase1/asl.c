@@ -135,7 +135,7 @@ int insertBlocked (int *semAdd, pcb_PTR p)
             new -> s_semAdd = semAdd;
             addokbuf("c");
             insertProcQ(&new -> s_procQ, p);
-            addokbuf("9");
+            addokbuf("9\n");
         }
         else
         {

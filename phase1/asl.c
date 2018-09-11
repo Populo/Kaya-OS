@@ -38,11 +38,22 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
         }
         else
         {
-            semd_PTR prev;
-            prev = searchASL(semAdd, semd_h);
+            if (semAdd == (int*) MAXINT)
+            {
+                semd_PTR max;
+                max = &semAdd;
 
-            returnMe -> s_next = prev -> s_next;
-            prev -> s_next = returnMe;
+                returnMe -> s_next = max -> s_next;
+                max -> s_next = returnMe;
+            }
+            else
+            {
+                semd_PTR prev;
+                prev = searchASL(semAdd, semd_h);
+
+                returnMe -> s_next = prev -> s_next;
+                prev -> s_next = returnMe;
+            }
         }
     }
     return returnMe;

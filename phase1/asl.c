@@ -83,6 +83,7 @@ HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s)
     {
         addokbuf("set to max");
         semAdd = (int*) MAXINT;
+        return searchASL(semAdd, s);
     }
     else
     {

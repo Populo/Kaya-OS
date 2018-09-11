@@ -105,14 +105,12 @@ int insertBlocked (int *semAdd, pcb_PTR p)
 {
     semd_PTR q;
     q = searchASL(semAdd, semd_h);
-    pcb_PTR lol;
-    lol = q -> s_next -> s_procQ;
     addokbuf("3");
     if(q -> s_next -> s_semAdd == semAdd)
     {
         addokbuf("4");
         p -> pcb_semAdd = semAdd;
-        insertProcQ(&lol, p);
+        insertProcQ(&q -> s_next, p);
 
     }
     else
@@ -134,6 +132,7 @@ int insertBlocked (int *semAdd, pcb_PTR p)
             addokbuf("b");
             new -> s_semAdd = semAdd;
             addokbuf("c");
+            p -> pcb_semAdd = semAdd;
             insertProcQ(&new -> s_procQ, p);
             addokbuf("9\n");
         }

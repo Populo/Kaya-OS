@@ -76,14 +76,17 @@ HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s)
 {
     if((s -> s_semAdd < semAdd) && (s -> s_next -> s_semAdd >= semAdd))
     {
+        addokbuf("returned 0");
         return s;
     }
     else if(s -> s_next -> s_semAdd == (int*) MAXINT)
     {
+        addokbuf("returned 1");
         return s;
     }
     else
     {
+        addokbuf("returned 2");
        return searchASL(semAdd, s->s_next);
     }
 }

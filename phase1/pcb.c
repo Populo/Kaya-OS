@@ -78,6 +78,7 @@ pcb_PTR allocPcb ()
 
         /* break references to queue */
         returnME -> pcb_next = NULL;
+        returnME -> pcb_prev = NULL;
 
         /* break references to children */
         returnME -> pcb_child = NULL;

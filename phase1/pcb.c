@@ -93,6 +93,7 @@ pcb_PTR allocPcb ()
 
 void insertProcQ (pcb_PTR *tp, pcb_PTR p)
 {
+    addokbuf("f");
     if(emptyProcQ(*tp))
     {
         addokbuf("d");

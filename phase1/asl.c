@@ -41,7 +41,7 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
             if (semAdd == (int*) MAXINT)
             {
                 semd_PTR max;
-                max = semAdd;
+                max -> s_semAdd = semAdd;
 
                 returnMe -> s_next = max -> s_next;
                 max -> s_next = returnMe;
@@ -226,13 +226,7 @@ void initASL()
         
         freeSemd(&semdTable[i]);
     }
-   
-    semd_PTR dummyZero, dummyMax;
 
-    dummyZero -> s_semAdd = (int*) 0;
-    dummyMax -> s_semAdd = (int*) MAXINT;
-
-    semd_h = dummyZero;
-    dummyZero -> s_next = dummyMax;
-
+    allocPcb((int*)0);
+    allocPcb((int*)MAXINT);
 }

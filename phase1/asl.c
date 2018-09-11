@@ -132,7 +132,6 @@ int insertBlocked (int *semAdd, pcb_PTR p)
             addokbuf("b");
             new -> s_semAdd = semAdd;
             addokbuf("c");
-            p -> pcb_semAdd = semAdd;
             insertProcQ(&new -> s_procQ, p);
             addokbuf("9\n");
         }
@@ -236,7 +235,7 @@ void initASL()
 {
     int i;
     HIDDEN semd_t semdTable[MAXPROC + 2];
-    for(i=0;i<MAXPROC;i++)
+    for(i=0;i<MAXPROC+2;i++)
     {
         
         freeSemd(&semdTable[i]);

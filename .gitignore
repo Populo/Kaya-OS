@@ -531,3 +531,4 @@ ASALocalRun/
 
 
 # End of https://www.gitignore.io/api/c,c++,linux,windows,clion+all,visualstudio,visualstudiocode
+.vscode/settings.json

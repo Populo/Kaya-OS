@@ -1,7 +1,7 @@
 #include "../h/types.h"
 #include "../h/const.h"
-#include "../e/pcb.e"
 
+#include "../e/pcb.e"
 #include "../e/asl.e"
 
 
@@ -14,6 +14,7 @@ void debugA(int a)
     i = 1;
 }
 
+HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s);
 
 HIDDEN semd_PTR allocSemd(int *semAdd)
 {

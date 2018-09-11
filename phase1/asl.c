@@ -30,6 +30,19 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
         returnMe -> s_next = NULL;
         returnMe -> s_procQ = mkEmptyProcQ();
         returnMe -> s_semAdd = semAdd;
+
+        if (semd_h == NULL)
+        {
+            semd_h = returnMe;
+        }
+        else
+        {
+            semd_PTR prev;
+            prev = searchASL(semAdd, semd_h);
+
+            returnMe -> s_next = prev -> s_next;
+            prev -> s_next = returnMe;
+        }
     }
     return returnMe;
 }
@@ -49,7 +62,7 @@ HIDDEN void freeSemd(semd_PTR s)
  */
 HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s)
 {
-    if(s -> s_next -> s_semAdd == semAdd)
+    if((s -> s_semAdd < semAdd) && (s -> s_next -> s_semAdd >= semAdd))
     {
         return s;
     }
@@ -201,14 +214,13 @@ void initASL()
         
         freeSemd(&semdTable[i]);
     }
-    /*
+   
     semd_PTR dummyZero, dummyMax;
-    dummyZero = NULL;
-    dummyMax = NULL;
-    dummyZero -> s_semAdd = 0;
-    dummyMax -> s_semAdd = MAXINT;
-    debugA(2);
+
+    dummyZero -> s_semAdd = (int*) 0;
+    dummyMax -> s_semAdd = (int*) MAXINT;
+
     semd_h = dummyZero;
     dummyZero -> s_next = dummyMax;
-    */
+
 }

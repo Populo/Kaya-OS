@@ -76,7 +76,7 @@ HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s)
 {
     if( s -> s_next-> s_semAdd < semAdd)
     {
-        addokbuf("returned 0");
+        addokbuf("0");
         return s -> s_next;
     }
     else if(semAdd == NULL)
@@ -86,7 +86,7 @@ HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s)
     }
     else
     {
-        addokbuf("returned 2");
+        addokbuf("2");
        return searchASL(semAdd, s->s_next);
     }
 }
@@ -106,17 +106,20 @@ int insertBlocked (int *semAdd, pcb_PTR p)
     q = searchASL(semAdd, semd_h);
     pcb_PTR lol;
     lol = q -> s_next -> s_procQ;
-
+    addokbuf("3");
     if(q -> s_next -> s_semAdd == semAdd)
     {
+        addokbuf("4");
         p -> pcb_semAdd = semAdd;
         insertProcQ((pcb_PTR*) lol, p);
 
     }
     else
     {
+        addokbuf("5");
         if(semdFree_h != NULL)
         {
+            addokbuf("6");
             semd_PTR temp;
             temp -> s_next = q -> s_next;
             q -> s_next = allocSemd(semAdd);
@@ -127,6 +130,7 @@ int insertBlocked (int *semAdd, pcb_PTR p)
         }
         else
         {
+            addokbuf("7");
             return 1;
         }
     }

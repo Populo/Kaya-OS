@@ -286,6 +286,7 @@ void main() {
 	
 	addokbuf("removeBlocked test started   \n");
 	for (i = 10; i< MAXPROC; i++) {
+		addokbuf("9");
 		q = removeBlocked(&sem[i]);
 		if (q == NULL)
 			adderrbuf("removeBlocked: wouldn't remove   ");

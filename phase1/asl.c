@@ -82,7 +82,7 @@ HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s)
     {
         semAdd = (int*) MAXINT;
     }
-    while(semAdd > s -> s_next -> s_semAdd)
+    while(semAdd < s -> s_next -> s_semAdd)
     {
         addokbuf("fuck  \n");
         debugA(semAdd, s -> s_next -> s_semAdd);
@@ -240,7 +240,7 @@ void initASL()
         freeSemd(&semdTable[i]);
     }
     addokbuf("who?  \n");
-    allocPcb((int*)0);
-    allocPcb((int*)MAXINT);
+    allocPcb((0);
+    allocPcb(MAXINT);
     
 }

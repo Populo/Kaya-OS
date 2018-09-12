@@ -224,6 +224,7 @@ pcb_PTR headBlocked (int *semAdd)
 void initASL()
 {
     int i;
+    semdFree_h = NULL;
     HIDDEN semd_t semdTable[MAXPROC+2];
     for(i=0;i<MAXPROC+2;i++)
     {

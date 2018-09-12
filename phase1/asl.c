@@ -83,7 +83,7 @@ HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s)
         semAdd = (int*) MAXINT;
         return searchASL(semAdd, s);
     }
-    else if(s -> s_next-> s_semAdd <= semAdd)
+    else if(s -> s_next-> s_semAdd >= semAdd)
     {
         return s -> s_next;
         

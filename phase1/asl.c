@@ -80,11 +80,11 @@ HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s)
 {
     if(semAdd == NULL)
     {
-        semAdd = MAXINT;
+        semAdd = (int*) MAXINT;
     }
-    while(s -> s_semAdd < semAdd && s -> s_next -> s_semAdd != MAXINT)
+    while(s -> s_semAdd < semAdd && s -> s_next -> s_semAdd != (int*) MAXINT)
     {
-        addokbuf("fuck you chris  \n");
+        addokbuf("fuck  \n");
         s = s->s_next;
     }
     return s;

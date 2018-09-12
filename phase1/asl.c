@@ -18,6 +18,7 @@ HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s);
 
 HIDDEN semd_PTR allocSemd(int *semAdd)
 {
+    addokbuf("n");
     semd_PTR returnMe;
     if(semdFree_h == NULL)
     {

@@ -78,7 +78,10 @@ HIDDEN void freeSemd(semd_PTR s)
  */
 HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s)
 {
-
+    if(semAdd == NULL)
+    {
+        semAdd = MAXINT;
+    }
     while(s -> s_next -> s_semAdd != semAdd && s -> s_next -> s_semAdd != MAXINT)
     {
         s = s->s_next;

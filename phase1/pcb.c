@@ -104,7 +104,8 @@ void insertProcQ (pcb_PTR *tp, pcb_PTR p)
         {
             addokbuf("f");
             p -> pcb_prev = p;
-            p -> pcb_next = p;       
+            p -> pcb_next = p;  
+            *tp = p;     
         }
         
     } 
@@ -114,8 +115,9 @@ void insertProcQ (pcb_PTR *tp, pcb_PTR p)
         p -> pcb_next = (*tp) -> pcb_next;
         (*tp) -> pcb_next = p;
         p -> pcb_next -> pcb_prev = p; 
+        *tp = p;
     }
-    *tp = p;
+    
 }
 pcb_PTR removeProcQ (pcb_PTR *tp)
 {

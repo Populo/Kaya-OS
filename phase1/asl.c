@@ -14,7 +14,7 @@ void debugA(int *a, int *b)
     i = 1;
 }
 
-HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s);
+HIDDEN semd_PTR searchASL(int *semAdd);
 
 HIDDEN semd_PTR allocSemd(int *semAdd)
 {

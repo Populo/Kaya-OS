@@ -101,6 +101,10 @@ void insertProcQ (pcb_PTR *tp, pcb_PTR p)
         p -> pcb_next = p;
         addokbuf("next");
         p -> pcb_prev = p;
+    }
+    else if(p == NULL)
+    {
+        addokbuf("p");
     }   
     else
     {

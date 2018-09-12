@@ -94,28 +94,18 @@ pcb_PTR allocPcb ()
 
 void insertProcQ (pcb_PTR *tp, pcb_PTR p)
 {
-    addokbuf("f");
     if(emptyProcQ(*tp))
     {
-        addokbuf("d");
         p -> pcb_next = p;
-        addokbuf("next");
         p -> pcb_prev = p;
-    }
-    else if(p == NULL)
-    {
-        addokbuf("p");
-    }   
+    } 
     else
     {
-        addokbuf("e");
         p -> pcb_prev = (*tp);
         p -> pcb_next = (*tp) -> pcb_next;
         (*tp) -> pcb_next = p;
         p -> pcb_next -> pcb_prev = p; 
     }
-    
-    addokbuf("fuck");
     *tp = p;
 }
 pcb_PTR removeProcQ (pcb_PTR *tp)

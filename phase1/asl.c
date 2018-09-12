@@ -20,7 +20,7 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
 {
     addokbuf("n");
     semd_PTR returnMe;
-    if(semdFree_h == NULL)
+    if(semdFree_h -> s_next == NULL)
     {
         addokbuf("1");
         returnMe = NULL;

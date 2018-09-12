@@ -5,32 +5,18 @@
 
 HIDDEN pcb_PTR pcb_FREE_h;
 
-HIDDEN pcb_PTR helpOut(pcb_PTR p, pcb_PTR looking)
-{
-    if(p -> pcb_nextSib == looking)
-    {
-        return p;
-    }
-    else
-    {
-       return helpOut(p -> pcb_nextSib, looking);
-    }
-}
-
 HIDDEN pcb_PTR findP(pcb_PTR check, pcb_PTR find, pcb_PTR tail)
 {
-    if (check == find) 
+    while(find != tail && find != check)
     {
-        return find;
+        find = find -> pcb_next;
     }
-    else if (check == tail) 
+    if(find == tail)
     {
-        return NULL;
-    } 
-    else
-    {
-        return findP(check->pcb_next, find, tail);
+        find = NULL;
     }
+    return find;
+
 }
 
 pcb_PTR mkEmptyProcQ ()

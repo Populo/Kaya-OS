@@ -240,7 +240,7 @@ void initASL()
         freeSemd(&semdTable[i]);
     }
     addokbuf("who?  \n");
-    allocPcb((0);
+    allocPcb(0);
     allocPcb(MAXINT);
     
 }

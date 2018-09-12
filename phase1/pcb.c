@@ -96,8 +96,8 @@ void insertProcQ (pcb_PTR *tp, pcb_PTR p)
 {
     if(emptyProcQ(*tp))
     {
-        p -> pcb_next = p;
         p -> pcb_prev = p;
+        p -> pcb_next = p;       
     } 
     else
     {

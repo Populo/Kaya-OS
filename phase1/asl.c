@@ -159,7 +159,7 @@ pcb_PTR removeBlocked (int *semAdd)
     {
         q = q -> s_next;
         pcb_PTR p;
-        p = removeProcQ(&&(q->s_procQ));
+        p = removeProcQ(&(&(q->s_procQ)));
         if(p == NULL)
         {
             addokbuf("*");

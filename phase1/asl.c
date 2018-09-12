@@ -84,6 +84,7 @@ HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s)
     }
     while(s -> s_next -> s_semAdd != semAdd && s -> s_next -> s_semAdd != MAXINT)
     {
+        addokbuf("fuck you chris  \n");
         s = s->s_next;
     }
     return s;

@@ -21,6 +21,7 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
     semd_PTR returnMe;
     if(semdFree_h == NULL)
     {
+        addokbuf("1");
         returnMe = NULL;
     }
     else

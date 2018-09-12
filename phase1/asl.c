@@ -51,7 +51,7 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
             else
             {
                 semd_PTR prev;
-                prev = searchASL(semAdd, semd_h);
+                prev = searchASL(semAdd);
 
                 returnMe -> s_next = prev -> s_next;
                 prev -> s_next = returnMe;
@@ -76,20 +76,21 @@ HIDDEN void freeSemd(semd_PTR s)
  * searching for 30 returns 20
  * searching for 25 returns 20
  */
-HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s)
+HIDDEN semd_PTR searchASL(int *semAdd)
 {
-    if(semAdd == NULL)
+    semd_PTR searching;
+    searching = semd_h;
+
+    if (semAdd == NULL)
     {
         semAdd = (int*) MAXINT;
     }
-    while(semAdd < s -> s_next -> s_semAdd)
+    while (searching -> s_next -> s_semAdd < semAdd )
     {
-        addokbuf("fuck  \n");
-        debugA(semAdd, s -> s_next -> s_semAdd);
-        s = s->s_next;
+        searching = searching -> s_next;
     }
-    return s;
 
+    return searching;
 }
 
 /*
@@ -105,7 +106,7 @@ int insertBlocked (int *semAdd, pcb_PTR p)
 {
     semd_PTR q;
     addokbuf("dick");
-    q = searchASL(semAdd, semd_h);
+    q = searchASL(semAdd);
     if(q  -> s_semAdd == semAdd)
     {
         p -> pcb_semAdd = semAdd;
@@ -154,7 +155,7 @@ int insertBlocked (int *semAdd, pcb_PTR p)
 pcb_PTR removeBlocked (int *semAdd)
 {
     semd_PTR q;
-    q = searchASL(semAdd, semd_h);
+    q = searchASL(semAdd);
     if(q -> s_semAdd == semAdd)  /* (q -> s_next -> s_semAdd == (int*) MAXINT) */
     {
         semd_PTR temp;
@@ -188,7 +189,7 @@ pcb_PTR outBlocked (pcb_PTR p)
     int *semAdd;
     semAdd = p -> pcb_semAdd;
 
-    q = searchASL(semAdd, semd_h);
+    q = searchASL(semAdd);
     if((q -> s_next -> s_semAdd != semAdd)||(q -> s_next -> s_semAdd == (int*)MAXINT))
     {
         returnMe = NULL;
@@ -213,7 +214,7 @@ pcb_PTR outBlocked (pcb_PTR p)
 pcb_PTR headBlocked (int *semAdd)
 {
     semd_PTR q;
-    q = searchASL(semAdd, semd_h);
+    q = searchASL(semAdd);
     pcb_PTR returnMe;
     if((q -> s_next -> s_semAdd != semAdd)||(q -> s_next -> s_semAdd == (int*)MAXINT))
     {

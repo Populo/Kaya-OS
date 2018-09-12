@@ -155,7 +155,7 @@ pcb_PTR removeBlocked (int *semAdd)
 {
     semd_PTR q;
     q = searchASL(semAdd, semd_h);
-    if((q -> s_next -> s_semAdd == (int*) MAXINT)||(q -> s_next -> s_semAdd != semAdd))  /* ||(q -> s_next -> s_semAdd != semAdd) */
+    if(q -> s_next -> s_semAdd != semAdd)  /* (q -> s_next -> s_semAdd == (int*) MAXINT) */
     {
         addokbuf("/");
         return NULL;

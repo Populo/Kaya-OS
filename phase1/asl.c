@@ -8,7 +8,7 @@
 semd_PTR semdFree_h, /* Head of free list */
          semd_h;     /* Head of ASL */
 
-void debugA(int a)
+void debugA(int *a, int *b)
 {
     int i;
     i = 1;
@@ -85,6 +85,7 @@ HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s)
     while(semAdd > s -> s_next -> s_semAdd)
     {
         addokbuf("fuck  \n");
+        debugA(semAdd, s -> s_next -> s_semAdd);
         s = s->s_next;
     }
     return s;

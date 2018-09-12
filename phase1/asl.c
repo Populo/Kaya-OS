@@ -124,10 +124,10 @@ int insertBlocked (int *semAdd, pcb_PTR p)
         }
         else
         {
-            return 1;
+            return 0;
         }
     }
-    return 0;
+    return 1;
 }
 
 /*

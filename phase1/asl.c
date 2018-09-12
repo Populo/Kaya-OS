@@ -158,8 +158,8 @@ pcb_PTR removeBlocked (int *semAdd)
     if(q -> s_next -> s_semAdd == semAdd)  /* (q -> s_next -> s_semAdd == (int*) MAXINT) */
     {
         q = q -> s_next;
-        pcb_PTR *p;
-        p = removeProcQ(q->s_procQ);
+        pcb_PTR p;
+        p = removeProcQ(&&(q->s_procQ));
         if(p == NULL)
         {
             addokbuf("*");

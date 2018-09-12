@@ -110,7 +110,7 @@ int insertBlocked (int *semAdd, pcb_PTR p)
     if(q  -> s_semAdd == semAdd)
     {
         p -> pcb_semAdd = semAdd;
-        insertProcQ(&q -> s_next, p);
+        insertProcQ(&q, p);
 
     }
     else

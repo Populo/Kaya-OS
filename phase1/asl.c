@@ -154,8 +154,8 @@ int insertBlocked (int *semAdd, pcb_PTR p)
 pcb_PTR removeBlocked (int *semAdd)
 {
     semd_PTR q;
-    q = searchASL(semAdd, semd_h -> s_next);
-    if(q -> s_next -> s_semAdd != semAdd)  /* ||(q -> s_next -> s_semAdd == (int*) MAXINT) */
+    q = searchASL(semAdd, semd_h);
+    if(q -> s_next -> s_semAdd == (int*) MAXINT)  /* ||(q -> s_next -> s_semAdd != semAdd) */
     {
         addokbuf("/");
         return NULL;

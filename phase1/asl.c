@@ -78,14 +78,15 @@ HIDDEN void freeSemd(semd_PTR s)
  */
 HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s)
 {
-    if( s -> s_next-> s_semAdd < semAdd)
-    {
-        return s -> s_next;
-    }
-    else if(semAdd == NULL)
+    if(semAdd == NULL)
     {
         semAdd = (int*) MAXINT;
         return searchASL(semAdd, s);
+    }
+    else if(s -> s_next-> s_semAdd < semAdd)
+    {
+        return s -> s_next;
+        
     }
     else
     {
@@ -159,7 +160,7 @@ pcb_PTR removeBlocked (int *semAdd)
     {
         q = q -> s_next;
         pcb_PTR p;
-        p = removeProcQ(&(&(q->s_procQ)));
+        p = removeProcQ(&(q->s_procQ));
         if(p == NULL)
         {
             addokbuf("*");

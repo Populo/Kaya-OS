@@ -7,15 +7,15 @@ HIDDEN pcb_PTR pcb_FREE_h;
 
 HIDDEN pcb_PTR findP(pcb_PTR check, pcb_PTR find, pcb_PTR tail)
 {
-    while(find != tail && find != check)
+    while(check != tail && find != check)
     {
-        find = find -> pcb_next;
+        check = check -> pcb_next;
     }
-    if(find == tail)
+    if(check == tail)
     {
-        find = NULL;
+        check = NULL;
     }
-    return find;
+    return check;
 
 }
 

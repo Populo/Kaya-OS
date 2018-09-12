@@ -20,9 +20,9 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
 {
     addokbuf("n");
     semd_PTR returnMe;
-    if(semdFree_h -> s_next == NULL)
+    if(semdFree_h == NULL)
     {
-        addokbuf("1");
+        addokbuf("1");      
         returnMe = NULL;
     }
     else
@@ -233,6 +233,7 @@ void initASL()
 {
     int i;
     semdFree_h = NULL;
+    semd_h = NULL;
     HIDDEN semd_t semdTable[MAXPROC+2];
     for(i=0;i<MAXPROC+2;i++)
     {

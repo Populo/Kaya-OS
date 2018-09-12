@@ -104,6 +104,7 @@ HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s)
 int insertBlocked (int *semAdd, pcb_PTR p)
 {
     semd_PTR q;
+    addokbuf("dick");
     q = searchASL(semAdd, semd_h);
     if(q  -> s_semAdd == semAdd)
     {
@@ -238,7 +239,7 @@ void initASL()
         
         freeSemd(&semdTable[i]);
     }
-
+    addokbuf("who?  \n");
     allocPcb((int*)0);
     allocPcb((int*)MAXINT);
     

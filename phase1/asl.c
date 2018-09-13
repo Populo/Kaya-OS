@@ -81,12 +81,13 @@ int insertBlocked (int *semAdd, pcb_PTR p)
     addokbuf("inserting");
     semd_PTR q;
     q = searchASL(semAdd);
+    q = q -> s_next;
 
-    if (q -> s_next -> s_semAdd == semAdd)
+    if (q -> s_semAdd == semAdd)
     {
         p -> pcb_semAdd = semAdd;
         addokbuf("found \n");
-        insertProcQ(&q -> s_next -> s_procQ, p);
+        insertProcQ(&q -> s_procQ, p);
         return FALSE;
     }
     else

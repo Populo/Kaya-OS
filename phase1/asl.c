@@ -211,4 +211,5 @@ void initASL()
     semdActive_h = semdZero;
 
     addokbuf((char*) semdActive_h);
+    addokbuf("\n");
 }

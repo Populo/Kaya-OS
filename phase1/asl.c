@@ -58,7 +58,7 @@ HIDDEN semd_PTR searchASL(int *semAdd)
     }
     addokbuf("pre loop");
     debugA(semAdd, searching -> s_next -> s_semAdd);
-    while (searching -> s_next -> s_semAdd < semAdd && searching -> s_next != NULL)
+    while (searching -> s_next -> s_semAdd < semAdd)
     {
         debugA(semAdd, searching -> s_next -> s_semAdd);
         searching = searching -> s_next;

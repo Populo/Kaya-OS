@@ -22,7 +22,7 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
 
     if (semdFree_h == NULL)
     {
-        return NULL;
+        returnMe = NULL;
     }
     else
     {
@@ -209,4 +209,6 @@ void initASL()
     semdZero -> s_next = semdMax;
 
     semdActive_h = semdZero;
+
+    addokbuf((char*) semdActive_h);
 }

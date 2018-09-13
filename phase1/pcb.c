@@ -82,28 +82,18 @@ void insertProcQ (pcb_PTR *tp, pcb_PTR p)
 {
     if(emptyProcQ(*tp))
     {
-        if(p == NULL)
-        {
-            addokbuf("p");
-        }
-        else
-        {
-            addokbuf("f");
-            p -> pcb_prev = p;
-            p -> pcb_next = p;  
-            *tp = p;     
-        }
-        
-    } 
+        p -> pcb_prev = p;
+        p -> pcb_next = p;     
+    }
     else
     {
         p -> pcb_prev = (*tp);
         p -> pcb_next = (*tp) -> pcb_next;
         (*tp) -> pcb_next = p;
         p -> pcb_next -> pcb_prev = p; 
-        *tp = p;
     }
     
+    *tp = p;
 }
 pcb_PTR removeProcQ (pcb_PTR *tp)
 {

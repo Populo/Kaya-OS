@@ -123,7 +123,6 @@ pcb_PTR removeBlocked (int *semAdd)
         p = removeProcQ(&(q->s_procQ));
         if(p == NULL)
         {
-            addokbuf("*");
             temp = q -> s_next;
             q -> s_next = q -> s_next -> s_next;
             freeSemd(q);
@@ -132,7 +131,6 @@ pcb_PTR removeBlocked (int *semAdd)
     }
     else
     {
-        addokbuf("/");
         return NULL;
     }
 
@@ -199,7 +197,6 @@ void initASL()
     {
         freeSemd(&semdTable[i]);
     }
-    addokbuf("who?  \n");
 
     semd_PTR semdZero;
     semd_PTR semdMax;
@@ -210,7 +207,4 @@ void initASL()
     semdZero -> s_next = semdMax;
 
     semdActive_h = semdZero;
-
-    addokbuf((char*) semdActive_h);
-    addokbuf("\n");
 }

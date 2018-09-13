@@ -91,8 +91,9 @@ int insertBlocked (int *semAdd, pcb_PTR p)
     }
     else
     {
-        q = allocSemd(semAdd);
-        if (q == NULL)
+        semd_PTR new;
+        new = allocSemd(semAdd);
+        if (new == NULL)
         {
             addokbuf("not found: free empty\n");
             return TRUE;
@@ -101,7 +102,9 @@ int insertBlocked (int *semAdd, pcb_PTR p)
         {
             p -> pcb_semAdd = semAdd;
             addokbuf("not found: inserting\n");
-            insertProcQ(&q -> s_procQ, p);
+            new -> s_next = q -> s_next;
+            q -> s_next = new;
+            insertProcQ(&new -> s_procQ, p);
             return FALSE;
         }
     }

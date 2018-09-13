@@ -65,10 +65,12 @@ HIDDEN semd_PTR searchASL(int *semAdd)
         addokbuf("in loop");
         if (searching -> s_next -> s_semAdd > semAdd)
         {
+            addokbuf("true");
             found = TRUE;
         }
         else
         {
+            addokbuf("false");
             searching = searching -> s_next;
         }
     }

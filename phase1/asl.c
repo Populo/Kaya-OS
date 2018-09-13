@@ -201,7 +201,8 @@ void initASL()
     }
     addokbuf("who?  \n");
 
-    semd_PTR semdZero, semdMax;
+    semd_PTR semdZero;
+    semd_PTR semdMax;
 
     semdZero = allocSemd((int*)0);
     semdMax = allocSemd((int*)MAXINT);

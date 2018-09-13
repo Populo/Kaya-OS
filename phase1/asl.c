@@ -53,7 +53,7 @@ HIDDEN semd_PTR searchASL(int *semAdd)
     int found;
     searching = semdActive_h;
     found = FALSE;
-    
+
     if (semAdd == NULL)
     {
         semAdd = (int*) MAXINT;
@@ -62,6 +62,7 @@ HIDDEN semd_PTR searchASL(int *semAdd)
     addokbuf("pre loop");
     while (!found)
     {
+        addokbuf("in loop");
         if (searching -> s_next -> s_semAdd < semAdd)
         {
             found = TRUE;

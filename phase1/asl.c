@@ -50,18 +50,26 @@ HIDDEN void freeSemd(semd_PTR s)
 HIDDEN semd_PTR searchASL(int *semAdd)
 {
     semd_PTR searching;
+    int found;
     searching = semdActive_h;
-
+    found = FALSE;
+    
     if (semAdd == NULL)
     {
         semAdd = (int*) MAXINT;
     }
     debugA(semAdd, searching -> s_next -> s_semAdd);
     addokbuf("pre loop");
-    while (searching -> s_next -> s_semAdd < semAdd)
+    while (!found)
     {
-        debugA(semAdd, searching -> s_next -> s_semAdd);
-        searching = searching -> s_next;
+        if (searching -> s_next -> s_semAdd < semAdd)
+        {
+            found = TRUE;
+        }
+        else
+        {
+            searching = searching -> s_next;
+        }
     }
 
     return searching;

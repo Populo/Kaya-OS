@@ -105,6 +105,7 @@ HIDDEN semd_PTR searchASL(int *semAdd, semd_PTR s)
  */
 int insertBlocked (int *semAdd, pcb_PTR p)
 {
+    addokbuf("inserting \n");
     semd_PTR q;
     q = searchASL(semAdd, semd_h);
     if(q  -> s_semAdd == semAdd)

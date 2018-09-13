@@ -5,32 +5,18 @@
 
 HIDDEN pcb_PTR pcb_FREE_h;
 
-HIDDEN pcb_PTR helpOut(pcb_PTR p, pcb_PTR looking)
-{
-    if(p -> pcb_nextSib == looking)
-    {
-        return p;
-    }
-    else
-    {
-       return helpOut(p -> pcb_nextSib, looking);
-    }
-}
-
 HIDDEN pcb_PTR findP(pcb_PTR check, pcb_PTR find, pcb_PTR tail)
 {
-    if (check == find) 
+    while(check != tail && find != check)
     {
-        return find;
+        check = check -> pcb_next;
     }
-    else if (check == tail) 
+    if(check == tail)
     {
-        return NULL;
-    } 
-    else
-    {
-        return findP(check->pcb_next, find, tail);
+        check = NULL;
     }
+    return check;
+
 }
 
 pcb_PTR mkEmptyProcQ ()
@@ -96,28 +82,18 @@ void insertProcQ (pcb_PTR *tp, pcb_PTR p)
 {
     if(emptyProcQ(*tp))
     {
-        if(p == NULL)
-        {
-            addokbuf("p");
-        }
-        else
-        {
-            addokbuf("f");
-            p -> pcb_prev = p;
-            p -> pcb_next = p;  
-            *tp = p;     
-        }
-        
-    } 
+        p -> pcb_prev = p;
+        p -> pcb_next = p;     
+    }
     else
     {
         p -> pcb_prev = (*tp);
         p -> pcb_next = (*tp) -> pcb_next;
         (*tp) -> pcb_next = p;
         p -> pcb_next -> pcb_prev = p; 
-        *tp = p;
     }
     
+    *tp = p;
 }
 pcb_PTR removeProcQ (pcb_PTR *tp)
 {

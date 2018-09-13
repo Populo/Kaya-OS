@@ -203,8 +203,8 @@ void initASL()
 
     semd_PTR semdZero, semdMax;
 
-    semdZero = allocPcb(0);
-    semdMax = allocPcb(MAXINT);
+    semdZero = allocPcb((int*)0);
+    semdMax = allocPcb((int*)MAXINT);
     
     semdZero -> s_next = semdMax;
 

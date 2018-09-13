@@ -6,7 +6,7 @@
 
 
 semd_PTR semdFree_h, /* Head of free list */
-         semd_h;     /* Head of ASL */
+         semdActive_h;     /* Head of ASL */
 
 void debugA(int *a, int *b)
 {
@@ -34,9 +34,9 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
         returnMe -> s_procQ = mkEmptyProcQ();
         returnMe -> s_semAdd = semAdd;
 
-        if (semd_h == NULL)
+        if (semdActive_h == NULL)
         {
-            semd_h = returnMe;
+            semdActive_h = returnMe;
         }
         else
         {
@@ -60,6 +60,18 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
         
     }
     
+    if (semdActive_h == NULL)
+    {
+        semdActive_h = returnMe;
+    }
+    else
+    {
+        semd_PTR parent;
+        parent = searchASL(semAdd);
+
+        parent -> s_next = returnMe;
+    }
+
     return returnMe;
 }
 
@@ -79,13 +91,13 @@ HIDDEN void freeSemd(semd_PTR s)
 HIDDEN semd_PTR searchASL(int *semAdd)
 {
     semd_PTR searching;
-    searching = semd_h;
+    searching = semdActive_h;
 
     if (semAdd == NULL)
     {
         semAdd = (int*) MAXINT;
     }
-    while (searching -> s_next -> s_semAdd < semAdd )
+    while (searching -> s_next -> s_semAdd < semAdd && searching -> s_next != NULL)
     {
         debugA(semAdd, searching -> s_next -> s_semAdd);
         searching = searching -> s_next;
@@ -235,13 +247,14 @@ void initASL()
 {
     int i;
     semdFree_h = NULL;
+    semdActive_h = NULL;
     HIDDEN semd_t semdTable[MAXPROC+2];
     for(i=0;i<MAXPROC+2;i++)
     {
-        
         freeSemd(&semdTable[i]);
     }
     addokbuf("who?  \n");
+
     allocPcb(0);
     allocPcb(MAXINT);
     

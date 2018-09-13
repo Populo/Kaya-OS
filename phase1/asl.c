@@ -27,7 +27,7 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
     else
     {
         returnMe -> s_next = NULL;
-        returnMe -> s_procQ = NULL;
+        returnMe -> s_procQ = mkEmptyProcQ();
         returnMe -> s_semAdd = semAdd;
     }
 
@@ -102,11 +102,11 @@ int insertBlocked (int *semAdd, pcb_PTR p)
         }
         else
         {
-            p -> pcb_semAdd = semAdd;
             addokbuf("not found: inserting\n");
             new -> s_next = q -> s_next;
             q -> s_next = new;
             insertProcQ(&new -> s_procQ, p);
+            p -> pcb_semAdd = semAdd;
             return FALSE;
         }
     }

@@ -138,11 +138,13 @@ pcb_PTR removeBlocked (int *semAdd)
     if(prev -> s_next -> s_semAdd == semAdd)  /* we found the one we were looking for */
     {
         pcb_PTR p;
-        p = removeProcQ(&(prev -> s_next -> s_procQ));
+        debugC(prev -> s_next -> s_procQ, NULL);
+        p = removeProcQ(&prev -> s_next -> s_procQ);
         if(emptyProcQ(&prev -> s_next -> s_procQ))
         {
             freeSemd(prev -> s_next);
         }
+        p -> pcb_semAdd = NULL;
         return p;
     }
     else

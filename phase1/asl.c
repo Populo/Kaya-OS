@@ -44,6 +44,10 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
 
 HIDDEN void freeSemd(semd_PTR s) 
 {
+    if (s -> s_next != NULL) /* jesus maneuver */
+    {
+        s -> s_next = s ->  s_next -> s_next;
+    }
     s -> s_next = semdFree_h;
     semdFree_h = s;
 }
@@ -127,15 +131,15 @@ int insertBlocked (int *semAdd, pcb_PTR p)
  */
 pcb_PTR removeBlocked (int *semAdd)
 {
-    semd_PTR q;
-    q = searchASL(semAdd);
-    if(q -> s_next -> s_semAdd == semAdd)  /* we found the one we were looking for */
+    semd_PTR prev;
+    prev = searchASL(semAdd);
+    if(prev -> s_next -> s_semAdd == semAdd)  /* we found the one we were looking for */
     {
         pcb_PTR p;
-        p = removeProcQ(&(q->s_procQ));
-        if(q -> s_procQ == NULL)
+        p = removeProcQ(&(prev->s_procQ));
+        if(emptyProcQ(&prev -> s_next -> s_procQ))
         {
-            freeSemd(q -> s_next);
+            freeSemd(prev -> s_next);
         }
         return p;
     }

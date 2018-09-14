@@ -152,8 +152,8 @@ pcb_PTR removeBlocked (int *semAdd)
             addokbuf("didnt fail there");
             freeSemd(prev -> s_next);
         }
-        p -> pcb_semAdd = NULL;
         addokbuf("dick \n");
+        p -> pcb_semAdd = NULL;
         return p;
     }
     else

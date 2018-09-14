@@ -106,7 +106,9 @@ int insertBlocked (int *semAdd, pcb_PTR p)
         {
             addokbuf("not found: inserting\n");
             new -> s_next = q -> s_next;
+            
             q -> s_next = new;
+            debugA(q->s_next, new->s_next);
             insertProcQ(&new -> s_procQ, p);
             p -> pcb_semAdd = semAdd;
             return FALSE;

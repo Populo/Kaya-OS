@@ -168,7 +168,7 @@ pcb_PTR outBlocked (pcb_PTR p)
     semd_PTR checking;
     semd_PTR prev;
 
-    checking = &p -> pcb_semAdd;
+    checking = p -> pcb_semAdd;
     prev = searchASL(checking);
 
     if (prev -> s_next = checking)

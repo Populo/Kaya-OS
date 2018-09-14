@@ -49,16 +49,6 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
 
 HIDDEN void freeSemd(semd_PTR removing) 
 {
-    if (removing -> s_next != NULL) /* jesus maneuver */
-    {
-        addokbuf("freeing....");
-        semd_PTR prev;
-        prev = searchASL(removing -> s_semAdd);
-
-        prev -> s_next = removing -> s_next;
-        addokbuf("freed\n");
-    }
-    
     removing -> s_next = semdFree_h;
     semdFree_h = removing;
 }

@@ -229,7 +229,7 @@ void initASL()
     HIDDEN semd_t semdTable[MAXPROC+2];
     for(i=0;i<MAXPROC+2;i++)
     {
-        freeSemd(&semdTable[i-1]);
+        freeSemd(&semdTable[i]);
     }
 
     semd_PTR semdZero;

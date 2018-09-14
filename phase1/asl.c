@@ -170,10 +170,10 @@ pcb_PTR outBlocked (pcb_PTR p)
 
     prev = searchASL(p -> pcb_semAdd);
 
-    if (&prev -> s_next -> s_semAdd == p -> pcb_semAdd)
+    if (prev -> s_next -> s_semAdd == p -> pcb_semAdd)
     {
-        checking = prev -> s_next;
         pcb_PTR pcb;
+        checking = prev -> s_next;
         pcb = outProcQ(&checking -> s_procQ, p);
 
         if (emptyProcQ(checking -> s_procQ))

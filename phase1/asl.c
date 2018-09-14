@@ -134,24 +134,18 @@ pcb_PTR removeBlocked (int *semAdd)
     if(prev -> s_next -> s_semAdd == semAdd)  /* we found the one we were looking for */
     {
         pcb_PTR p;
-        debugC(prev -> s_next -> s_procQ, NULL);
-        addokbuf("removing...");
-        debugC(p, prev -> s_next -> s_procQ);
+
         p = removeProcQ(&prev -> s_next -> s_procQ);
-        addokbuf("removed\n");
-        debugC(p, prev -> s_next -> s_procQ);
-        debugB(prev, prev->s_next);
-        addokbuf("about to fail?");
+
         if(emptyProcQ(prev -> s_next -> s_procQ))
         {
-            addokbuf("didnt fail there");
             semd_PTR removing;
             removing = prev -> s_next;
 
             prev -> s_next = removing -> s_next;
             freeSemd(removing);
         }
-        addokbuf("dick \n");
+
         if (p != NULL)
         {
             p -> pcb_semAdd = NULL;
@@ -200,18 +194,17 @@ pcb_PTR outBlocked (pcb_PTR p)
  */
 pcb_PTR headBlocked (int *semAdd)
 {
-    semd_PTR q;
-    q = searchASL(semAdd);
-    pcb_PTR returnMe;
-    if((q -> s_next -> s_semAdd != semAdd)||(q -> s_next -> s_semAdd == (int*)MAXINT))
+    semd_PTR prev;
+    prev = searchASL(semAdd);
+
+    if (prev -> s_next -> s_semAdd != semAdd)
     {
-        returnMe = NULL;
+        return NULL;
     }
     else
     {
-        returnMe = headProcQ(q -> s_next -> s_procQ);
+        return headProcQ(prev -> s_next -> s_procQ);
     }
-    return returnMe;
 }
 
 /*

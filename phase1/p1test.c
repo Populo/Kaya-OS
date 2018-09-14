@@ -273,20 +273,14 @@ void main() {
 	addokbuf("Done inserting");
 	/* check if semaphore descriptors are returned to free list */
 	p = removeBlocked(&sem[11]);
-	addokbuf("6");
 	if (insertBlocked(&sem[11],p))
 		adderrbuf("removeBlocked: fails to return to free list   ");
 
-	addokbuf("7");
-
 	if (insertBlocked(&onesem, procp[9]) == FALSE)
 		adderrbuf("insertBlocked: inserted more than MAXPROC   ");
-
-	addokbuf("8");
 	
 	addokbuf("removeBlocked test started   \n");
 	for (i = 10; i< MAXPROC; i++) {
-		addokbuf("9");
 		addokbuf((char*)i);
 		q = removeBlocked(&sem[i]);
 		if (q == NULL)

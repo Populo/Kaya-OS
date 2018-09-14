@@ -8,22 +8,6 @@
 semd_PTR semdFree_h, /* Head of free list */
          semdActive_h;     /* Head of ASL */
 
-void debugA(int *a, int *b)
-{
-    int i;
-    i = 1;
-}
-void debugB(semd_PTR a, semd_PTR b)
-{
-    int i;
-    i = 1;
-}
-void debugC(pcb_PTR a, pcb_PTR b)
-{
-    int i;
-    i =0;
-}
-
 HIDDEN semd_PTR searchASL(int *semAdd);
 
 HIDDEN semd_PTR allocSemd(int *semAdd)

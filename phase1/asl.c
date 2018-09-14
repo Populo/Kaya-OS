@@ -180,6 +180,7 @@ pcb_PTR headBlocked (int *semAdd)
     semd_PTR prev;
     prev = searchASL(semAdd);
 
+    addokbuf("testing head\n");
     if (prev -> s_next -> s_semAdd == semAdd)
     {
         addokbuf("correct semadd\n");

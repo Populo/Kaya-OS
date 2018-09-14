@@ -150,6 +150,7 @@ pcb_PTR removeBlocked (int *semAdd)
             freeSemd(prev -> s_next);
         }
         p -> pcb_semAdd = NULL;
+        addokbuf("dick \n");
         return p;
     }
     else

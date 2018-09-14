@@ -47,19 +47,17 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
     return returnMe;
 }
 
-HIDDEN void freeSemd(semd_PTR prev) 
+HIDDEN void freeSemd(semd_PTR removing) 
 {
     semd_PTR removing;
-    if (prev -> s_next != NULL)
+    if (removing -> s_next != NULL) /* jesus maneuver */
     {
+        addokbuf("freeing....");
+        semd_PTR prev;
+        prev = searchASL(removing -> s_semAdd);
 
-        removing = prev -> s_next;
-        if (removing -> s_next != NULL) /* jesus maneuver */
-        {
-            addokbuf("freeing....");
-            prev -> s_next = removing -> s_next;
-            addokbuf("freed\n");
-        }
+        prev -> s_next = removing -> s_next;
+        addokbuf("freed\n");
     }
     
     removing -> s_next = semdFree_h;
@@ -158,7 +156,7 @@ pcb_PTR removeBlocked (int *semAdd)
         if(emptyProcQ(prev -> s_next -> s_procQ))
         {
             addokbuf("didnt fail there");
-            freeSemd(prev);
+            freeSemd(prev -> s_next);
         }
         addokbuf("dick \n");
         if (p != NULL)

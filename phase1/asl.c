@@ -51,12 +51,16 @@ HIDDEN void freeSemd(semd_PTR prev)
 {
     semd_PTR removing;
     removing = prev -> s_next;
-    if (removing -> s_next != NULL) /* jesus maneuver */
+    if (prev -> s_next != NULL)
     {
-        addokbuf("freeing....");
-        prev -> s_next = removing -> s_next;
-        addokbuf("freed\n");
+        if (removing -> s_next != NULL) /* jesus maneuver */
+        {
+            addokbuf("freeing....");
+            prev -> s_next = removing -> s_next;
+            addokbuf("freed\n");
+        }
     }
+    
     removing -> s_next = semdFree_h;
     semdFree_h = removing;
 }

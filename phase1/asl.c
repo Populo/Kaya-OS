@@ -172,7 +172,7 @@ pcb_PTR outBlocked (pcb_PTR p)
     {
         pcb_PTR p;
 
-        p = outProcQ(&prev -> s_next -> s_procQ, p);
+        p = outProcQ(prev -> s_next -> s_procQ, p);
 
         if(emptyProcQ(prev -> s_next -> s_procQ))
         {

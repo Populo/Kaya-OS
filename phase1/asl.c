@@ -165,28 +165,35 @@ pcb_PTR removeBlocked (int *semAdd)
  */
 pcb_PTR outBlocked (pcb_PTR p)
 {
-    semd_PTR q;
-    pcb_PTR returnMe;
-    int *semAdd;
-    semAdd = p -> pcb_semAdd;
+    semd_PTR prev;
+    prev = searchASL(p -> pcb_semAdd);
 
-    q = searchASL(semAdd);
-    if((q -> s_next -> s_semAdd != semAdd)||(q -> s_next -> s_semAdd == (int*)MAXINT))
+    if(prev -> s_next -> s_semAdd == p -> pcb_semAdd)  /* we found the one we were looking for */
     {
-        returnMe = NULL;
+        pcb_PTR p;
+
+        p = outProcQ(&prev -> s_next -> s_procQ, p);
+
+        if(emptyProcQ(prev -> s_next -> s_procQ))
+        {
+            semd_PTR removing;
+            removing = prev -> s_next;
+
+            prev -> s_next = removing -> s_next;
+            freeSemd(removing);
+        }
+
+        if (p != NULL)
+        {
+            p -> pcb_semAdd = NULL;
+        }
+        
+        return p;
     }
     else
     {
-        if(p ==  NULL)
-        {
-            returnMe = NULL;
-        } 
-        else
-        {
-            returnMe = outProcQ((pcb_PTR*)q -> s_next -> s_procQ, p);
-        }   
+        return NULL;
     }
-    return returnMe;
 }
 
 /*

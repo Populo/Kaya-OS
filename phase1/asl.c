@@ -18,6 +18,11 @@ void debugB(semd_PTR a, semd_PTR b)
     int i;
     i = 1;
 }
+void debugC(pcb_PTR a, pcb_PTR b)
+{
+    int i;
+    i =0;
+}
 
 HIDDEN semd_PTR searchASL(int *semAdd);
 
@@ -133,7 +138,7 @@ pcb_PTR removeBlocked (int *semAdd)
     if(prev -> s_next -> s_semAdd == semAdd)  /* we found the one we were looking for */
     {
         pcb_PTR p;
-        p = removeProcQ(&(prev->s_procQ));
+        p = removeProcQ(&(prev -> s_next -> s_procQ));
         if(emptyProcQ(&prev -> s_next -> s_procQ))
         {
             freeSemd(prev -> s_next);

@@ -49,7 +49,7 @@ HIDDEN void freeSemd(semd_PTR s)
  */
 HIDDEN semd_PTR searchASL(int *semAdd)
 {
-    semd_PTR searching;
+  /*   semd_PTR searching;
     searching = semdActive_h;
 
     if (semAdd == NULL)
@@ -66,7 +66,17 @@ HIDDEN semd_PTR searchASL(int *semAdd)
         
     }
 
-    return searching;
+    return searching; */
+
+    semd_PTR temp = semdFree_h;
+	if(semAdd == NULL){
+		semAdd = (int*) MAXINT;
+	}
+	while(semAdd > temp -> s_next -> s_semAdd){
+        /* advance until next node is greater than search value */
+		temp = temp -> s_next;
+	}
+	return temp;
 }
 
 /*

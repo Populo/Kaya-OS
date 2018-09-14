@@ -145,6 +145,7 @@ pcb_PTR removeBlocked (int *semAdd)
         p = removeProcQ(&prev -> s_next -> s_procQ);
         addokbuf("removed\n");
         debugC(p,NULL);
+        debugB(prev, prev->s_next);
         if(emptyProcQ(&prev -> s_next -> s_procQ))
         {
             freeSemd(prev -> s_next);

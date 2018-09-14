@@ -64,16 +64,9 @@ HIDDEN semd_PTR searchASL(int *semAdd)
     {
         semAdd = (int*) MAXINT;
     }
-    debugA(semAdd, searching -> s_next -> s_semAdd);
-    addokbuf("pre loop");
     while (searching -> s_next -> s_semAdd < semAdd)
     {
-        addokbuf("in loop (");
-        addokbuf((char*) searching -> s_next -> s_semAdd);
-        addokbuf(")\n");
-        debugA(searching -> s_semAdd, searching -> s_next -> s_semAdd);
         searching = searching -> s_next;
-        
     }
 
     return searching; 
@@ -90,14 +83,12 @@ HIDDEN semd_PTR searchASL(int *semAdd)
  */
 int insertBlocked (int *semAdd, pcb_PTR p)
 {
-    addokbuf("inserting");
     semd_PTR q;
     q = searchASL(semAdd);
 
     if (q -> s_next -> s_semAdd == semAdd)
     {
         p -> pcb_semAdd = semAdd;
-        addokbuf("found \n");
         insertProcQ(&q -> s_procQ, p);
         return FALSE;
     }
@@ -107,12 +98,10 @@ int insertBlocked (int *semAdd, pcb_PTR p)
         new = allocSemd(semAdd);
         if (new == NULL)
         {
-            addokbuf("not found: free empty\n");
             return TRUE;
         }
         else
         {
-            addokbuf("not found: inserting\n");
             debugB(new -> s_next, new);
             debugB(q -> s_next, q);
             new -> s_next = q -> s_next;
@@ -140,17 +129,13 @@ pcb_PTR removeBlocked (int *semAdd)
 {
     semd_PTR q;
     q = searchASL(semAdd);
-    if(q -> s_semAdd == semAdd)  /* (q -> s_next -> s_semAdd == (int*) MAXINT) */
+    if(q -> s_next -> s_semAdd == semAdd)  /* we found the one we were looking for */
     {
-        semd_PTR temp;
-        temp = q -> s_next;
         pcb_PTR p;
         p = removeProcQ(&(q->s_procQ));
         if(p == NULL)
         {
-            temp = q -> s_next;
-            q -> s_next = q -> s_next -> s_next;
-            freeSemd(q);
+            freeSemd(q -> s_next);
         }
         return p;
     }

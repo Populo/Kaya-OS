@@ -280,7 +280,6 @@ void main() {
 	
 	addokbuf("removeBlocked test started   \n");
 	for (i = 10; i< MAXPROC; i++) {
-		addokbuf((char*)i);
 		q = removeBlocked(&sem[i]);
 		if (q == NULL)
 			adderrbuf("removeBlocked: wouldn't remove   ");
@@ -289,7 +288,6 @@ void main() {
 		if (insertBlocked(&sem[i-10], q))
 			adderrbuf("insertBlocked(3): unexpected TRUE   ");
 	}
-	addokbuf("post loop");
 	if (removeBlocked(&sem[11]) != NULL)
 		adderrbuf("removeBlocked: removed nonexistent blocked proc   ");
 	addokbuf("insertBlocked and removeBlocked ok   \n");

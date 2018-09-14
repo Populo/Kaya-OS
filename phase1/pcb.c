@@ -138,9 +138,8 @@ pcb_PTR outProcQ (pcb_PTR *tp, pcb_PTR p)
         }
         else 
         {
-            pcb_PTR foundP = findP((*tp), p, (*tp));
-
-            if (foundP != NULL) 
+            pcb_PTR foundP = findP((*tp) -> pcb_next, p, (*tp));
+            if (foundP != NULL)
             {
                 foundP -> pcb_prev -> pcb_next = foundP -> pcb_next;
                 foundP -> pcb_next -> pcb_prev = foundP -> pcb_prev;

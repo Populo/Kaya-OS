@@ -13,6 +13,11 @@ void debugA(int *a, int *b)
     int i;
     i = 1;
 }
+void debugB(semd_PTR a, semd_PTR b)
+{
+    int i;
+    i = 1;
+}
 
 HIDDEN semd_PTR searchASL(int *semAdd);
 
@@ -105,10 +110,12 @@ int insertBlocked (int *semAdd, pcb_PTR p)
         else
         {
             addokbuf("not found: inserting\n");
+            debugB(new -> s_next, new);
+            debugB(q -> s_next, q);
             new -> s_next = q -> s_next;
             
             q -> s_next = new;
-            debugA(q->s_next, new->s_next);
+            debugB(q->s_next, new->s_next);
             insertProcQ(&new -> s_procQ, p);
             p -> pcb_semAdd = semAdd;
             return FALSE;

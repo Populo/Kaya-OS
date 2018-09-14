@@ -182,6 +182,7 @@ pcb_PTR headBlocked (int *semAdd)
 
     if (prev -> s_next -> s_semAdd == semAdd)
     {
+        addokbuf("correct semadd\n");
         return headProcQ(prev -> s_next -> s_procQ);
     }
     else

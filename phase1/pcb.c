@@ -1,3 +1,11 @@
+/*******************************pcb.c**************************************/
+/*            Queue manager for the Kaya Operating System.                */
+/*            The methods in this file will create, delete                */
+/*             and otherwise manage queues of type pcb_t                  */
+/*              By: Chris Staudigel and Grant Stapleton                   */
+/*              with starting code by Michael Goldweber                   */
+/**************************************************************************/
+
 #include "../h/types.h"
 #include "../h/const.h"
 

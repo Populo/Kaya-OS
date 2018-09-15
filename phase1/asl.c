@@ -1,3 +1,10 @@
+/*********************************asl.c************************************/
+/*          Active Semaphore List for the Kaya Operating System.          */
+/*   The methods in this file will manage the free and active semaphores  */
+/*              By: Chris Staudigel and Grant Stapleton                   */
+/*              with starting code by Michael Goldweber                   */
+/**************************************************************************/
+
 #include "../h/types.h"
 #include "../h/const.h"
 

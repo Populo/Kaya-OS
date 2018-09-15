@@ -118,18 +118,22 @@ pcb_PTR headProcQ (pcb_PTR tp)
 pcb_PTR outProcQ (pcb_PTR *tp, pcb_PTR p) 
 {
     pcb_PTR returnMe;
-
+    addokbuf("a");
     if (!emptyProcQ(*tp)) 
     {
+        addokbuf("b");
         if ((*tp) == p) 
         {
+            addokbuf("c");
             if((*tp)->pcb_next == (*tp))
             {
+                addokbuf("d");
                 returnMe = (*tp);
                 (*tp) = mkEmptyProcQ();
             }
             else
             {
+                addokbuf("e");
                 (*tp) -> pcb_prev -> pcb_next = (*tp) -> pcb_next;
                 (*tp) -> pcb_next -> pcb_prev = (*tp) -> pcb_prev;
                 *tp = (*tp) -> pcb_prev;
@@ -138,21 +142,25 @@ pcb_PTR outProcQ (pcb_PTR *tp, pcb_PTR p)
         }
         else 
         {
+            addokbuf("f");
             pcb_PTR foundP = findP((*tp) -> pcb_next, p, (*tp));
             if (foundP != NULL)
             {
+                addokbuf("g");
                 foundP -> pcb_prev -> pcb_next = foundP -> pcb_next;
                 foundP -> pcb_next -> pcb_prev = foundP -> pcb_prev;
                 returnMe = foundP;
             }
             else
             {
+                addokbuf("h");
                 returnMe = NULL;
             }
         }
     }
     else
     {
+        addokbuf("i");
         returnMe = NULL;
     }
     

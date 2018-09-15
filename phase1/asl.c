@@ -93,7 +93,7 @@ int insertBlocked (int *semAdd, pcb_PTR p)
     if (q -> s_next -> s_semAdd == semAdd)
     {
         p -> pcb_semAdd = semAdd;
-        insertProcQ(&(q -> s_procQ), p);
+        insertProcQ(&(q -> s_next -> s_procQ), p);
         return FALSE;
     }
     else
@@ -183,7 +183,7 @@ pcb_PTR outBlocked (pcb_PTR p)
             prev -> s_next = prev -> s_next -> s_next;
         
             freeSemd(removing);
-            
+            removing -> s_semAdd = NULL;
         }
         pcb -> pcb_semAdd = NULL;
         return pcb;
@@ -202,7 +202,7 @@ pcb_PTR headBlocked (int *semAdd)
 {
     semd_PTR prev;
     prev = searchASL(semAdd);
-    debugA(prev -> s_semAdd, semAdd);
+    debugA(prev -> s_next -> s_semAdd, semAdd);
     if (prev -> s_next -> s_semAdd == semAdd)
     {
         addokbuf("1");

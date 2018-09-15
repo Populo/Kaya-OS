@@ -157,19 +157,19 @@ pcb_PTR outBlocked (pcb_PTR p)
     if (prev -> s_next -> s_semAdd == p -> pcb_semAdd)
     {
         pcb_PTR pcb;
-        pcb = outProcQ((pcb_PTR*) prev -> s_next -> s_procQ, p);
+        pcb = outProcQ(&(prev -> s_next -> s_procQ), p);
 
         if (emptyProcQ(prev -> s_next -> s_procQ))
         {
             semd_PTR removing;
             removing = prev -> s_next;
 
-            prev -> s_next = removing -> s_next;
+            prev -> s_next = prev -> s_next -> s_next;
         
             freeSemd(removing);
-            removing -> s_semAdd = NULL;
+            
         }
-
+        pcb -> pcb_semAdd = NULL;
         return pcb;
     }
 

@@ -149,7 +149,6 @@ pcb_PTR removeBlocked (int *semAdd)
  */
 pcb_PTR outBlocked (pcb_PTR p)
 {
-    semd_PTR checking;
     semd_PTR prev;
 
     prev = searchASL(p -> pcb_semAdd);
@@ -157,13 +156,15 @@ pcb_PTR outBlocked (pcb_PTR p)
     if (prev -> s_next -> s_semAdd == p -> pcb_semAdd)
     {
         pcb_PTR pcb;
-        checking = prev -> s_next;
-        pcb = outProcQ(&checking -> s_procQ, p);
+        pcb = outProcQ(&prev -> s_next -> s_procQ, p);
 
-        if (emptyProcQ(checking -> s_procQ))
+        if (emptyProcQ(prev -> s_next -> s_procQ))
         {
-            prev -> s_next = checking -> s_next;
-            freeSemd(checking);
+            semd_PTR removing;
+            removing = prev -> s_next;
+
+            prev -> s_next = removing -> s_next;
+            freeSemd(prev -> s_next);
         }
 
         return pcb;

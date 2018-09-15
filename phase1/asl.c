@@ -178,12 +178,10 @@ pcb_PTR outBlocked (pcb_PTR p)
             
         }
         pcb -> pcb_semAdd = NULL;
-        addokbuf("1");
         return pcb;
     }
     else
-    {
-        addokbuf("2");
+    {  
         return NULL;
     }
     
@@ -198,9 +196,10 @@ pcb_PTR headBlocked (int *semAdd)
     prev = searchASL(semAdd);
     if (prev -> s_next -> s_semAdd == semAdd)
     {
+        addokbuf("1");
         return headProcQ(prev -> s_next -> s_procQ);
     }
-
+    addokbuf("2");
     return NULL;
 }
 

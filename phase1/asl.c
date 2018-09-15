@@ -128,6 +128,7 @@ pcb_PTR removeBlocked (int *semAdd)
 
             prev -> s_next = removing -> s_next;
             freeSemd(removing);
+            removing -> s_semAdd = NULL;
         }
 
         if (p != NULL)
@@ -164,7 +165,9 @@ pcb_PTR outBlocked (pcb_PTR p)
             removing = prev -> s_next;
 
             prev -> s_next = removing -> s_next;
-            freeSemd(prev -> s_next);
+            
+            freeSemd(removing);
+            removing -> s_semAdd = NULL;
         }
 
         return pcb;

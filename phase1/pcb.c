@@ -203,7 +203,7 @@ pcb_PTR outProcQ (pcb_PTR *tp, pcb_PTR p)
             /* search for p in the given queue
              * checking head first because loop breaks if checking == tp 
              */
-            pcb_PTR foundP = findP(headProcQ(tp), p, (*tp));
+            pcb_PTR foundP = findP((*tp) -> pcb_next, p, (*tp));
             
             if (foundP != NULL)
             {

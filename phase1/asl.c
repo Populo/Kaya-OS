@@ -180,16 +180,18 @@ pcb_PTR headBlocked (int *semAdd)
     semd_PTR prev;
     prev = searchASL(semAdd);
 
-    addokbuf("testing head\n");
-    if (prev -> s_next -> s_semAdd == semAdd)
+    if (prev -> s_next != NULL)
     {
-        addokbuf("correct semadd\n");
-        return headProcQ(prev -> s_next -> s_procQ);
+        semd_PTR current;
+        current = prev -> s_next;
+
+        if (current -> s_semAdd == semAdd)
+        {
+            return headProcQ(current -> s_procQ);
+        }
     }
-    else
-    {
-        return NULL;
-    }
+
+    return NULL;
 }
 
 /*

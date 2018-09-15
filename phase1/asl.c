@@ -157,7 +157,7 @@ pcb_PTR outBlocked (pcb_PTR p)
     if (prev -> s_next -> s_semAdd == p -> pcb_semAdd)
     {
         pcb_PTR pcb;
-        pcb = outProcQ(&prev -> s_next -> s_procQ, p);
+        pcb = outProcQ(prev -> s_next -> s_procQ, p);
 
         if (emptyProcQ(prev -> s_next -> s_procQ))
         {
@@ -165,7 +165,7 @@ pcb_PTR outBlocked (pcb_PTR p)
             removing = prev -> s_next;
 
             prev -> s_next = removing -> s_next;
-            
+        
             freeSemd(removing);
             removing -> s_semAdd = NULL;
         }

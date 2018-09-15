@@ -16,7 +16,7 @@ void debugA(int* a, int* b)
     i=0;
 }
 
-HIDDEN semd_PTR allocSemd(int *semAdd)
+HIDDEN semd_PTR allocSemd()
 {
     semd_PTR returnMe;
 
@@ -30,8 +30,9 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
         semdFree_h = semdFree_h -> s_next;
 
         returnMe -> s_next = NULL;
+        returnMe -> s_semAdd = NULL;
         returnMe -> s_procQ = mkEmptyProcQ();
-        returnMe -> s_semAdd = semAdd;
+        
     }
 
     return returnMe;
@@ -98,7 +99,7 @@ int insertBlocked (int *semAdd, pcb_PTR p)
     else
     {
         semd_PTR new;
-        new = allocSemd(semAdd);
+        new = allocSemd();
         if (new == NULL)
         {
             return TRUE;
@@ -109,6 +110,7 @@ int insertBlocked (int *semAdd, pcb_PTR p)
             q -> s_next = new;
             new -> s_procQ = mkEmptyProcQ();
             insertProcQ(&(new -> s_procQ), p);
+            new -> s_semAdd = semAdd;
             p -> pcb_semAdd = semAdd;
             return FALSE;
         }
@@ -227,9 +229,12 @@ void initASL()
     semd_PTR semdZero;
     semd_PTR semdMax;
 
-    semdZero = allocSemd((int*)0);
-    semdMax = allocSemd((int*)MAXINT);
+    semdZero = allocSemd();
+    semdMax = allocSemd();
     
+    semdZero -> s_semAdd = 0;
+    semdMax -> s_semAdd = MAXINT;
+
     semdZero -> s_next = semdMax;
 
     semdActive_h = semdZero;

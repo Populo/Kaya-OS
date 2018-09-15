@@ -10,7 +10,7 @@ semd_PTR semdFree_h, /* Head of free list */
 
 HIDDEN semd_PTR searchASL(int *semAdd);
 
-debugA(int* a, int* b)
+void debugA(int* a, int* b)
 {
     int i;
     i=0;

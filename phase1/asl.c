@@ -178,10 +178,15 @@ pcb_PTR outBlocked (pcb_PTR p)
             
         }
         pcb -> pcb_semAdd = NULL;
+        addokbuf("1");
         return pcb;
     }
-
-    return NULL;
+    else
+    {
+        addokbuf("2");
+        return NULL;
+    }
+    
 }
 
 /*

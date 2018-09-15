@@ -9,7 +9,6 @@ semd_PTR semdFree_h, /* Head of free list */
          semdActive_h;     /* Head of ASL */
 
 /* ========================== Helper Methods ========================== */
-HIDDEN semd_PTR searchASL(int *semAdd);
 
 /*
  * pull semd from freelist and add it to active list
@@ -134,31 +133,64 @@ int insertBlocked (int *semAdd, pcb_PTR p)
  */
 pcb_PTR removeBlocked (int *semAdd)
 {
-    semd_PTR parent;
-    parent = searchASL(semAdd);
+    semd_PTR prev;
+    prev = searchASL(semAdd);
+    /* semaphore is on active list */
+    if(prev -> s_next -> s_semAdd == semAdd)  /* we found the one we were looking for */
+    {
+        pcb_PTR p;
 
-    pcb_PTR removing;
-    removing = headProcQ(parent -> s_next -> s_procQ);
+        /* remove dequeue first process from semaphore */
+        p = removeProcQ(&prev -> s_next -> s_procQ);
 
-    return outBlocked(removing);
+        /* if procQ is now empty */
+        if(emptyProcQ(prev -> s_next -> s_procQ))
+        {
+            /* remove semaphore from active list */
+            semd_PTR removing;
+            removing = prev -> s_next;
+
+            prev -> s_next = removing -> s_next;
+            freeSemd(removing);
+            removing -> s_semAdd = NULL;
+        }
+
+        if (p != NULL)
+        {
+            p -> pcb_semAdd = NULL;
+        }
+        
+        return p;
+    }
+    else
+    {
+        return NULL;
+    }
 }
 
 /*
- * same as removeBlocked except call outProcQ instead of removeProcQ
+ * Remove the ProcBlk pointed to bypfrom the process queue associated 
+ * with p’s semaphore (p→psemAdd) on the ASL. If ProcBlk pointed to by p 
+ * does not appear in the process queue associated with p’s semaphore, 
+ * which is an error condition, return NULL; otherwise,return p. 
  */
 pcb_PTR outBlocked (pcb_PTR p)
 {
     semd_PTR prev;
-
+    /* find parent */
     prev = searchASL(p -> pcb_semAdd);
 
+    /* if semaphore is on active list */
     if (prev -> s_next -> s_semAdd == p -> pcb_semAdd)
     {
+        /* pull pcb from procQ */
         pcb_PTR pcb;
         pcb = outProcQ(&(prev -> s_next -> s_procQ), p);
 
+        /* if procQ is empty */
         if (emptyProcQ(prev -> s_next -> s_procQ))
         {
+            /* remove semaphore and place it on the free list */
             semd_PTR removing;
             removing = prev -> s_next;
 
@@ -178,45 +210,57 @@ pcb_PTR outBlocked (pcb_PTR p)
 }
 
 /*
- * same as remove/out except call headProcQ and do not deallocate
+ * Return a pointer to the ProcBlk that is at the head of the process 
+ * queue associated with the semaphore semAdd. Return NULL if semAdd is 
+ * not found on the ASL or if the process queue associated with semAdd is empty. 
  */
 pcb_PTR headBlocked (int *semAdd)
 {
+    /* find parent */
     semd_PTR prev;
     prev = searchASL(semAdd);
+    /* if semaphore is on active list */
     if (prev -> s_next -> s_semAdd == semAdd)
     {
+        /* return head of procQ but do not deallocate it */
         return headProcQ(prev -> s_next -> s_procQ);
     }
     return NULL;
 }
 
-/*
- * create ASL of length MAXPROC + 2 dummy nodes
+/* 
+ * Initialize the semdFree list to contain all the elements of the array 
+ * static semdt semdTable[MAXPROC] This method will be only called once 
+ * during data structure initialization. 
  */
 void initASL()
 {
+    /* variables were using */
     int i;
     semdFree_h = NULL;
     semdActive_h = NULL;
     HIDDEN semd_t semdTable[MAXPROC+2];
     for(i=0;i<MAXPROC;++i)
     {
+        /* free each semaphore */
         freeSemd(&(semdTable[i]));
     }
 
+    /* dummy nodes */
     semd_PTR semdZero;
     semd_PTR semdMax;
 
+    /* initialization */
     semdZero = &(semdTable[MAXPROC]);
     semdMax = &(semdTable[MAXPROC+1]);
   
+    /* set values */
     semdZero -> s_semAdd = 0;
     semdMax -> s_semAdd = MAXINT;
     semdZero -> s_procQ = mkEmptyProcQ();
     semdMax -> s_procQ = mkEmptyProcQ();
 
+    /* add to active list */
     semdZero -> s_next = semdMax;
-
     semdActive_h = semdZero;
 }

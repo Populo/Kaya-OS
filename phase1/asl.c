@@ -92,7 +92,7 @@ int insertBlocked (int *semAdd, pcb_PTR p)
     if (q -> s_next -> s_semAdd == semAdd)
     {
         p -> pcb_semAdd = semAdd;
-        insertProcQ(&q -> s_procQ, p);
+        insertProcQ(&(q -> s_procQ), p);
         return FALSE;
     }
     else
@@ -108,7 +108,7 @@ int insertBlocked (int *semAdd, pcb_PTR p)
             new -> s_next = q -> s_next;
             q -> s_next = new;
             new -> s_procQ = mkEmptyProcQ();
-            insertProcQ(&new -> s_procQ, p);
+            insertProcQ(&(new -> s_procQ), p);
             p -> pcb_semAdd = semAdd;
             return FALSE;
         }

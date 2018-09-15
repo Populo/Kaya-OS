@@ -228,6 +228,9 @@ void initASL()
 
     semd_PTR semdZero;
     semd_PTR semdMax;
+
+    semdZero = &(semdTable[MAXPROC]);
+    semdMax = &(semdTable[MAXPROC+1]);
   
     semdZero -> s_semAdd = 0;
     semdMax -> s_semAdd = MAXINT;

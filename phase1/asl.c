@@ -35,7 +35,7 @@ HIDDEN void freeSemd(semd_PTR removing)
 {
     if(semdFree_h == NULL)
     {
-        semdActive_h = removing;
+        semdFree_h = removing;
         semdFree_h -> s_next = NULL;
     }
     else

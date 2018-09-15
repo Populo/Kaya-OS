@@ -8,18 +8,24 @@
 semd_PTR semdFree_h, /* Head of free list */
          semdActive_h;     /* Head of ASL */
 
+/* ========================== Helper Methods ========================== */
 HIDDEN semd_PTR searchASL(int *semAdd);
 
+/*
+ * pull semd from freelist and add it to active list
+ */
 HIDDEN semd_PTR allocSemd()
 {
     semd_PTR returnMe;
 
+    /* no free semds */
     if (semdFree_h == NULL)
     {
         returnMe = NULL;
     }
     else
     {
+        /* using first element in free list */
         returnMe = semdFree_h;
         semdFree_h = semdFree_h -> s_next;
 
@@ -32,18 +38,21 @@ HIDDEN semd_PTR allocSemd()
     return returnMe;
 }
 
+/*
+ * add semd to free list
+ */
 HIDDEN void freeSemd(semd_PTR removing) 
 {
-    if(semdFree_h == NULL)
+/*     if(semdFree_h == NULL)
     {
         semdFree_h = removing;
         semdFree_h -> s_next = NULL;
     }
     else
-    {
+    { */
         removing -> s_next = semdFree_h;
         semdFree_h = removing;
-    }
+    /*}*/
 }
 
 /*

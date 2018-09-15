@@ -24,7 +24,7 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
         semdFree_h = semdFree_h -> s_next;
 
         returnMe -> s_next = NULL;
-        returnMe -> s_procQ = NULL;
+        returnMe -> s_procQ = mkEmptyProcQ();
         returnMe -> s_semAdd = semAdd;
     }
 

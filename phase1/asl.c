@@ -33,8 +33,16 @@ HIDDEN semd_PTR allocSemd(int *semAdd)
 
 HIDDEN void freeSemd(semd_PTR removing) 
 {
-    removing -> s_next = semdFree_h;
-    semdFree_h = removing;
+    if(semdFree_h == NULL)
+    {
+        semdActive_h = removing;
+        semdFree_h -> s_next = NULL;
+    }
+    else
+    {
+        removing -> s_next = semdFree_h;
+        semdFree_h = removing;
+    }
 }
 
 /*
@@ -192,7 +200,7 @@ pcb_PTR headBlocked (int *semAdd)
 }
 
 /*
- * create ASL of length MAXPROC
+ * create ASL of length MAXPROC + 2 dummy nodes
  */
 void initASL()
 {

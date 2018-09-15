@@ -175,7 +175,7 @@ pcb_PTR outBlocked (pcb_PTR p)
         pcb_PTR pcb;
         pcb = outProcQ(&(prev -> s_next -> s_procQ), p);
 
-        if (emptyProcQ(prev -> s_next -> s_procQ -> pcb_next))
+        if (emptyProcQ(prev -> s_next -> s_procQ))
         {
             semd_PTR removing;
             removing = prev -> s_next;

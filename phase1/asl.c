@@ -10,12 +10,6 @@ semd_PTR semdFree_h, /* Head of free list */
 
 HIDDEN semd_PTR searchASL(int *semAdd);
 
-void debugA(int* a, int* b)
-{
-    int i;
-    i=0;
-}
-
 HIDDEN semd_PTR allocSemd()
 {
     semd_PTR returnMe;
@@ -202,13 +196,10 @@ pcb_PTR headBlocked (int *semAdd)
 {
     semd_PTR prev;
     prev = searchASL(semAdd);
-    debugA(prev -> s_next -> s_semAdd, semAdd);
     if (prev -> s_next -> s_semAdd == semAdd)
     {
-        addokbuf("1");
         return headProcQ(prev -> s_next -> s_procQ);
     }
-    addokbuf("2");
     return NULL;
 }
 

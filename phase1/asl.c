@@ -157,7 +157,7 @@ pcb_PTR outBlocked (pcb_PTR p)
     if (prev -> s_next -> s_semAdd == p -> pcb_semAdd)
     {
         pcb_PTR pcb;
-        pcb = outProcQ(prev -> s_next -> s_procQ, p);
+        pcb = outProcQ((pcb_PTR*) prev -> s_next -> s_procQ, p);
 
         if (emptyProcQ(prev -> s_next -> s_procQ))
         {

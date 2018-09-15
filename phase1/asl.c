@@ -221,19 +221,18 @@ void initASL()
     semdFree_h = NULL;
     semdActive_h = NULL;
     HIDDEN semd_t semdTable[MAXPROC+2];
-    for(i=0;i<MAXPROC+2;i++)
+    for(i=0;i<MAXPROC;++i)
     {
-        freeSemd(&semdTable[i]);
+        freeSemd(&(semdTable[i]));
     }
 
     semd_PTR semdZero;
     semd_PTR semdMax;
-
-    semdZero = allocSemd();
-    semdMax = allocSemd();
-    
+  
     semdZero -> s_semAdd = 0;
     semdMax -> s_semAdd = MAXINT;
+    semdZero -> s_procQ = mkEmptyProcQ();
+    semdMax -> s_procQ = mkEmptyProcQ();
 
     semdZero -> s_next = semdMax;
 

@@ -27,7 +27,7 @@ HIDDEN semd_PTR allocSemd()
     /* no free semds */
     if (semdFree_h == NULL)
     {
-        returnMe = NULL;
+        return NULL;
     }
 
     /* using first element in free list */

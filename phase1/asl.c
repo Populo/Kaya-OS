@@ -12,8 +12,8 @@
 #include "../e/asl.e"
 
 
-semd_PTR semdFree_h, /* Head of free list */
-         semdActive_h;     /* Head of ASL */
+semd_PTR semdFree_h, /* Head of free list stack */
+         semdActive_h;     /* Head of ASL stack */
 
 /* ========================== Helper Methods ========================== */
 
@@ -29,26 +29,25 @@ HIDDEN semd_PTR allocSemd()
     {
         returnMe = NULL;
     }
-    else
-    {
-        /* using first element in free list */
-        returnMe = semdFree_h;
-        semdFree_h = semdFree_h -> s_next;
 
-        returnMe -> s_next = NULL;
-        returnMe -> s_semAdd = NULL;
-        returnMe -> s_procQ = mkEmptyProcQ();
-        
-    }
+    /* using first element in free list */
+    returnMe = semdFree_h;
+    semdFree_h = semdFree_h -> s_next;
+
+    returnMe -> s_next = NULL;
+    returnMe -> s_semAdd = NULL;
+    returnMe -> s_procQ = mkEmptyProcQ();
+
 
     return returnMe;
 }
 
 /*
- * add semd to free list
+ * add semd to free list stack
  */
 HIDDEN void freeSemd(semd_PTR removing) 
 {
+    /* push onto the stack */
     removing -> s_next = semdFree_h;
     semdFree_h = removing;
 }
@@ -65,6 +64,7 @@ HIDDEN semd_PTR searchASL(int *semAdd)
     semd_PTR searching;
     searching = semdActive_h;
 
+    /* error case, return the last real element in the stack */
     if (semAdd == NULL)
     {
         semAdd = (int*) MAXINT;
@@ -100,32 +100,32 @@ int insertBlocked (int *semAdd, pcb_PTR p)
         insertProcQ(&(q -> s_next -> s_procQ), p);
         return FALSE;
     }
-    else
+
+
+    /* allocate new semaphore */
+    semd_PTR new;
+    new = allocSemd();
+    /* there arent any free semaphores to use */
+    if (new == NULL)
     {
-        /* allocate new semaphore */
-        semd_PTR new;
-        new = allocSemd();
-        /* there arent any free semaphores to use */
-        if (new == NULL)
-        {
-            return TRUE;
-        }
-        else
-        {
-            /* weave new semaphore onto active list */
-            new -> s_next = q -> s_next;
-            q -> s_next = new;
-
-            /* insert procQ onto semaphore */
-            new -> s_procQ = mkEmptyProcQ();
-            insertProcQ(&(new -> s_procQ), p);
-            /* set semAdd */
-            new -> s_semAdd = semAdd;
-            p -> pcb_semAdd = semAdd;
-
-            return FALSE;
-        }
+        return TRUE;
     }
+
+
+    /* weave new semaphore onto active list */
+    new -> s_next = q -> s_next;
+    q -> s_next = new;
+
+    /* insert procQ onto semaphore */
+    new -> s_procQ = mkEmptyProcQ();
+    insertProcQ(&(new -> s_procQ), p);
+    /* set semAdd */
+    new -> s_semAdd = semAdd;
+    p -> pcb_semAdd = semAdd;
+
+    return FALSE;
+
+
 }
 
 /*

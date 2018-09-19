@@ -153,12 +153,8 @@ void insertProcQ (pcb_PTR *tp, pcb_PTR p)
  */
 pcb_PTR removeProcQ (pcb_PTR *tp)
 {
-    pcb_PTR returnMe;
-
     /* call outproc with tp and head of the queue */
-    returnMe = outProcQ(tp, headProcQ(*tp));
-
-    return returnMe;
+    return outProcQ(tp, headProcQ(*tp));
 }
 
 /*
@@ -185,56 +181,48 @@ pcb_PTR headProcQ (pcb_PTR tp)
  */
 pcb_PTR outProcQ (pcb_PTR *tp, pcb_PTR p) 
 {
-    pcb_PTR returnMe;
-    /* check for empty */
-    if (!emptyProcQ(*tp)) 
+
+    /* error case: queue is empty */
+    if (emptyProcQ(*tp))
     {
-        /* if we are looking for tp */
-        if ((*tp) == p) 
-        {
-            /* if tp is the only element in the queue */
-            if((*tp)->pcb_next == (*tp))
-            {
-                /* make the queue empty */
-                returnMe = (*tp);
-                (*tp) = mkEmptyProcQ();
-            }
-            else
-            {
-                /* remove tp from the queue gracefully */
-                (*tp) -> pcb_prev -> pcb_next = (*tp) -> pcb_next;
-                (*tp) -> pcb_next -> pcb_prev = (*tp) -> pcb_prev;
-                *tp = (*tp) -> pcb_prev;
-            }
-            returnMe = p;
-        }
-        else 
-        {
-            /* search for p in the given queue
-             * checking head first because loop breaks if checking == tp 
-             */
-            pcb_PTR foundP = findP((*tp) -> pcb_next, p, (*tp));
-            
-            if (foundP != NULL)
-            {
-                /* we found the pcb on the queue */
-                foundP -> pcb_prev -> pcb_next = foundP -> pcb_next;
-                foundP -> pcb_next -> pcb_prev = foundP -> pcb_prev;
-                returnMe = foundP;
-            }
-            else
-            {
-                /* we did not find the pcb */
-                returnMe = NULL;
-            }
-        }
+        return NULL;
     }
-    else
+
+    /* if we are looking for tp */
+    if ((*tp) == p) 
     {
-        returnMe = NULL;
+        /* if tp is the only element in the queue */
+        if((*tp)->pcb_next == (*tp))
+        {
+            (*tp) = mkEmptyProcQ();
+        }
+        else
+        {
+            /* remove tp from the queue gracefully */
+            (*tp) -> pcb_prev -> pcb_next = (*tp) -> pcb_next;
+            (*tp) -> pcb_next -> pcb_prev = (*tp) -> pcb_prev;
+            *tp = (*tp) -> pcb_prev;
+        }
+
+        return p;
     }
+
+    /* 
+     * we are not looking for tp, so search for p in the given queue
+     * checking head first because loop breaks if checking == tp 
+     */
+    pcb_PTR foundP = findP((*tp) -> pcb_next, p, (*tp));
     
-    return returnMe;
+    /* we did not find p on the queue */
+    if (foundP == NULL)
+    {
+        return NULL;
+    }
+
+    /* we found the pcb on the queue */
+    foundP -> pcb_prev -> pcb_next = foundP -> pcb_next;
+    foundP -> pcb_next -> pcb_prev = foundP -> pcb_prev;
+    return foundP;
 }
 
 /* =============================== Child Management ========================== */
@@ -253,28 +241,24 @@ int emptyChild (pcb_PTR p)
  */
 void insertChild (pcb_PTR prnt, pcb_PTR p)
 {
-    /* if the parent exists */
-    if (!emptyProcQ(prnt)) {
-        /* if there are no children */
-        if(emptyChild(prnt))
-        {
-            /* create a new child list on parent */
-            prnt -> pcb_child = p;
-            p -> pcb_parent = prnt;
-            p-> pcb_nextSib = NULL;
-            p -> pcb_prevSib = NULL;
-        }
-        else
-        {
-            /* insert child into family */
-            prnt -> pcb_child -> pcb_prevSib = p;
-            p -> pcb_nextSib = prnt ->pcb_child;
-            p -> pcb_parent = prnt;
-            prnt -> pcb_child = p;
-            p -> pcb_prevSib = NULL;  
-        }
+    /* there are no children */
+    if(emptyChild(prnt))
+    {
+        /* create a new child list on parent */
+        prnt -> pcb_child = p;
+        p -> pcb_parent = prnt;
+        p-> pcb_nextSib = NULL;
+        p -> pcb_prevSib = NULL;
     }
-   
+    else
+    {
+        /* insert child into family */
+        prnt -> pcb_child -> pcb_prevSib = p;
+        p -> pcb_nextSib = prnt ->pcb_child;
+        p -> pcb_parent = prnt;
+        prnt -> pcb_child = p;
+        p -> pcb_prevSib = NULL;  
+    }  
 }
 
 /*
@@ -298,43 +282,51 @@ pcb_PTR outChild (pcb_PTR child)
      *      last child
      */
 
-    pcb_PTR returnMe;
-    if ((child == NULL) || (child -> pcb_parent == NULL)) /* not a child/null */
+     /* not a child/null */
+    if ((child == NULL) || (child -> pcb_parent == NULL))
     {
-        
-        returnMe = NULL;
+        return NULL;
     }
-    else if ((child -> pcb_nextSib == NULL) && (child -> pcb_prevSib == NULL) && (child == (child -> pcb_parent -> pcb_child))) /* only child */
-    {        
-        returnMe = child;  
+
+     /* only child */
+    if ((child -> pcb_nextSib == NULL) && (child -> pcb_prevSib == NULL) && (child == (child -> pcb_parent -> pcb_child)))
+    {          
         child -> pcb_parent -> pcb_child = NULL;
         child -> pcb_parent = NULL;
+
+        return child;
     }
-    else if (child == (child -> pcb_parent -> pcb_child)) /* first child */
+
+     /* first child */
+    if (child == (child -> pcb_parent -> pcb_child))
     {   
         child -> pcb_nextSib -> pcb_prevSib = NULL;
         child -> pcb_parent -> pcb_child = child -> pcb_nextSib;
         child -> pcb_parent = NULL;
-        returnMe = child;
+        
+        return child;
     }
-    else if ((child -> pcb_nextSib != NULL) && (child -> pcb_prevSib != NULL)) /* middle child */
+
+     /* middle child */
+    if ((child -> pcb_nextSib != NULL) && (child -> pcb_prevSib != NULL))
     {
         child -> pcb_prevSib -> pcb_nextSib = child -> pcb_nextSib;
         child -> pcb_nextSib -> pcb_prevSib = child -> pcb_prevSib;
         child -> pcb_parent = NULL;
-        returnMe = child;
+        
+        return child;
     }
-    else if ((child -> pcb_nextSib == NULL) && (child -> pcb_prevSib != NULL)) /* last child */
+
+     /* last child */
+    if ((child -> pcb_nextSib == NULL) && (child -> pcb_prevSib != NULL))
     {
         child -> pcb_prevSib -> pcb_nextSib = NULL;
         child -> pcb_parent = NULL;
-        returnMe = child;
-    }
-    else
-    {
-        returnMe = NULL;
+        return child;
     }
 
-    return returnMe;
+    /* error case */
+    return NULL;
+
 } 
 

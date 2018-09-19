@@ -144,7 +144,8 @@ void insertProcQ (pcb_PTR *tp, pcb_PTR p)
         p -> pcb_next -> pcb_prev = p; 
     }
     
-    *tp = p;
+    /* new tail is p */
+    tp = &p;
 }
 
 /*

@@ -81,6 +81,7 @@ void initPcbs ()
 
 /*
  * add given pcb pointer to the free list
+ * free list implemented as a stack
  */
 void freePcb (pcb_PTR p)
 {
@@ -93,33 +94,33 @@ void freePcb (pcb_PTR p)
  */
 pcb_PTR allocPcb ()
 {
-    pcb_PTR returnME;
     /* check for an available free pcb on the free list */
     if (pcb_FREE_h == NULL)
     {
-        /* there isnt a free pcb */
-        returnME = NULL;
-    }
-    else
-    {
-        /* using first pcb on free list */
-        returnME = pcb_FREE_h;
-        pcb_FREE_h = pcb_FREE_h -> pcb_next;
-
-        /* break references to queue */
-        returnME -> pcb_next = NULL;
-        returnME -> pcb_prev = NULL;
-
-        /* break references to children */
-        returnME -> pcb_child = NULL;
-        returnME -> pcb_prevSib = NULL;
-        returnME -> pcb_nextSib = NULL;
-
-        /* semaphore values to null */
-        returnME -> pcb_semAdd = NULL;
+        /* there isnt a free pcb, error */
+        return NULL;
     }
 
-    return returnME;
+    pcb_PTR newPcb;
+
+    /* using first pcb on free list */
+    newPcb = pcb_FREE_h;
+    pcb_FREE_h = pcb_FREE_h -> pcb_next;
+
+    /* break references to queue */
+    newPcb -> pcb_next = NULL;
+    newPcb -> pcb_prev = NULL;
+
+    /* break references to children */
+    newPcb -> pcb_child = NULL;
+    newPcb -> pcb_prevSib = NULL;
+    newPcb -> pcb_nextSib = NULL;
+
+    /* semaphore values to null */
+    newPcb -> pcb_semAdd = NULL;
+
+
+    return newPcb;
 }
 
 /*
@@ -143,7 +144,7 @@ void insertProcQ (pcb_PTR *tp, pcb_PTR p)
         p -> pcb_next -> pcb_prev = p; 
     }
     
-    *tp = p;
+    /*tp = p;*/
 }
 
 /*

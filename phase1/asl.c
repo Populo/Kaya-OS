@@ -12,8 +12,8 @@
 #include "../e/asl.e"
 
 
-semd_PTR semdFree_h, /* Head of free list stack */
-         semdActive_h;     /* Head of ASL stack */
+semd_PTR semdFree_h,        /* Head of free list stack */
+         semdActive_h;      /* Head of ASL list ordered by memory address */
 
 /* ========================== Helper Methods ========================== */
 
@@ -24,7 +24,7 @@ HIDDEN semd_PTR allocSemd()
 {
     semd_PTR returnMe;
 
-    /* no free semds */
+    /* no free semds, error */
     if (semdFree_h == NULL)
     {
         return NULL;
@@ -61,6 +61,7 @@ HIDDEN void freeSemd(semd_PTR removing)
  */
 HIDDEN semd_PTR searchASL(int *semAdd)
 {
+    /* starting with the head of the list */
     semd_PTR searching;
     searching = semdActive_h;
 
@@ -69,6 +70,8 @@ HIDDEN semd_PTR searchASL(int *semAdd)
     {
         semAdd = (int*) MAXINT;
     }
+
+
     /* while the next node's address < searching for address */
     while (searching -> s_next -> s_semAdd < semAdd)
     {
@@ -90,6 +93,7 @@ HIDDEN semd_PTR searchASL(int *semAdd)
  */
 int insertBlocked (int *semAdd, pcb_PTR p)
 {
+    /* find the parent of the new node */
     semd_PTR q;
     q = searchASL(semAdd);
     
@@ -105,7 +109,7 @@ int insertBlocked (int *semAdd, pcb_PTR p)
     /* allocate new semaphore */
     semd_PTR new;
     new = allocSemd();
-    /* there arent any free semaphores to use */
+    /* there arent any free semaphores to use, error */
     if (new == NULL)
     {
         return TRUE;
@@ -119,6 +123,7 @@ int insertBlocked (int *semAdd, pcb_PTR p)
     /* insert procQ onto semaphore */
     new -> s_procQ = mkEmptyProcQ();
     insertProcQ(&(new -> s_procQ), p);
+
     /* set semAdd */
     new -> s_semAdd = semAdd;
     p -> pcb_semAdd = semAdd;
@@ -140,39 +145,40 @@ int insertBlocked (int *semAdd, pcb_PTR p)
  */
 pcb_PTR removeBlocked (int *semAdd)
 {
+    /* find parent of semaphore we are removing */
     semd_PTR prev;
     prev = searchASL(semAdd);
-    /* semaphore is on active list */
-    if(prev -> s_next -> s_semAdd == semAdd)  /* we found the one we were looking for */
-    {
-        pcb_PTR p;
 
-        /* remove dequeue first process from semaphore */
-        p = removeProcQ(&prev -> s_next -> s_procQ);
-
-        /* if procQ is now empty */
-        if(emptyProcQ(prev -> s_next -> s_procQ))
-        {
-            /* remove semaphore from active list */
-            semd_PTR removing;
-            removing = prev -> s_next;
-
-            prev -> s_next = removing -> s_next;
-            freeSemd(removing);
-            removing -> s_semAdd = NULL;
-        }
-
-        if (p != NULL)
-        {
-            p -> pcb_semAdd = NULL;
-        }
-        
-        return p;
-    }
-    else
+    /* semadd is not in the list, error case */
+    if (prev -> s_next -> s_semAdd != semAdd)
     {
         return NULL;
     }
+
+
+    pcb_PTR p;
+    /* remove dequeue first process from semaphore */
+    p = removeProcQ(&prev -> s_next -> s_procQ);
+
+    /* if procQ is now empty */
+    if(emptyProcQ(prev -> s_next -> s_procQ))
+    {
+        /* remove semaphore from active list */
+        semd_PTR removing;
+        removing = prev -> s_next;
+
+        prev -> s_next = removing -> s_next;
+        freeSemd(removing);
+        removing -> s_semAdd = NULL;
+    }
+
+    /* reset the semAdd if the removed process block exists */
+    if (p != NULL)
+    {
+        p -> pcb_semAdd = NULL;
+    }
+    
+    return p;
 }
 
 /*
@@ -187,32 +193,33 @@ pcb_PTR outBlocked (pcb_PTR p)
     /* find parent */
     prev = searchASL(p -> pcb_semAdd);
 
-    /* if semaphore is on active list */
-    if (prev -> s_next -> s_semAdd == p -> pcb_semAdd)
+    /* error case, the semaphore is not on the list */
+    if (prev -> s_next -> s_semAdd != p -> pcb_semAdd)
     {
-        /* pull pcb from procQ */
-        pcb_PTR pcb;
-        pcb = outProcQ(&(prev -> s_next -> s_procQ), p);
-
-        /* if procQ is empty */
-        if (emptyProcQ(prev -> s_next -> s_procQ))
-        {
-            /* remove semaphore and place it on the free list */
-            semd_PTR removing;
-            removing = prev -> s_next;
-
-            prev -> s_next = prev -> s_next -> s_next;
-        
-            freeSemd(removing);
-            removing -> s_semAdd = NULL;
-        }
-        pcb -> pcb_semAdd = NULL;
-        return pcb;
-    }
-    else
-    {  
         return NULL;
     }
+
+
+    /* pull pcb from procQ */
+    pcb_PTR pcb;
+    pcb = outProcQ(&(prev -> s_next -> s_procQ), p);
+
+    /* if procQ is empty */
+    if (emptyProcQ(prev -> s_next -> s_procQ))
+    {
+        /* remove semaphore and place it on the free list */
+        semd_PTR removing;
+        removing = prev -> s_next;
+
+        prev -> s_next = prev -> s_next -> s_next;
+    
+        freeSemd(removing);
+        removing -> s_semAdd = NULL;
+    }
+
+    /* reset the semadd on process block */
+    pcb -> pcb_semAdd = NULL;
+    return pcb;
     
 }
 
@@ -226,6 +233,10 @@ pcb_PTR headBlocked (int *semAdd)
     /* find parent */
     semd_PTR prev;
     prev = searchASL(semAdd);
+
+    
+    return headProcQ(prev -> s_next -> s_procQ);
+
     /* if semaphore is on active list */
     if (prev -> s_next -> s_semAdd == semAdd)
     {

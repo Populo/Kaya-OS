@@ -234,16 +234,7 @@ pcb_PTR headBlocked (int *semAdd)
     semd_PTR prev;
     prev = searchASL(semAdd);
 
-    
     return headProcQ(prev -> s_next -> s_procQ);
-
-    /* if semaphore is on active list */
-    if (prev -> s_next -> s_semAdd == semAdd)
-    {
-        /* return head of procQ but do not deallocate it */
-        return headProcQ(prev -> s_next -> s_procQ);
-    }
-    return NULL;
 }
 
 /* 

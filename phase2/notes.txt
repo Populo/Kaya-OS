@@ -1,0 +1,25 @@
+main:
+    - populate 4 new areas of registers
+        - set stack pointer (last page of physical) (all 4 same?)
+        - set PC
+        - set status register (all 4 are the same)
+            - VM off
+            - Interrupts masked
+            - Supervisor mode on
+    - initPCBs
+    - initASL
+
+    - initialize phase 2 global variables
+
+    - p = allocatePCB()
+        - initialize the p_s
+            - stack pointer to the penultimate page of physical memory
+            - PC (p2test)
+            - status:
+                - VM off
+                - Interrupts enabled/unmasked
+                - supervisor mode on
+        processCount++
+        insertProcQ(&readyQue, p)
+
+        scheduler()

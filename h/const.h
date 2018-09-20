@@ -22,6 +22,17 @@
 #define INTERVALTMR	0x10000020	
 #define TIMESCALEADDR	0x10000024
 
+/* new processor state locations */
+#define SYSCALLNEWAREA 0x200003D4
+#define PBGTRAPNEWAREA 0x200002BC
+#define TBLMGMTNEWAREA 0x200001A4
+#define INTPNEWAREA    0x2000008C
+
+/* old processor state locations */
+#define SYSCALLOLDAREA 0x20000348
+#define PGMTRAPOLDAREA 0x20000230
+#define TBLMGMTOLDAREA 0x20000118
+#define INTPOLDAREA    0x20000000
 
 /* utility constants */
 #define	TRUE		1

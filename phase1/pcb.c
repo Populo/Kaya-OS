@@ -213,9 +213,9 @@ pcb_PTR outProcQ (pcb_PTR *tp, pcb_PTR p)
      */
     pcb_PTR searching;
     
-    searching = headProcQ(tp);
+    searching = headProcQ(*tp);
 
-    while (searching != &tp && searching != p)
+    while (searching != tp && searching != p)
     {
         searching = searching -> pcb_next;
     }

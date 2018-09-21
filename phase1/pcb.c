@@ -66,14 +66,14 @@ void freePcb (pcb_PTR p)
  */
 pcb_PTR allocPcb ()
 {
+    pcb_PTR newPcb;
+
     /* check for an available free pcb on the free list */
     if (pcb_FREE_h == NULL)
     {
         /* there isnt a free pcb, error */
         return NULL;
     }
-
-    pcb_PTR newPcb;
 
     /* using first pcb on free list */
     newPcb = pcb_FREE_h;

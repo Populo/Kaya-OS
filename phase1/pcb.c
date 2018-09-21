@@ -215,13 +215,13 @@ pcb_PTR outProcQ (pcb_PTR *tp, pcb_PTR p)
     
     searching = headProcQ(*tp);
 
-    while (searching != tp && searching != p)
+    while (searching != *tp && searching != p)
     {
         searching = searching -> pcb_next;
     }
 
     /* we did not find p on the stack */
-    if (searching == &tp)
+    if (searching == *tp)
     {
         return NULL;
     }

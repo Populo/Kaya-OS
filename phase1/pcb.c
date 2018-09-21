@@ -211,18 +211,25 @@ pcb_PTR outProcQ (pcb_PTR *tp, pcb_PTR p)
      * we are not looking for tp, so search for p in the given queue
      * checking head first because loop breaks if checking == tp 
      */
-    pcb_PTR foundP = findP((*tp) -> pcb_next, p, (*tp));
+    pcb_PTR searching;
     
-    /* we did not find p on the queue */
-    if (foundP == NULL)
+    searching = headProcQ(tp);
+
+    while (searching != &tp && searching != p)
+    {
+        searching = searching -> pcb_next;
+    }
+
+    /* we did not find p on the stack */
+    if (searching == &tp)
     {
         return NULL;
     }
 
     /* we found the pcb on the queue */
-    foundP -> pcb_prev -> pcb_next = foundP -> pcb_next;
-    foundP -> pcb_next -> pcb_prev = foundP -> pcb_prev;
-    return foundP;
+    p -> pcb_prev -> pcb_next = p -> pcb_next;
+    p -> pcb_next -> pcb_prev = p -> pcb_prev;
+    return p;
 }
 
 /* =============================== Child Management ========================== */

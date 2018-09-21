@@ -39,7 +39,6 @@
 #define	FALSE		0
 #define ON              1
 #define OFF             0
-#define HIDDEN		static
 #define EOS		'\0'
 
 #define NULL ((void *)0xFFFFFFFF)

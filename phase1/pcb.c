@@ -13,34 +13,6 @@
 
 HIDDEN pcb_PTR pcb_FREE_h;
 
-/* ================ Helper Methods ================== */
-
-/*
- * method to loop through a queue and return the found pcb if found or null
- * 
- * params
- * check -> current procQ we are checking
- * find -> procQ we are looking for
- * tail -> tail pointer of queue
- */
-HIDDEN pcb_PTR findP(pcb_PTR check, pcb_PTR find, pcb_PTR tail)
-{
-    /* loop through if we havent found pcb and we havent made it around the queue */
-    while(check != tail && find != check)
-    {
-        /* check next element in queue */
-        check = check -> pcb_next;
-    }
-    /* we did not find the pcb in the queue */
-    if(check == tail)
-    {
-        check = NULL;
-    }
-
-    return check;
-
-}
-
 /* ================================= queue management ========================== */
 
 /*

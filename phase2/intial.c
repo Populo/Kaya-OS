@@ -5,6 +5,8 @@
 #include "../e/asl.e"
 #include "../e/p2test.e"
 #include "../e/scheduler.e"
+#include "../e/exceptions.e"
+#include "../e/interrupts.e"
 
 #include "../e/initial.e"
 
@@ -26,21 +28,26 @@ int main()
     /* new syscall location */
     stateLocation = (state_PTR) SYSCALLNEWAREA;
     stateLocation -> s_sp = RAMTOP;
+    stateLocation -> s_pc = stateLocation -> s_t9 = (memaddr) sysCallHandler;
     
 
     /* new pbg trap location */
     stateLocation = (state_PTR) PBGTRAPNEWAREA;
     stateLocation -> s_sp = RAMTOP;
+    stateLocation -> s_pc = stateLocation -> s_t9 = (memaddr) pbgTrapHandler;
+
 
 
     /* new tlb management location */
     stateLocation = (state_PTR) TBLMGMTNEWAREA;
     stateLocation -> s_sp = RAMTOP;
+    stateLocation -> s_pc = stateLocation -> s_t9 = (memaddr) tlbTrapHandler;
 
 
     /* new interrupt location */
     stateLocation = (state_PTR) INTPNEWAREA;
     stateLocation -> s_sp = RAMTOP;
+    stateLocation -> s_pc = stateLocation -> s_t9 = (memaddr) ioTrapHandler;
 
     /* init globals */
     readyQueue = mkEmptyProcQ();

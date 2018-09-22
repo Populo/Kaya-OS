@@ -63,3 +63,14 @@ scheduler:
 							need to modify current state:
 								wait bit is on
 								interrupts are enabled
+
+
+Syscall IntHandler
+	255 syscalls
+	9 - 255 -> pass up or die
+	1 - 8 && process in kernel mode
+		handle each individually
+	1 - 8 && user mode
+		privileged instruction program trap
+		(only allowed in kernel mode)
+		

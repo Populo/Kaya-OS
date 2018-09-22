@@ -23,3 +23,43 @@ main:
         insertProcQ(&readyQue, p)
 
         scheduler()
+
+pointers:
+	address in memory
+
+struct:
+	template over section in memory
+	state_t *foo = (state_t *)0x2000008C;
+	foo -> s_pc = (memaddr) IntHandler; (in interrupt.c/e)
+	foo -> s_t9 = (memaddr) IntHandler; <--------- always do both at the same time 
+
+RAMTOP
+	particular memory location
+	devregarea_t *foo2 = (devregarea_t *)0x1000000;
+	foo2 -> s_sp = foo2->rambase + foo2->ramsize 
+
+
+scheduler:
+	gets control at the end of main
+	pcb_PTR currP = removeProcQ(&readyQueue);
+	if (currP == NULL) -- error
+	else
+	runningProcess = currP;
+	Load a timer with the value of a quantum (manual, 5, 50, 500?)
+	LDST(&(currP -> pcb_s));
+	
+
+	special conditions
+		what if there are no more processes?
+			processCount == 0
+				HALT();
+		what if processCount > 0, but the readyQueue is empty?
+			2 cases
+				softBlockCnt (waiting for IO to complete) == 0
+					PANIC
+				softBlockCnt > 0
+					suspended animation
+						wait bit in the status register
+							need to modify current state:
+								wait bit is on
+								interrupts are enabled

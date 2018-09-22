@@ -98,9 +98,27 @@
 /* Maximum number of ProcBLK allowed to be allocated */
 #define MAXPROC 20
 
-#define MAXINT 0xEFFFFFFF
-
 /* Quality of Life Constants */
 #define HIDDEN      static
+#define MAXINT      0xEFFFFFFF
+
+/* Cause Codes */
+#define Int     0 /* external device interrupt */
+#define Mod     1 /* TLB - Modification Exception */
+#define TLBL    2 /* TLB Invalid Exception: on a Load or Fetch */
+#define TLBS    3 /* TLB Invalid Exception: on a Store */
+#define AdEL    4 /* Address Error Exception: on a Load or Fetch */
+#define AdES    5 /* Address Error Exception: on a Load/Store data access */
+#define IBE     6 /* Bus Error Exception: on an instruction fetch */
+#define DBE     7 /* Bus Error Exception: on a Load/Store data access */
+#define Sys     8 /* Syscall Exception */
+#define Bp      9 /* Breakpoint Exception */
+#define RI      10 /* Reserved Instruction Exception */
+#define CpU     11 /* CoProcessor Unusable Exception */
+#define OV      12 /* Arithmetic Overflow Exception */
+#define BdPT    13 /* Bad Page Table */
+#define PTMs    14 /* Page Table Miss */
+
+
 
 #endif

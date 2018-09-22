@@ -36,7 +36,7 @@
 
 /* utility constants */
 #define	TRUE		1
-#define	FALSE		0
+#define	FALSE		!TRUE
 #define ON              1
 #define OFF             0
 #define EOS		'\0'

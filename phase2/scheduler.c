@@ -7,6 +7,8 @@
 
 void scheduler()
 {
+    pcb_PTR runningProcess;
+
     if (processCount == 0)
     {
         HALT();
@@ -34,6 +36,10 @@ void scheduler()
     {
         PANIC();
     }
+
+    runningProcess = currentProcess;
+
+    LDST(&(runningProcess -> pcb_s));
 
     
 }

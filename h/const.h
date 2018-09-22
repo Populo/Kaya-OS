@@ -101,6 +101,7 @@
 /* Quality of Life Constants */
 #define HIDDEN      static
 #define MAXINT      0xEFFFFFFF
+#define QUANTUM     5 /* in milliseconds */
 
 /* Cause Codes */
 #define Int     0 /* external device interrupt */

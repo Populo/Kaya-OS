@@ -15,7 +15,6 @@ int softBlockCount;
 pcb_PTR currentProcess;
 pcb_PTR readyQueue;
 
-
 int main()
 {
     unsigned int RAMTOP;
@@ -29,12 +28,13 @@ int main()
     stateLocation = (state_PTR) SYSCALLNEWAREA;
     stateLocation -> s_sp = RAMTOP;
     stateLocation -> s_pc = stateLocation -> s_t9 = (memaddr) sysCallHandler;
-    
+    stateLocation -> s_status = ALLOFF;
 
     /* new pbg trap location */
     stateLocation = (state_PTR) PBGTRAPNEWAREA;
     stateLocation -> s_sp = RAMTOP;
     stateLocation -> s_pc = stateLocation -> s_t9 = (memaddr) pbgTrapHandler;
+    stateLocation -> s_status = ALLOFF;
 
 
 
@@ -42,12 +42,14 @@ int main()
     stateLocation = (state_PTR) TBLMGMTNEWAREA;
     stateLocation -> s_sp = RAMTOP;
     stateLocation -> s_pc = stateLocation -> s_t9 = (memaddr) tlbTrapHandler;
+    stateLocation -> s_status = ALLOFF;
 
 
     /* new interrupt location */
     stateLocation = (state_PTR) INTPNEWAREA;
     stateLocation -> s_sp = RAMTOP;
     stateLocation -> s_pc = stateLocation -> s_t9 = (memaddr) ioTrapHandler;
+    stateLocation -> s_status = ALLOFF;
 
     /* init globals */
     readyQueue = mkEmptyProcQ();

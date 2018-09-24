@@ -80,11 +80,11 @@ else /* User mode */
 
 void sysCreate(state_PTR state)
 {
-    pcb_PTR child = allocPcb();
-    if(child != NULL)
+    pcb_PTR newProc = allocPcb();
+    if(newProc != NULL)
     {
         ++processCount;
-        insertChild(currentProcess, child);
+        insertChild(currentProcess, newProc);
         state -> s_v0 = 0;
     }
     else
@@ -98,15 +98,16 @@ void sysTerminate()
     pcb_PTR death = currentProcess;
     while(death != NULL)
     {
-        if (currentProcess -> pcb_child == NULL) 
+        if (emptyChild(currentProcess -> pcb_child)) 
         {
+            outProcQ(readyQueue, currentProcess);
             freePcb(currentProcess);
             --processCount;
             death = NULL;
         }
         else
         {
-            if(death -> pcb_child != NULL)
+            if(!emptyChild(death -> pcb_child))
             {
                 death = death -> pcb_child;
             }

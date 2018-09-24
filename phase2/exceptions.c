@@ -100,7 +100,6 @@ void sysTerminate()
     {
         if (emptyChild(currentProcess -> pcb_child)) 
         {
-            outProcQ(readyQueue, currentProcess);
             freePcb(currentProcess);
             --processCount;
             death = NULL;

@@ -145,5 +145,4 @@
 #define WAIT_FOR_CLOCK                      7    
 #define WAIT_FOR_IO_DEVICE                  8
 
-
 #endif

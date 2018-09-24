@@ -145,5 +145,10 @@
 #define WAIT_FOR_CLOCK                      7    
 #define WAIT_FOR_IO_DEVICE                  8
 
+#define TLB                                 0
+#define PGMTRAP                             1
+#define SYSBP                               2
+
+
 
 #endif

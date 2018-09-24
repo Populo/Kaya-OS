@@ -91,6 +91,14 @@ pcb_PTR allocPcb ()
     /* semaphore values to null */
     newPcb -> pcb_semAdd = NULL;
 
+    /* PULL UP AND DIE MF */
+    newPcb -> oldPGM = NULL;
+    newPcb -> newPGM = NULL;
+    newPcb -> oldSys = NULL;
+    newPcb -> newSys = NULL;
+    newPcb -> oldTLB = NULL;
+    newPcb -> oldTLB = NULL;
+
 
     return newPcb;
 }

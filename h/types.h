@@ -101,6 +101,13 @@ typedef struct pcb_t
 
 	cpu_t 			cpu_time; 		/* time the process has spent on the CPU in microseconds */
 
+	state_PTR		oldSys,			/* For pull up and die */
+					newSys,
+					oldPGM,
+					newPGM,
+					oldTLB,
+					newTLB;
+
 } pcb_t, *pcb_PTR;
 
 /* semaphore descriptor type */

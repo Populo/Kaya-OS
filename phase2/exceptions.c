@@ -15,11 +15,10 @@ HIDDEN void sysCreate(state_PTR state);
 HIDDEN void sysTerminate();
 HIDDEN void sysVerhogen(int *semAdd);
 HIDDEN void sysPasseren(int *semAdd);
-HIDDEN void sysSpecify(int type, state_PTR old, state_PTR new);
 HIDDEN void sysCPUTime(state_PTR state);
 HIDDEN void sysWaitClock();
 HIDDEN void sysWaitIO(int interruptLine, int deviceNum, int isTerminal);
-HIDDEN void PASSUPORDIE();
+HIDDEN void pullUpAndDie(int type, state_PTR old, state_PTR new);
 
 void copyState(state_PTR old, state_PTR new);
 
@@ -52,7 +51,7 @@ if(old -> s_status & KUON == ALLOFF) /* Kernel mode on */
             sysPasseren(old -> s_a1);
             break;
         case SPECIFY_EXCEPTION_STATE_VECTOR:
-            sysSpecify(old -> s_a1, old -> s_a2, old -> s_a3);
+            pullUpAndDie(old -> s_a1, old -> s_a2, old -> s_a3);
             break;
         case GET_CPU_TIME:
             sysCPUTime(old);
@@ -91,6 +90,7 @@ void sysCreate(state_PTR state)
     {
         state -> s_v0 = -1;
     }
+    /* LDST  we need this at some point on a lot of the syscalls */
 }
 
 void sysTerminate()
@@ -100,10 +100,10 @@ void sysTerminate()
     {
         if (emptyChild(currentProcess -> pcb_child)) 
         {
-            outProcQ(readyQueue, currentProcess);
             freePcb(currentProcess);
             --processCount;
             death = NULL;
+            currentProcess = NULL;
         }
         else
         {
@@ -115,7 +115,7 @@ void sysTerminate()
             {
                 death = death -> pcb_parent;
                 freePcb(removeChild(death));
-                --processCount;               
+                --processCount;           
             }
         }
     }
@@ -129,11 +129,6 @@ void sysVerhogen(int *semAdd)
 void sysPasseren(int *semAdd)
 {
 
-}
-
-void sysSpecify(int type, state_PTR old, state_PTR new)
-{
-    
 }
 
 void sysCPUTime(state_PTR state)
@@ -151,9 +146,38 @@ void sysWaitIO(int interruptLine, int deviceNum, int isTerminal)
 
 }
 
-HIDDEN void PASSUPORDIE()
+HIDDEN void pullUpAndDie(int type, state_PTR old, state_PTR new)
 {
-
+    switch(type)
+    {
+        case TLB:
+            if(currentProcess -> oldTLB != NULL)
+            {
+                sysTerminate();
+            }
+            break;
+        case PGMTRAP: 
+            if(currentProcess -> oldPGM != NULL)
+            {
+                sysTerminate();
+            }              
+            break;
+        case SYSBP: 
+            if(currentProcess -> oldSys != NULL)
+            {
+                sysTerminate();
+            }
+            break;
+        default:
+            sysTerminate();
+            break;
+    }
+    if(currentProcess != NULL)
+    {
+        copyState(old, new);
+        state_PTR newLocation = type == TLB ? currentProcess -> newTLB : type == PGMTRAP ? currentProcess -> newPGM : type == SYSBP ? currentProcess -> newSys : NULL;
+        LDST(&newLocation);
+    }
 }
 
 

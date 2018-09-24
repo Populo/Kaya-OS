@@ -95,7 +95,7 @@ void sysCreate(state_PTR state)
 
 void sysTerminate()
 {
-    pcb_PTR death = currentProcess -> pcb_child;
+    pcb_PTR death = currentProcess;
     while(death != NULL)
     {
         if (currentProcess -> pcb_child == NULL) 

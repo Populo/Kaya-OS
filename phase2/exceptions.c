@@ -98,7 +98,7 @@ void sysTerminate()
     pcb_PTR death = currentProcess -> pcb_child;
     while(death != NULL)
     {
-        if (currentProcess -> pcb_child == NULL) 
+        if (emptyChild(currentProcess -> pcb_child)) 
         {
             removeProcQ(currentProcess);
             freePcb(currentProcess);
@@ -107,7 +107,7 @@ void sysTerminate()
         }
         else
         {
-            if(death -> pcb_child != NULL)
+            if(!emptyChild(death -> pcb_child))
             {
                 death = death -> pcb_child;
             }

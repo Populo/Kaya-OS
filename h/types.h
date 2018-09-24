@@ -50,7 +50,7 @@ typedef struct state_t {
 	unsigned int	s_cause;
 	unsigned int	s_status;
 	unsigned int 	s_pc;
-	int	 			s_reg[STATEREGNUM];
+	int	 			s_reg[STATEREGNUM]; 
 
 } state_t, *state_PTR;
 
@@ -97,7 +97,9 @@ typedef struct pcb_t
 					*pcb_nextSib;	/* pointer to the next sibling */
 
 	state_t			pcb_s;			/* processor state */
-	int				*pcb_semAdd;		/* pointer to semaphore on which process is blocked */
+	int				*pcb_semAdd;	/* pointer to semaphore on which process is blocked */
+
+	cpu_t 			cpu_time; 		/* time the process has spent on the CPU in microseconds */
 
 } pcb_t, *pcb_PTR;
 

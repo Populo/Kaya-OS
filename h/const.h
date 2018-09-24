@@ -120,6 +120,29 @@
 #define BdPT    13 /* Bad Page Table */
 #define PTMs    14 /* Page Table Miss */
 
+/* Status codes of registers? */
+/* It is an AND to turn registers off and an OR to turn registers on. */
+#define ALLOFF  0x00000000 /* Turn all of them off */
+#define VMON    0x02000000 /* Turns on virtual memory */
+#define VMOFF   0xFDFFFFFF /* Turns off virtual memory */
+#define LTON    0x08000000 /* Turns on local time */
+#define LTOFF   0xF7FFFFFF /* Turns off local time */
+#define IMON    0x0000FF00 /* Turns on interrupt mask */
+#define IMOFF   0xFFFF00FF /* Turns off interrupt mask */
+#define KUON    0x00000008 /* Puts it into user mode */
+#define KUOFF   0xFFFFFFF7 /* Puts it into kernel mode */
+#define IEON    0x00000004 /* Turns on global interrupts */
+#define IEOFF   0xFFFFFFFB /* Turns off global interrupts */
 
+
+/* Syscalls */
+#define CREATE_PROCESS                      1
+#define TERMINATE_PROCESS                   2
+#define VERHOGEN                            3
+#define PASSEREN                            4
+#define SPECIFY_EXCEPTION_STATE_VECTOR      5
+#define GET_CPU_TIME                        6
+#define WAIT_FOR_CLOCK                      7    
+#define WAIT_FOR_IO_DEVICE                  8
 
 #endif

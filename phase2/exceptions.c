@@ -11,14 +11,14 @@ extern int softBlockCount;
 extern pcb_PTR currentProcess;
 extern pcb_PTR readyQueue;
 
-HIDDEN void sysCreate();
+HIDDEN void sysCreate(state_PTR state);
 HIDDEN void sysTerminate();
-HIDDEN void sysVerhogen();
-HIDDEN void sysPasseren();
-HIDDEN void sysSpecify();
-HIDDEN void sysCPUTime();
+HIDDEN void sysVerhogen(int *semAdd);
+HIDDEN void sysPasseren(int *semAdd);
+HIDDEN void sysSpecify(int type, state_PTR old, state_PTR new);
+HIDDEN void sysCPUTime(state_PTR state);
 HIDDEN void sysWaitClock();
-HIDDEN void sysWaitIO();
+HIDDEN void sysWaitIO(int interruptLine, int deviceNum, int isTerminal);
 HIDDEN void PASSUPORDIE();
 
 void copyState(state_PTR old, state_PTR new);
@@ -147,7 +147,7 @@ void sysWaitClock()
 
 void sysWaitIO(int interruptLine, int deviceNum, int isTerminal)
 {
-    
+
 }
 
 HIDDEN void PASSUPORDIE()

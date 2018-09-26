@@ -3,6 +3,7 @@
 
 
 #include "../e/pcb.e"
+#include "../e/asl.e"
 
 #include "../e/exceptions.e"
 
@@ -113,6 +114,10 @@ void sysTerminate()
             }
             else
             {
+                if (death -> pcb_semAdd != NULL)
+                {
+                    removeBlocked(death -> pcb_semAdd);
+                }
                 death = death -> pcb_parent;
                 freePcb(removeChild(death));
                 --processCount;           
@@ -148,35 +153,43 @@ void sysWaitIO(int interruptLine, int deviceNum, int isTerminal)
 
 HIDDEN void pullUpAndDie(int type, state_PTR old, state_PTR new)
 {
+    state_PTR newLocation;
+
     switch(type)
     {
         case TLB:
             if(currentProcess -> oldTLB != NULL)
             {
+                newLocation = currentProcess -> newTLB;
                 sysTerminate();
             }
             break;
         case PGMTRAP: 
             if(currentProcess -> oldPGM != NULL)
             {
+                newLocation = currentProcess -> oldPGM;
                 sysTerminate();
             }              
             break;
         case SYSBP: 
             if(currentProcess -> oldSys != NULL)
             {
+                newLocation = currentProcess -> oldSys;
                 sysTerminate();
             }
             break;
         default:
+            newLocation = NULL;
             sysTerminate();
             break;
     }
     if(currentProcess != NULL)
     {
         copyState(old, new);
-        state_PTR newLocation = type == TLB ? currentProcess -> newTLB : type == PGMTRAP ? currentProcess -> newPGM : type == SYSBP ? currentProcess -> newSys : NULL;
-        LDST(&newLocation);
+        if (newLocation != NULL)
+        {
+            LDST(&newLocation);
+        }
     }
 }
 

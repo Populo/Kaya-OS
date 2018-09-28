@@ -68,7 +68,6 @@ HIDDEN semd_PTR searchASL(int *semAdd)
     /* error case, return the last real element in the stack */
     if (semAdd == NULL)
     {
-        addokbuf("fucking cock \n");
         semAdd = (int*) MAXINT;
     }
 

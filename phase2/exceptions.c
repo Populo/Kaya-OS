@@ -64,7 +64,7 @@ if(old -> s_status & KUON == ALLOFF) /* Kernel mode on */
             sysWaitIO(old -> s_a1, old -> s_a2, old -> s_a3);
             break;
         default: /* handle 9-255 */
-            PASSUPORDIE();
+            pullUpAndDie(old -> s_a1, old -> s_a2, old -> s_a3);
             break;
     }
 }

@@ -1,9 +1,10 @@
 #include "../h/const.h"
 #include "../h/types.h"
-
 #include "../e/initial.e"
-
-#include "../e/interrupts.e"
+#include "../e/scheduler.e"
+#include "../e/pcb.e"
+#include "../e/asl.e"
+#include "/usr/local/include/umps2/umps/libumps.e"
 
 extern int processCount;
 extern int softBlockCount;
@@ -46,7 +47,7 @@ void ioTrapHandler()
     }
     else if((oldCause & THIRD) != 0)
     {
-        ldit(INTTIME);
+        LDIT(INTTIME);
         semAdd = (int*) &(sem[TOTALSEM-1]);
         while(headBlocked(semAdd) != NULL)
         {

@@ -14,6 +14,7 @@
 
 
 #define ROMPAGESTART	0x20000000	 /* ROM Reserved Page */
+#define INTTIME			100000 		/* interval timer period */
 
 
 /* timer, timescale, TOD-LO and other bus regs */
@@ -64,6 +65,16 @@
 #define DEVREGLEN	4	/* device register field length in bytes & regs per dev */
 #define DEVREGSIZE	16 	/* device register size in bytes */
 #define DEVNOSEM    3   /* we dont know what the first three devices are */
+
+/* device & line number bits on */
+#define FIRST			0x1
+#define SECOND			0x2
+#define THIRD			0x4
+#define FOURTH			0x8
+#define FIFTH			0x10
+#define SIXTH			0x20
+#define SEVENTH			0x40
+#define EIGHTH			0x80
 
 /* device register field number for non-terminal devices */
 #define STATUS		0

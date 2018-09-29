@@ -11,6 +11,10 @@ extern pcb_PTR currProc;
 extern pcb_PTR readyQueue;
 extern int sem[TOTALSEM];
 
+extern cpu_t TODStarted;
+
+extern void copyState(state_PTR old, state_PTR new);
+
 void ioTrapHandler()
 {
     unsigned int oldCause;
@@ -79,7 +83,7 @@ void ioTrapHandler()
     {
         interruptNum = TERMINT;
     }
-    else
+    else 
     {
         PANIC();
     }
@@ -101,6 +105,90 @@ void ioTrapHandler()
     }
     else
     {
-        tranStatus = (devRegNum -> /* bitch i dont know */ )
+        tranStatus = (devRegNum -> t_transm_status & 0xFF);
+
+        if(tranStatus == 3 || tranStatus == 4 || tranStatus == 5)
+        {
+            i = (DEVPERINT * (interruptNum - DEVNOSEM)) + deviceNum;
+            status = devRegNum -> t_recv_status;
+            devRegNum -> t_recv_command = ACK;
+        } 
+        else
+        {
+            i = DEVPERINT * (interruptNum - DEVNOSEM + 1) + deviceNum;
+            status = devRegNum -> t_recv_status;
+            devRegNum -> t_recv_command = ACK;
+        }
     }
+    semAdd = &(sem[i]);
+    ++(*semAdd);
+
+    if((*semAdd) <= 0)
+    {
+        temp = removeBlocked(semAdd);
+        if(temp != NULL)
+        {
+            temp -> pcb_s.s_v0 = status;
+            insertProcQ(&readyQueue, temp);
+            softBlockCount--;
+        }
+        
+    }
+    else
+    {
+        /* LOL FUCK YOU */
+    }
+
+    finish(start);
+}
+
+HIDDEN void finish(cpu_t start)
+{
+        cpu_t end;
+        state_PTR old = (state_PTR) INTPOLDAREA;
+        if(currentProcess != NULL)
+        {
+                STCK(end);
+                TODStarted = TODStarted + (end - start);
+                copyState(old, &(currentProcess -> pcb_s));
+                insertProcQ(&readyQueue, currentProcess);
+        }
+        scheduler();
+}
+
+HIDDEN int getDeviceNumber(unsigned int* bitMap) {
+	unsigned int oldCause = *bitMap;
+	if((oldCause & FIRST) != 0) {
+		return 0;
+	}
+
+	else if((oldCause & SECOND) != 0){
+		return 1;
+	}
+
+	else if((oldCause & THIRD) != 0){
+		return 2;
+	}
+
+	else if((oldCause & FOURTH) != 0){
+		return 3;
+	}
+
+	else if((oldCause & FIFTH) != 0){
+		return 4;
+	}
+
+	else if((oldCause & SIXTH) != 0){
+		return 5;
+	}
+
+	else if((oldCause & SEVENTH) != 0){
+		return 6;
+	}
+
+	else if((oldCause & EIGHTH) != 0){
+		return 7;
+	}
+
+	return -1;
 }

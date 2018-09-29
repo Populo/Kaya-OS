@@ -76,6 +76,10 @@
 #define SEVENTH			0x40
 #define EIGHTH			0x80
 
+/* start of interrupt device bitmap and registers */
+#define INTBITMAP		0x1000003C
+#define INTDEVREG		0x10000050
+
 /* device register field number for non-terminal devices */
 #define STATUS		0
 #define COMMAND		1

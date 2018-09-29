@@ -63,6 +63,7 @@
 
 #define DEVREGLEN	4	/* device register field length in bytes & regs per dev */
 #define DEVREGSIZE	16 	/* device register size in bytes */
+#define DEVNOSEM    3   /* we dont know what the first three devices are */
 
 /* device register field number for non-terminal devices */
 #define STATUS		0
@@ -101,7 +102,11 @@
 /* Quality of Life Constants */
 #define HIDDEN      static
 #define MAXINT      0xEFFFFFFF
-#define QUANTUM     5 /* in milliseconds */
+#define QUANTUM     5000 /* 5 milliseconds in microseconds */
+#define TOTALSEM    49 /* max number of semaphores possible plus 1 for timer */ /* SYSCALL8 */
+
+
+#define ZEROSTATUS  0x0F
 
 /* Cause Codes */
 #define Int     0 /* external device interrupt */
@@ -148,5 +153,5 @@
 #define TLB                                 0
 #define PGMTRAP                             1
 #define SYSBP                               2
-
+  
 #endif

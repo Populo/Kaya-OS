@@ -11,70 +11,84 @@ extern int processCount;
 extern int softBlockCount;
 extern pcb_PTR currentProcess;
 extern pcb_PTR readyQueue;
+extern int deviceSem[TOTALSEM];
+
+extern cpu_t start;
+extern cpu_t current;
 
 HIDDEN void sysCreate(state_PTR state);
 HIDDEN void sysTerminate();
-HIDDEN void sysVerhogen(int *semAdd);
-HIDDEN void sysPasseren(int *semAdd);
+HIDDEN void sysVerhogen(int* semAdd);
+HIDDEN void sysPasseren(state_PTR old);
+HIDDEN void sysSpecifyException(int type, state_PTR old, state_PTR new);
 HIDDEN void sysCPUTime(state_PTR state);
-HIDDEN void sysWaitClock();
-HIDDEN void sysWaitIO(int interruptLine, int deviceNum, int isTerminal);
-HIDDEN void pullUpAndDie(int type, state_PTR old, state_PTR new);
+HIDDEN void sysWaitClock(state_PTR old);
+HIDDEN void sysWaitIO(state_PTR old);
+HIDDEN void pullUpAndDie(int type, state_PTR old);
 
 void copyState(state_PTR old, state_PTR new);
 
 
+void pbgTrapHandler()
+{
+    pullUpAndDie(PGMTRAP, (state_PTR) PGMTRAPOLDAREA);
+}
+
+void tlbTrapHandler()
+{
+    pullUpAndDie(PGMTRAP, (state_PTR) TBLMGMTOLDAREA);
+}
+
+
 void sysCallHandler()
 {
-    /* pc = pc+4 */ /* we need this */
     state_PTR old;
     int sysCall;
 
     old  = (state_PTR) SYSCALLOLDAREA;
-    
-    old -> s_status; /* user mode or kernel mode */
     sysCall = old -> s_a0; /* which syscall was executed */
-
-if(old -> s_status & KUON == ALLOFF) /* Kernel mode on */
-{
-    switch(sysCall)
+    old -> s_pc = old -> s_pc + 4;
+    if(old -> s_status & KUON == ALLOFF) /* Kernel mode on */
     {
-        case CREATE_PROCESS:
-            sysCreate(old -> s_a1);
-            break;
-        case TERMINATE_PROCESS:
-            sysTerminate();
-            break;
-        case VERHOGEN:
-            sysVerhogen(old -> s_a1);
-            break;
-        case PASSEREN:
-            sysPasseren(old -> s_a1);
-            break;
-        case SPECIFY_EXCEPTION_STATE_VECTOR:
-            pullUpAndDie(old -> s_a1, old -> s_a2, old -> s_a3);
-            break;
-        case GET_CPU_TIME:
-            sysCPUTime(old);
-            break;
-        case WAIT_FOR_CLOCK:
-            sysWaitClock();
-            break;
-        case WAIT_FOR_IO_DEVICE:
-            sysWaitIO(old -> s_a1, old -> s_a2, old -> s_a3);
-            break;
-        default: /* handle 9-255 */
-            pullUpAndDie(old -> s_a1, old -> s_a2, old -> s_a3);
-            break;
+        switch(sysCall)
+        {
+            case CREATE_PROCESS:
+                sysCreate(old -> s_a1);
+                break;
+            case TERMINATE_PROCESS:
+                sysTerminate();
+                break;
+            case VERHOGEN:
+                sysVerhogen(old -> s_a1);
+                break;
+            case PASSEREN:
+                sysPasseren(old);
+                break;
+            case SPECIFY_EXCEPTION_STATE_VECTOR:
+                sysSpecifyException(old -> s_a1, old -> s_a2, old -> s_a3);
+                break;
+            case GET_CPU_TIME:
+                sysCPUTime(old);
+                break;
+            case WAIT_FOR_CLOCK:
+                sysWaitClock(old);
+                break;
+            case WAIT_FOR_IO_DEVICE:
+                sysWaitIO(old);
+                break;
+            default: /* handle 9-255 */
+                pullUpAndDie(old -> s_a1, old -> s_a2);
+                break;
+        }
+        LDST(&old);
     }
-}
-else /* User mode */
-{
-    state_PTR oldTrap = (state_PTR)PGMTRAPOLDAREA;
-    copyState((state_PTR)SYSCALLOLDAREA, oldTrap);
-    oldTrap -> s_cause = RI;
-    pbgTrapHandler();
-}
+    else /* User mode */
+    {
+        state_PTR oldTrap = (state_PTR)PGMTRAPOLDAREA;
+        copyState(old, oldTrap);
+        oldTrap -> s_cause = RI;
+        pbgTrapHandler();
+    }
     
 }
 
@@ -91,7 +105,6 @@ void sysCreate(state_PTR state)
     {
         state -> s_v0 = -1;
     }
-    /* LDST  we need this at some point on a lot of the syscalls */
 }
 
 void sysTerminate()
@@ -124,55 +137,143 @@ void sysTerminate()
             }
         }
     }
+    scheduler();
 }
 
-void sysVerhogen(int *semAdd)
+void sysVerhogen(int* semAdd)
 {
-
+    pcb_PTR new = mkEmptyProcQ();
+    *semAdd++;
+    if((*semAdd) <= 0)
+    {
+        new = removeBlocked(semAdd);
+        if(!emptyProcQ(new))
+        {
+            insertProcQ(&readyQueue, new);
+        }
+    } 
 }
 
-void sysPasseren(int *semAdd)
+void sysPasseren(state_PTR old)
 {
+    int* semAdd;
+    semAdd = old -> s_a1;
+    --(*semAdd);
+    if((*semAdd) < 0)
+    {
+        copyState(old, &currentProcess -> pcb_s);
+        insertBlocked(semAdd, currentProcess);
+        scheduler();
+    }
+}
 
+void sysSpecifyException(int type, state_PTR old, state_PTR new)
+{
+    switch(type)
+    {
+        case TLBTRAP:
+            if(currentProcess -> newTLB != NULL)
+            {
+                sysTerminate();
+            }
+            currentProcess -> newTLB = (state_PTR) new;
+            currentProcess -> oldTLB = (state_PTR) old;
+            break;
+        case PROGTRAP:
+            if(currentProcess -> newPGM != NULL)
+            {
+                sysTerminate();
+            }
+            currentProcess -> newPGM = (state_PTR) new;
+            currentProcess -> oldPGM = (state_PTR) old;
+            break;
+        case SYSTRAP:
+            if(currentProcess -> newSys != NULL)
+            {
+                sysTerminate();
+            }
+            currentProcess -> newSys = (state_PTR) new;
+            currentProcess -> oldSys = (state_PTR) old;
+            break;
+        default:
+            sysTerminate();
+            break; /* fuck you */
+    }
 }
 
 void sysCPUTime(state_PTR state)
 {
+    cpu_t t;
+    STCK(t);
+
+    currentProcess -> cpu_time = currentProcess -> cpu_time + (t - start);
     state -> s_v0 = currentProcess -> cpu_time;
+    STCK(start);
 }
 
-void sysWaitClock()
+void sysWaitClock(state_PTR old)
 {
-
+    int *semAdd = (int *)&(deviceSem[TOTALSEM - 1]); /* final semAdd is timer */
+    *semAdd--;
+    insertBlocked(semAdd, currentProcess);
+    copyState(old, &(currentProcess -> pcb_s));
+    softBlockCount++;
+    scheduler();
 }
 
-void sysWaitIO(int interruptLine, int deviceNum, int isTerminal)
+void sysWaitIO(state_PTR old)
 {
+    int semAdd, interruptLine, deviceNum, isTerminal;
+    interruptLine = old -> s_a1;
+    deviceNum = old -> s_a2;
+    isTerminal = old -> s_a3;
+
+
+    if(interruptLine < DISKINT || interruptLine > TERMINT)
+    {
+        sysTerminate();
+    }  
+
+    if(interruptLine == TERMINT && isTerminal)
+    {
+        interruptLine++;
+    }  
+    semAdd = DEVPERINT * (interruptLine - DEVNOSEM) + deviceNum;
+
+    deviceSem[semAdd]--;
+
+    if(deviceSem[semAdd] < 0)
+    {
+        insertBlocked(&deviceSem[semAdd], currentProcess);
+        copyState(old, &(currentProcess -> pcb_s));
+        softBlockCount++;
+        scheduler();
+    }
 
 }
 
-HIDDEN void pullUpAndDie(int type, state_PTR old, state_PTR new)
+HIDDEN void pullUpAndDie(int type, state_PTR old)
 {
     state_PTR newLocation;
 
     switch(type)
     {
         case TLB:
-            if(currentProcess -> oldTLB != NULL)
+            if(currentProcess -> newTLB != NULL)
             {
                 newLocation = currentProcess -> newTLB;
                 sysTerminate();
             }
             break;
         case PGMTRAP: 
-            if(currentProcess -> oldPGM != NULL)
+            if(currentProcess -> newPGM != NULL)
             {
                 newLocation = currentProcess -> oldPGM;
                 sysTerminate();
             }              
             break;
         case SYSBP: 
-            if(currentProcess -> oldSys != NULL)
+            if(currentProcess -> newSys != NULL)
             {
                 newLocation = currentProcess -> oldSys;
                 sysTerminate();
@@ -185,20 +286,13 @@ HIDDEN void pullUpAndDie(int type, state_PTR old, state_PTR new)
     }
     if(currentProcess != NULL)
     {
-        copyState(old, new);
+        copyState(old, newLocation);
         if (newLocation != NULL)
         {
             LDST(&newLocation);
         }
     }
 }
-
-
-void pbgTrapHandler()
-{
-
-}
-
 
 void copyState(state_PTR old, state_PTR new)
 {

@@ -16,6 +16,9 @@ extern cpu_t TODStarted;
 
 extern void copyState(state_PTR old, state_PTR new);
 
+HIDDEN void finish(cpu_t start);
+HIDDEN int getDeviceNumber(unsigned int* bitMap);
+
 void ioTrapHandler()
 {
     unsigned int oldCause;

@@ -16,8 +16,6 @@ extern pcb_PTR currentProcess;
 extern pcb_PTR readyQueue;
 extern int sem[TOTALSEM];
 
-extern cpu_t TODStarted;
-
 int main()
 {
     unsigned int RAMTOP;
@@ -64,6 +62,12 @@ int main()
     initPcbs();
     initASL();
 
+    int temp;
+    for(temp = 0; temp < TOTALSEM; temp++)
+    {
+        sem[temp] = 0;
+    }
+
     /* init first process */
     currentProcess = allocPcb();
     /* penultimate page of physical memory */
@@ -78,8 +82,10 @@ int main()
     ++processCount;
 
     insertProcQ(&readyQueue, currentProcess);
+    currentProcess = NULL;
+    LDIT(INTTIME);
 
     scheduler();
 
-    return 0;
+    return -1;
 }

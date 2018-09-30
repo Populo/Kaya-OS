@@ -13,6 +13,9 @@ extern pcb_PTR currentProcess;
 extern pcb_PTR readyQueue;
 extern int sem[TOTALSEM];
 
+extern cpu_t TODStarted;
+
+
 extern cpu_t start;
 extern cpu_t current;
 

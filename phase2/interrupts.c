@@ -8,7 +8,7 @@
 
 extern int processCount;
 extern int softBlockCount;
-extern pcb_PTR currProc;
+extern pcb_PTR currentProcess;
 extern pcb_PTR readyQueue;
 extern int sem[TOTALSEM];
 

@@ -11,7 +11,7 @@ extern int processCount;
 extern int softBlockCount;
 extern pcb_PTR currentProcess;
 extern pcb_PTR readyQueue;
-extern int deviceSem[TOTALSEM];
+extern int sem[TOTALSEM];
 
 extern cpu_t start;
 extern cpu_t current;
@@ -213,7 +213,7 @@ void sysCPUTime(state_PTR state)
 
 void sysWaitClock(state_PTR old)
 {
-    int *semAdd = (int *)&(deviceSem[TOTALSEM - 1]); /* final semAdd is timer */
+    int *semAdd = (int *)&(sem[TOTALSEM - 1]); /* final semAdd is timer */
     *semAdd--;
     insertBlocked(semAdd, currentProcess);
     copyState(old, &(currentProcess -> pcb_s));
@@ -240,11 +240,11 @@ void sysWaitIO(state_PTR old)
     }  
     semAdd = DEVPERINT * (interruptLine - DEVNOSEM) + deviceNum;
 
-    deviceSem[semAdd]--;
+    sem[semAdd]--;
 
-    if(deviceSem[semAdd] < 0)
+    if(sem[semAdd] < 0)
     {
-        insertBlocked(&deviceSem[semAdd], currentProcess);
+        insertBlocked(&sem[semAdd], currentProcess);
         copyState(old, &(currentProcess -> pcb_s));
         softBlockCount++;
         scheduler();

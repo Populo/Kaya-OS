@@ -144,7 +144,7 @@
 /* It is an AND to turn registers off and an OR to turn registers on. */
 #define ALLOFF  0x00000000 /* Turn all of them off */
 #define VMON    0x02000000 /* Turns on virtual memory */
-#define VMOFF   0xFDFFFFFF /* Turns off virtual memory */
+#define VMOFF   0xF8FFFFFF /* Turns off virtual memory */
 #define LTON    0x08000000 /* Turns on local time */
 #define LTOFF   0xF7FFFFFF /* Turns off local time */
 #define IMON    0x0000FF00 /* Turns on interrupt mask */

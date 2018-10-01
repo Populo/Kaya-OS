@@ -10,11 +10,11 @@
 
 #include "../e/initial.e"
 
-extern int processCount;
-extern int softBlockCount;
-extern pcb_PTR currentProcess;
-extern pcb_PTR readyQueue;
-extern int sem[TOTALSEM];
+int processCount;
+int softBlockCount;
+pcb_PTR currentProcess;
+pcb_PTR readyQueue;
+int sem[TOTALSEM];
 
 int main()
 {

@@ -307,3 +307,4 @@ void copyState(state_PTR old, state_PTR new)
     for(i = 0; i<STATEREGNUM; i++)
         new -> s_reg[i] = old -> s_reg[i];
 }
+

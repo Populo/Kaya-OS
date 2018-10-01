@@ -197,3 +197,4 @@ HIDDEN int getDeviceNumber(unsigned int* bitMap) {
 
 	return -1;
 }
+

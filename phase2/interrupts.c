@@ -93,7 +93,7 @@ void ioTrapHandler()
         PANIC();
     }
 
-    deviceNum = getDeviceNum((unsigned int*) (INTBITMAP + ((interruptNum - DEVNOSEM) * WORDLEN)));
+    deviceNum = getDeviceNumber((unsigned int*) (INTBITMAP + ((interruptNum - DEVNOSEM) * WORDLEN)));
 
     if(deviceNum == -1)
     {

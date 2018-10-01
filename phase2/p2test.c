@@ -15,6 +15,12 @@
 
 #include "../h/const.h"
 #include "../h/types.h"
+#include "../e/interrupts.e"
+#include "../e/exceptions.e"
+#include "../e/pcb.e"
+#include "../e/asl.e"
+#include "../e/scheduler.e"
+#include "../e/initial.e"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
 typedef unsigned int devregtr;

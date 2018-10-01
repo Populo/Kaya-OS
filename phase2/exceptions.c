@@ -62,7 +62,7 @@ void sysCallHandler()
                 sysTerminate();
                 break;
             case VERHOGEN:
-                sysVerhogen(old -> s_a1);
+                sysVerhogen((int*) old -> s_a1);
                 break;
             case PASSEREN:
                 sysPasseren(old);

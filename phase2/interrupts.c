@@ -13,7 +13,7 @@ extern pcb_PTR currentProcess;
 extern pcb_PTR readyQueue;
 extern int sem[TOTALSEM];
 
-extern cpu_t TODStarted;
+cpu_t TODStarted;
 
 extern void copyState(state_PTR old, state_PTR new);
 

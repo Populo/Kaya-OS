@@ -16,8 +16,8 @@ extern int sem[TOTALSEM];
 extern cpu_t TODStarted;
 
 
-extern cpu_t start;
-extern cpu_t current;
+cpu_t start;
+cpu_t current;
 
 HIDDEN void sysCreate(state_PTR state);
 HIDDEN void sysTerminate();

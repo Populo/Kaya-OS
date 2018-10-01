@@ -5,6 +5,13 @@
 #include "../h/types.h"
 #include "../h/const.h"
 
+extern int processCount;
+extern int softBlockCount;
+extern pcb_PTR currentProcess;
+extern pcb_PTR readyQueue;
+
+cpu_t TODStarted;
+
 void scheduler()
 {
     pcb_PTR runningProcess;

@@ -42,13 +42,13 @@ void scheduler()
     }
     if(processCount > 0 && softBlockCount > 0)
     {
-      /*  setSTATUS((getSTATUS() | ALLOFF | IEON | IECON | IMON)); */
+        setSTATUS((getSTATUS() | ALLOFF | IEON | IECON | IMON)); 
         WAIT();
     }
 
     currentProcess = removeProcQ(&readyQueue);
     STCK(TODStarted);
-    setTimer(QUANTUM);
+    /*setTimer(QUANTUM);*/
     LDST(&(currentProcess -> pcb_s));
 
     

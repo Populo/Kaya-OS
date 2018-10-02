@@ -34,6 +34,7 @@ void scheduler()
         }
     }
     currentProcess = removeProcQ(&readyQueue);
+    --processCount;
     STCK(TODStarted);
     /*setTimer(QUANTUM);*/
     LDST(&(currentProcess -> pcb_s));

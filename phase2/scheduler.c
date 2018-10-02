@@ -33,6 +33,11 @@ void scheduler()
             HALT();
         }
     }
+    currentProcess = removeProcQ(&readyQueue);
+    STCK(TODStarted);
+    /*setTimer(QUANTUM);*/
+    LDST(&(currentProcess -> pcb_s));
+
     
     
 
@@ -46,11 +51,7 @@ void scheduler()
         WAIT();
     }
 
-    currentProcess = removeProcQ(&readyQueue);
-    STCK(TODStarted);
-    /*setTimer(QUANTUM);*/
-    LDST(&(currentProcess -> pcb_s));
-
+    
     
 }
 

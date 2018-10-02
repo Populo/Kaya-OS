@@ -4,6 +4,7 @@
 
 #include "../h/types.h"
 #include "../h/const.h"
+#include "/usr/local/include/umps2/umps/libumps.e"
 
 extern int processCount;
 extern int softBlockCount;

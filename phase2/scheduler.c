@@ -15,7 +15,6 @@ cpu_t TODStarted;
 
 void scheduler()
 {
-    pcb_PTR runningProcess;
 
     if (processCount == 0)
     {
@@ -43,7 +42,7 @@ void scheduler()
     }
     if(processCount > 0 && softBlockCount > 0)
     {
-        setSTATUS((getSTATUS() | ALLOFF | IEON | IECON | IMON));
+      /*  setSTATUS((getSTATUS() | ALLOFF | IEON | IECON | IMON)); */
         WAIT();
     }
 

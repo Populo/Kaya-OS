@@ -15,7 +15,11 @@ cpu_t TODStarted;
 
 void scheduler()
 {
-
+    if(currentProcess != NULL)
+    {
+        STCK(currentTOD);
+        currentProcess -> cpu_time = (currentProcess -> cpu_time) + (currentTOD - TODStarted);
+    }
     if (processCount == 0)
     {
         HALT();

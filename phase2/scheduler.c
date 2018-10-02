@@ -11,6 +11,7 @@ extern int softBlockCount;
 extern pcb_PTR currentProcess;
 extern pcb_PTR readyQueue;
 
+cpu_t currentTOD;
 cpu_t TODStarted;
 
 void scheduler()

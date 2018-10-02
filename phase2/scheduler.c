@@ -33,20 +33,23 @@ void scheduler()
             HALT();
         }
     }
+    
+    
 
-
-    pcb_PTR currentProcess;
-
-    currentProcess = removeProcQ(&readyQueue);
-
-    if (currentProcess == NULL)
+    if (currentProcess > 0 && softBlockCount == 0)
     {
         PANIC();
     }
+    if(processCount > 0 && softBlockCount > 0)
+    {
+        setSTATUS((getSTATUS() | ALLOFF | IEON | IECON | IMON));
+        WAIT();
+    }
 
-    runningProcess = currentProcess;
-
-    LDST(&(runningProcess -> pcb_s));
+    currentProcess = removeProcQ(&readyQueue);
+    STCK(TODStarted);
+    setTimer(QUANTUM);
+    LDST(&(currentProcess -> pcb_s));
 
     
 }

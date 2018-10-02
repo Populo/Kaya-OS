@@ -153,6 +153,7 @@
 #define KUOFF   0xFFFFFFF7 /* Puts it into kernel mode */
 #define IEON    0x00000004 /* Turns on global interrupts */
 #define IEOFF   0xFFFFFFFB /* Turns off global interrupts */
+#define IECON   0x00000001 /* Turns on current interrupts */
 
 
 /* Syscalls */

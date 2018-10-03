@@ -14,20 +14,33 @@ extern pcb_PTR readyQueue;
 cpu_t currentTOD;
 cpu_t TODStarted;
 
+
+int debugA(int i)
+{
+    int temp;
+    temp = i;
+}
+
 void scheduler()
 {
+    debugA(1);
     if(currentProcess != NULL)
     {
+        debugA(100);
         STCK(currentTOD);
         currentProcess -> cpu_time = (currentProcess -> cpu_time) + (currentTOD - TODStarted);
+        debugA(110);
     }
     if (processCount == 0)
     {
+        debugA(200);
         HALT();
     }
 
+    debugA(2);
     if (emptyProcQ(readyQueue))
     {
+        debugA(300);
         if (softBlockCount == 0)
         {
             PANIC();
@@ -38,13 +51,15 @@ void scheduler()
             HALT();
         }
     }
+    debugA(3);
     currentProcess = removeProcQ(&readyQueue);
     --processCount;
+    debugA(4);
     STCK(TODStarted);
     /*setTimer(QUANTUM);*/
     LDST(&(currentProcess -> pcb_s));
 
-    
+    debugA(5);
     
 
     if (currentProcess > 0 && softBlockCount == 0)
@@ -57,7 +72,7 @@ void scheduler()
         WAIT();
     }
 
-    
+    debugA(6);
     
 }
 

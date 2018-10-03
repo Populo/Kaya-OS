@@ -56,6 +56,7 @@ void scheduler()
     --processCount;
     debugA(4);
     STCK(TODStarted);
+    debugA(999);
     /*setTimer(QUANTUM);*/
     LDST(&(currentProcess -> pcb_s));
 

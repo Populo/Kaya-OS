@@ -56,16 +56,15 @@ int main()
     currentProcess = NULL;
     processCount = 0;
     softBlockCount = 0;
-
-    /* allocate pcbs and semd freelists */
-    initPcbs();
-    initASL();
-
     int temp;
     for(temp = 0; temp < TOTALSEM; temp++)
     {
         sem[temp] = 0;
     }
+
+    /* allocate pcbs and semd freelists */
+    initPcbs();
+    initASL();
 
     /* init first process */
     currentProcess = allocPcb();
@@ -76,7 +75,7 @@ int main()
     /* i dont know what this is but we need to set this too */
     currentProcess -> pcb_s.s_t9 = (memaddr) test;
     /* set the status */
-    currentProcess -> pcb_s.s_status = ALLOFF | IEON | IMON | LTON | KUON;
+    currentProcess -> pcb_s.s_status = ALLOFF | IEON | IMON | KUON;
 
     ++processCount;
 

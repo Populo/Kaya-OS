@@ -146,10 +146,10 @@ void sysTerminate()
 void sysVerhogen(int* semAdd)
 {
     pcb_PTR new = mkEmptyProcQ();
-    semAdd++;
-    if(semAdd <= 0)
+    sem[*semAdd]++;
+    if(sem[*semAdd] <= 0)
     {
-        new = removeBlocked(*semAdd);
+        new = removeBlocked(semAdd);
         if(!emptyProcQ(new))
         {
             insertProcQ(&readyQueue, new);

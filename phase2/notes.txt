@@ -74,3 +74,9 @@ Syscall IntHandler
 		privileged instruction program trap
 		(only allowed in kernel mode)
 		
+pull up and die
+	sys5 
+		which type of trap
+		address to be stored in old area
+		address to be stored in new area
+		

@@ -148,7 +148,6 @@ void print(char *msg) {
 /*                                                                   */
 void test() {
 	debugB(1);
-	print("dick \n");
 	SYSCALL(VERHOGEN, (int)&testsem, 0, 0);					/* V(testsem)   */
 
 	print("p1 v(testsem)\n");

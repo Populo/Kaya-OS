@@ -10,6 +10,8 @@
 
 #include "../e/initial.e"
 
+#include "/usr/local/include/umps2/umps/libumps.e"
+
 int processCount;
 int softBlockCount;
 pcb_PTR currentProcess;

@@ -7,12 +7,6 @@
 
 #include "../e/exceptions.e"
 
-extern int processCount;
-extern int softBlockCount;
-extern pcb_PTR currentProcess;
-extern pcb_PTR readyQueue;
-extern int sem[TOTALSEM];
-
 extern cpu_t TODStarted;
 
 
@@ -31,6 +25,11 @@ HIDDEN void pullUpAndDie(int type, state_PTR old);
 
 void copyState(state_PTR old, state_PTR new);
 
+void debugC(int i)
+{
+    int a;
+    a = 10;
+}
 
 void pbgTrapHandler()
 {

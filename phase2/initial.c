@@ -24,12 +24,14 @@ int debugA(int i)
 
 int main()
 {
-    debugA(2);
+    debugA(1);
     unsigned int RAMTOP;
     state_PTR stateLocation;
     devregarea_t *device = (devregarea_t *)RAMBASEADDR;
 
     RAMTOP = (device -> rambase) + (device -> ramsize);
+
+    debugA(2);
 
     /* populate 4 new state areas */
     /* new syscall location */
@@ -57,21 +59,29 @@ int main()
     stateLocation -> s_pc = stateLocation -> s_t9 = (memaddr) ioTrapHandler;
     stateLocation -> s_status = ALLOFF;
 
+    debugA(3);
+
     /* init globals */
     readyQueue = mkEmptyProcQ();
     currentProcess = NULL;
     processCount = 0;
     softBlockCount = 0;
 
+    debugA(4);
+
     /* allocate pcbs and semd freelists */
     initPcbs();
     initASL();
+
+    debugA(5);
 
     int temp;
     for(temp = 0; temp < TOTALSEM; temp++)
     {
         sem[temp] = 0;
     }
+
+    debugA(6);
 
     /* init first process */
     currentProcess = allocPcb();
@@ -86,9 +96,13 @@ int main()
 
     ++processCount;
 
+    debugA(7);
+
     insertProcQ(&readyQueue, currentProcess);
     currentProcess = NULL;
     LDIT(INTTIME);
+
+    debugA(8);
 
     scheduler();
 

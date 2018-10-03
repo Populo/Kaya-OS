@@ -161,8 +161,8 @@ void sysPasseren(state_PTR old)
 {
     int* semAdd;
     semAdd = old -> s_a1;
-    --(*semAdd);
-    if((*semAdd) < 0)
+    sem[*semAdd]--;
+    if(sem[*semAdd] < 0)
     {
         copyState(old, &currentProcess -> pcb_s);
         insertBlocked(semAdd, currentProcess);

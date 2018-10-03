@@ -25,6 +25,12 @@
 
 typedef unsigned int devregtr;
 
+void debugA(int a) 
+{
+	int i;
+	i = 10;
+}
+
 /* hardware constants */
 #define PRINTCHR	2
 #define BYTELEN	8
@@ -140,7 +146,8 @@ void print(char *msg) {
 /*                                                                   */
 /*                 p1 -- the root process                            */
 /*                                                                   */
-void test() {	
+void test() {
+	debugA(1);
 	print("dick \n");
 	SYSCALL(VERHOGEN, (int)&testsem, 0, 0);					/* V(testsem)   */
 

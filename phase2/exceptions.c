@@ -272,14 +272,14 @@ HIDDEN void pullUpAndDie(int type, state_PTR old)
         case PGMTRAP: 
             if(currentProcess -> newPGM != NULL)
             {
-                newLocation = currentProcess -> oldPGM;
+                newLocation = currentProcess -> newPGM;
                 sysTerminate();
             }              
             break;
         case SYSBP: 
             if(currentProcess -> newSys != NULL)
             {
-                newLocation = currentProcess -> oldSys;
+                newLocation = currentProcess -> newSys;
                 sysTerminate();
             }
             break;

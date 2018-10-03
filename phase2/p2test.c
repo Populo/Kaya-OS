@@ -141,6 +141,7 @@ void print(char *msg) {
 /*                 p1 -- the root process                            */
 /*                                                                   */
 void test() {	
+	print("dick \n");
 	SYSCALL(VERHOGEN, (int)&testsem, 0, 0);					/* V(testsem)   */
 
 	print("p1 v(testsem)\n");

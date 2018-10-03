@@ -37,8 +37,6 @@ int main()
     stateLocation -> s_pc = stateLocation -> s_t9 = (memaddr) pbgTrapHandler;
     stateLocation -> s_status = ALLOFF;
 
-
-
     /* new tlb management location */
     stateLocation = (state_PTR) TBLMGMTNEWAREA;
     stateLocation -> s_sp = RAMTOP;
@@ -77,7 +75,7 @@ int main()
     /* i dont know what this is but we need to set this too */
     currentProcess -> pcb_s.s_t9 = (memaddr) test;
     /* set the status */
-    currentProcess -> pcb_s.s_status = ALLOFF | IEON | IMON | LTON;
+    currentProcess -> pcb_s.s_status = ALLOFF | IEON | IMON | LTON | KUON;
 
     ++processCount;
 

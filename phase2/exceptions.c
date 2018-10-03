@@ -265,22 +265,31 @@ HIDDEN void pullUpAndDie(int type, state_PTR old)
         case TLB:
             if(currentProcess -> newTLB != NULL)
             {
-                newLocation = currentProcess -> newTLB;
                 sysTerminate();
+            }
+            else
+            {
+                newLocation = currentProcess -> newTLB;
             }
             break;
         case PGMTRAP: 
             if(currentProcess -> newPGM != NULL)
             {
-                newLocation = currentProcess -> newPGM;
                 sysTerminate();
-            }              
+            }
+            else
+            {
+                newLocation = currentProcess -> newPGM;
+            }           
             break;
         case SYSBP: 
             if(currentProcess -> newSys != NULL)
             {
-                newLocation = currentProcess -> newSys;
                 sysTerminate();
+            }
+            else
+            {
+                newLocation = currentProcess -> newSys;
             }
             break;
         default:

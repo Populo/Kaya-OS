@@ -79,4 +79,9 @@ pull up and die
 		which type of trap
 		address to be stored in old area
 		address to be stored in new area
-		
+	puad
+		a) has a sys5 for that type been called?
+			new == null = no
+			no: terminate process
+			yes: copy the state that caused the exception (oldXXX from const) to location specified in pcb
+		LDST(current -> newXXX)

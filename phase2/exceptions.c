@@ -144,6 +144,7 @@ void sysTerminate()
 
 void sysVerhogen(int* semAdd)
 {
+    debugC(1);
     pcb_PTR new = mkEmptyProcQ();
     sem[*semAdd]++;
     if(sem[*semAdd] <= 0)
@@ -158,6 +159,7 @@ void sysVerhogen(int* semAdd)
 
 void sysPasseren(state_PTR old)
 {
+    debugC(2);
     int* semAdd;
     semAdd = old -> s_a1;
     sem[*semAdd]--;

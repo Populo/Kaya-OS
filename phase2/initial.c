@@ -16,8 +16,15 @@ pcb_PTR currentProcess;
 pcb_PTR readyQueue;
 int sem[TOTALSEM];
 
+int debugA(int i)
+{
+    int temp;
+    temp = i;
+}
+
 int main()
 {
+    debugA(2);
     unsigned int RAMTOP;
     state_PTR stateLocation;
     devregarea_t *device = (devregarea_t *)RAMBASEADDR;

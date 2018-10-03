@@ -25,7 +25,7 @@
 
 typedef unsigned int devregtr;
 
-void debugA(int a) 
+void debugB(int a) 
 {
 	int i;
 	i = 10;
@@ -147,7 +147,7 @@ void print(char *msg) {
 /*                 p1 -- the root process                            */
 /*                                                                   */
 void test() {
-	debugA(1);
+	debugB(1);
 	print("dick \n");
 	SYSCALL(VERHOGEN, (int)&testsem, 0, 0);					/* V(testsem)   */
 

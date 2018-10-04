@@ -17,7 +17,7 @@ HIDDEN void sysCreate(state_PTR state);
 HIDDEN void sysTerminate();
 HIDDEN void sysVerhogen(int* semAdd);
 HIDDEN void sysPasseren(state_PTR old);
-HIDDEN void sysSpecifyException(int type, state_PTR old, state_PTR new);
+HIDDEN void sysSpecifyException(state_PTR caller);
 HIDDEN void sysCPUTime(state_PTR state);
 HIDDEN void sysWaitClock(state_PTR old);
 HIDDEN void sysWaitIO(state_PTR old);
@@ -68,7 +68,7 @@ void sysCallHandler()
                 sysPasseren(old);
                 break;
             case SPECIFY_EXCEPTION_STATE_VECTOR:
-                sysSpecifyException(old -> s_a1, old -> s_a2, old -> s_a3);
+                sysSpecifyException(old);
                 break;
             case GET_CPU_TIME:
                 sysCPUTime(old);
@@ -172,8 +172,12 @@ void sysPasseren(state_PTR old)
     }
 }
 
-void sysSpecifyException(int type, state_PTR old, state_PTR new)
+void sysSpecifyException(state_PTR caller)
 {
+    int type = caller -> s_a1;
+    state_PTR old = caller -> s_a2;
+    state_PTR new = caller -> s_a3;
+
     switch(type)
     {
         case TLBTRAP:

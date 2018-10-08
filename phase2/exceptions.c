@@ -102,8 +102,8 @@ void sysCreate(state_PTR state)
     {
         ++processCount;
         copyState((state_PTR) state -> s_a1, (state_PTR) &(newProc -> pcb_s));
-        insertProcQ(readyQueue, newProc);
         insertChild(currentProcess, newProc);
+        insertProcQ(readyQueue, newProc);
         state -> s_v0 = 0;
     }
     else
@@ -132,7 +132,7 @@ void sysTerminate()
             }
             else
             {
-                if (death -> pcb_semAdd != NULL)
+                if (death -> pcb_semAdd != NULL) /* probably needs something */
                 {
                     removeBlocked(death -> pcb_semAdd);
                 }
@@ -270,34 +270,31 @@ HIDDEN void pullUpAndDie(int type, state_PTR old)
     switch(type)
     {
         case TLB:
-            if(currentProcess -> newTLB != NULL)
+            if(currentProcess -> newTLB == NULL)
             {
                 sysTerminate();
             }
-            else
-            {
-                newLocation = currentProcess -> newTLB;
-            }
+
+            newLocation = currentProcess -> newTLB;
+            
             break;
         case PGMTRAP: 
-            if(currentProcess -> newPGM != NULL)
+            if(currentProcess -> newPGM == NULL)
             {
                 sysTerminate();
             }
-            else
-            {
-                newLocation = currentProcess -> newPGM;
-            }           
+            
+            newLocation = currentProcess -> newPGM;      
+            
             break;
         case SYSBP: 
-            if(currentProcess -> newSys != NULL)
+            if(currentProcess -> newSys == NULL)
             {
                 sysTerminate();
             }
-            else
-            {
-                newLocation = currentProcess -> newSys;
-            }
+            
+            newLocation = currentProcess -> newSys;
+            
             break;
         default:
             newLocation = NULL;

@@ -24,7 +24,6 @@ int debugA(int i)
 void scheduler()
 {
     debugA(1);
-    print("tits");
     if(currentProcess != NULL)
     {
         debugA(100);

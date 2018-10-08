@@ -142,6 +142,14 @@ void print(char *msg) {
 	SYSCALL(VERHOGEN, (int)&term_mut, 0, 0);				/* V(term_mut) */
 }
 
+void addokbuf(char *strp) {
+	char *tstrp = strp;
+	while ((*mp++ = *strp++) != '\0')
+		;
+	mp--;
+	termprint(tstrp, 0);
+}
+
 
 /*                                                                   */
 /*                 p1 -- the root process                            */

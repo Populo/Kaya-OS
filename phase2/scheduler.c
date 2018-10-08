@@ -24,6 +24,7 @@ int debugA(int i)
 void scheduler()
 {
     debugA(1);
+    addokbuf("tits");
     if(currentProcess != NULL)
     {
         debugA(100);

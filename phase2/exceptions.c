@@ -101,12 +101,14 @@ void sysCreate(state_PTR state)
     if(newProc != NULL)
     {
         ++processCount;
+        copyState((state_PTR) state -> s_a1, (state_PTR) &(newProc -> pcb_s));
+        insertProcQ(readyQueue, newProc);
         insertChild(currentProcess, newProc);
         state -> s_v0 = 0;
     }
     else
     {
-        state -> s_v0 = -1;
+        state -> s_v0 = -1; /* const.h custom error defs */
     }
 }
 

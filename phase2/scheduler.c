@@ -64,13 +64,13 @@ void scheduler()
     debugA(5);
     
 
-    if (currentProcess > 0 && softBlockCount == 0)
+    if (processCount > 0 && softBlockCount == 0)
     {
         PANIC();
     }
     if(processCount > 0 && softBlockCount > 0)
     {
-        setSTATUS((getSTATUS() & ALLOFF | IEON | IECON | IMON)); 
+        setSTATUS((getSTATUS() | ALLOFF | IEON | IECON | IMON)); 
         WAIT();
     }
 

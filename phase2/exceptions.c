@@ -103,7 +103,7 @@ void sysCreate(state_PTR state)
         ++processCount;
         copyState((state_PTR) state -> s_a1, (state_PTR) &(newProc -> pcb_s));
         insertChild(currentProcess, newProc);
-        insertProcQ(readyQueue, newProc);
+        insertProcQ(&readyQueue, newProc);
         state -> s_v0 = SUCCESS;
     }
     else

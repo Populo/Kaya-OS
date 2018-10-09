@@ -119,6 +119,7 @@ void sysTerminate()
     {
         if (emptyChild(currentProcess -> pcb_child)) 
         {
+            outChild(currentProcess);
             freePcb(currentProcess);
             --processCount;
             death = NULL;
@@ -308,9 +309,9 @@ HIDDEN void pullUpAndDie(int type, state_PTR old)
     }
     if(currentProcess != NULL)
     {
-        copyState(old, newLocation);
         if (newLocation != NULL)
         {
+            copyState(old, newLocation);
             LDST(&newLocation);
         }
     }

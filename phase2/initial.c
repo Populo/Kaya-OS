@@ -75,7 +75,7 @@ int main()
     /* i dont know what this is but we need to set this too */
     currentProcess -> pcb_s.s_t9 = (memaddr) test;
     /* set the status */
-    currentProcess -> pcb_s.s_status = ALLOFF | IEON | IMON | KUON;
+    currentProcess -> pcb_s.s_status = ALLOFF | IEON | IMON | LTON;
 
     ++processCount;
 

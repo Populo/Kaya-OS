@@ -85,7 +85,8 @@ void sysCallHandler()
                 pullUpAndDie((int) old -> s_a1, (state_PTR)old -> s_a2);
                 break;
         }
-        LDST(&old);
+        debugC(43);
+        LDST(old);
     }
     else /* User mode */
     {

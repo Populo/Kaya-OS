@@ -56,7 +56,7 @@ void sysCallHandler()
         switch(sysCall)
         {
             case CREATE_PROCESS:
-                sysCreate(old -> s_a1);
+                sysCreate((state_PTR)old -> s_a1);
                 break;
             case TERMINATE_PROCESS:
                 sysTerminate();
@@ -80,7 +80,7 @@ void sysCallHandler()
                 sysWaitIO(old);
                 break;
             default: /* handle 9-255 */
-                pullUpAndDie(old -> s_a1, old -> s_a2);
+                pullUpAndDie((int) old -> s_a1, (state_PTR)old -> s_a2);
                 break;
         }
         LDST(&old);

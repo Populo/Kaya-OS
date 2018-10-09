@@ -51,7 +51,7 @@ void scheduler()
             HALT();
         }
     }
-    if (processCount > 0 && softBlockCount == 0)
+  /*   if (processCount > 0 && softBlockCount == 0)
     {
         PANIC();
     }
@@ -59,7 +59,7 @@ void scheduler()
     {
         setSTATUS((getSTATUS() | ALLOFF | IEON | IECON | IMON)); 
         WAIT();
-    }
+    } */
     debugA(3);
     currentProcess = removeProcQ(&readyQueue);
     --processCount;

@@ -153,14 +153,13 @@ void sysVerhogen(int* semAdd)
 {
     debugC(1);
     pcb_PTR new = mkEmptyProcQ();
-    *semAdd++;
-    if(*semAdd <= 0)
+    (*semAdd)++;
+    if((*semAdd) <= 0)
     {
         new = removeBlocked(semAdd);
         if(!emptyProcQ(new))
         {
             insertProcQ(&readyQueue, new);
-            softBlockCount--;
         }
     } 
 }
@@ -170,12 +169,11 @@ void sysPasseren(state_PTR old)
     debugC(2);
     int* semAdd;
     semAdd = (int *)old -> s_a1;
-    *semAdd--;
-    if(*semAdd < 0)
+    (*semAdd)--;
+    if((*semAdd) < 0)
     {
-        copyState(old, &currentProcess -> pcb_s);
+        copyState(old, &(currentProcess -> pcb_s));
         insertBlocked(semAdd, currentProcess);
-        softBlockCount++;
         scheduler();
     }
 }

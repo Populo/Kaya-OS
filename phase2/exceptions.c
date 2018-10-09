@@ -135,6 +135,7 @@ void sysTerminate()
                 if (death -> pcb_semAdd != NULL) /* probably needs something */
                 {
                     removeBlocked(death -> pcb_semAdd);
+                    softBlockCount--;
                 }
                 death = death -> pcb_parent;
                 freePcb(removeChild(death));
@@ -156,6 +157,7 @@ void sysVerhogen(int* semAdd)
         if(!emptyProcQ(new))
         {
             insertProcQ(&readyQueue, new);
+            softBlockCount--;
         }
     } 
 }
@@ -170,6 +172,7 @@ void sysPasseren(state_PTR old)
     {
         copyState(old, &currentProcess -> pcb_s);
         insertBlocked(semAdd, currentProcess);
+        softBlockCount++;
         scheduler();
     }
 }

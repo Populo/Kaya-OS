@@ -238,7 +238,7 @@ void sysWaitClock(state_PTR old)
 void sysWaitIO(state_PTR old)
 {
     int *semAdd;
-    int interruptLine, deviceNum, isTerminal;
+    int interruptLine, deviceNum, isTerminal, index;
     interruptLine = old -> s_a1;
     deviceNum = old -> s_a2;
     isTerminal = old -> s_a3;
@@ -253,9 +253,10 @@ void sysWaitIO(state_PTR old)
     {
         interruptLine++;
     }  
-    semAdd = (int *)(DEVPERINT * (interruptLine - DEVNOSEM) + deviceNum);
+    index = (int *)(DEVPERINT * (interruptLine - DEVNOSEM) + deviceNum);
 
-    *semAdd--;
+    *semAdd = &(sem[index]);
+    --*semAdd;
 
     if(*semAdd < 0)
     {

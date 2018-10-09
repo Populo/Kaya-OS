@@ -51,7 +51,7 @@ void sysCallHandler()
     sysCall = old -> s_a0; /* which syscall was executed */
     old -> s_pc = old -> s_pc + 4;
     old -> s_t9 = old -> s_t9 + 4;
-    if(old -> s_status & KUON == ALLOFF) /* Kernel mode on */
+    if((old -> s_status & KUON) == ALLOFF) /* Kernel mode on */
     {
         switch(sysCall)
         {

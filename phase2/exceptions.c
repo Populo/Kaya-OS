@@ -234,7 +234,8 @@ void sysWaitClock(state_PTR old)
 
 void sysWaitIO(state_PTR old)
 {
-    int semAdd, interruptLine, deviceNum, isTerminal;
+    int *semAdd;
+    int interruptLine, deviceNum, isTerminal;
     interruptLine = old -> s_a1;
     deviceNum = old -> s_a2;
     isTerminal = old -> s_a3;
@@ -251,11 +252,11 @@ void sysWaitIO(state_PTR old)
     }  
     semAdd = DEVPERINT * (interruptLine - DEVNOSEM) + deviceNum;
 
-    sem[semAdd]--;
+    *semAdd--;
 
-    if(sem[semAdd] < 0)
+    if(*semAdd < 0)
     {
-        insertBlocked(&sem[semAdd], currentProcess);
+        insertBlocked(&sem[*semAdd], currentProcess);
         copyState(old, &(currentProcess -> pcb_s));
         softBlockCount++;
         scheduler();

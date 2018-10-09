@@ -166,7 +166,7 @@ void sysPasseren(state_PTR old)
 {
     debugC(2);
     int* semAdd;
-    semAdd = old -> s_a1;
+    semAdd = (int *)old -> s_a1;
     *semAdd--;
     if(*semAdd < 0)
     {
@@ -253,7 +253,7 @@ void sysWaitIO(state_PTR old)
     {
         interruptLine++;
     }  
-    semAdd = DEVPERINT * (interruptLine - DEVNOSEM) + deviceNum;
+    semAdd = (int *)(DEVPERINT * (interruptLine - DEVNOSEM) + deviceNum);
 
     *semAdd--;
 

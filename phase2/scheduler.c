@@ -59,7 +59,7 @@ void scheduler()
     debugA(15);
     /*setTimer(QUANTUM);*/
     debugA(16);
-    LDST(&currentProcess -> pcb_s);
+    LDST(&(currentProcess -> pcb_s));
 
     debugA(5);
     

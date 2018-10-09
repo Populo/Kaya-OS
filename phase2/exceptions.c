@@ -177,8 +177,7 @@ void sysVerhogen(state_PTR old)
 void sysPasseren(state_PTR old)
 {
     debugC(2);
-    int* semAdd;
-    semAdd = (int *)old -> s_a1;
+    int* semAdd = (int *)old -> s_a1;
     (*semAdd)--;
     if((*semAdd) < 0)
     {

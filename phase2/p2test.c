@@ -142,11 +142,19 @@ void print(char *msg) {
 	SYSCALL(VERHOGEN, (int)&term_mut, 0, 0);				/* V(term_mut) */
 }
 
+debugD(int i)
+{
+	int temp;
+	temp = i;
+}
+
+
 
 /*                                                                   */
 /*                 p1 -- the root process                            */
 /*                                                                   */
 void test() {
+	debugD(1);
 	SYSCALL(VERHOGEN, (int)&testsem, 0, 0);					/* V(testsem)   */
 
 	print("p1 v(testsem)\n");

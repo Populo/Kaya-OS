@@ -178,13 +178,19 @@ void sysPasseren(state_PTR old)
 {
     debugC(2);
     int* semAdd = (int *)old -> s_a1;
+    debugC(48);
     (*semAdd)--;
+    debugC(64);
     if((*semAdd) < 0)
     {
+        debugC(80);
         copyState(old, &(currentProcess -> pcb_s));
+        debugC(96);
         insertBlocked(semAdd, currentProcess);
+        debugC(112);
         scheduler();
     }
+    debugC(25);
 }
 
 void sysSpecifyException(state_PTR caller)

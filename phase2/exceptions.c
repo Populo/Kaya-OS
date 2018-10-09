@@ -153,16 +153,24 @@ void sysVerhogen(state_PTR old)
 {
     debugC(1);
     pcb_PTR new = NULL;
+    debugC(3);
     int* semAdd = (int*) old -> s_a1;
+    debugC(5);
     (*semAdd)++;
+    debugC(7);
     if((*semAdd) <= 0)
     {
+        debugC(9);
         new = removeBlocked(semAdd);
+        debugC(11);
         if(!emptyProcQ(new))
         {
+            debugC(13);
             insertProcQ(&readyQueue, new);
+            debugC(4);
         }
     } 
+    debugC(42);
 }
 
 void sysPasseren(state_PTR old)

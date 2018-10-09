@@ -64,7 +64,7 @@ void sysCallHandler()
                 sysTerminate();
                 break;
             case VERHOGEN:
-                sysVerhogen((int*) old -> s_a1);
+                sysVerhogen(old);
                 break;
             case PASSEREN:
                 sysPasseren(old);
@@ -149,10 +149,11 @@ void sysTerminate()
     scheduler();
 }
 
-void sysVerhogen(int* semAdd)
+void sysVerhogen(state_PTR old)
 {
     debugC(1);
-    pcb_PTR new = mkEmptyProcQ();
+    pcb_PTR new = NULL;
+    int* semAdd = (int*) old -> s_a1;
     (*semAdd)++;
     if((*semAdd) <= 0)
     {

@@ -149,8 +149,8 @@ void sysVerhogen(int* semAdd)
 {
     debugC(1);
     pcb_PTR new = mkEmptyProcQ();
-    sem[*semAdd]++;
-    if(sem[*semAdd] <= 0)
+    *semAdd++;
+    if(*semAdd <= 0)
     {
         new = removeBlocked(semAdd);
         if(!emptyProcQ(new))
@@ -165,8 +165,8 @@ void sysPasseren(state_PTR old)
     debugC(2);
     int* semAdd;
     semAdd = old -> s_a1;
-    sem[*semAdd]--;
-    if(sem[*semAdd] < 0)
+    *semAdd--;
+    if(*semAdd < 0)
     {
         copyState(old, &currentProcess -> pcb_s);
         insertBlocked(semAdd, currentProcess);

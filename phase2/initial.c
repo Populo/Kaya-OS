@@ -16,6 +16,11 @@ pcb_PTR currentProcess;
 pcb_PTR readyQueue;
 int sem[TOTALSEM];
 
+void debugA(int i){
+    int a;
+    a= 0;
+}
+
 int main()
 {
     unsigned int RAMTOP;
@@ -83,6 +88,7 @@ int main()
     currentProcess = NULL;
     LDIT(INTTIME);
 
+    debugA(0);
     scheduler();
 
     return -1;

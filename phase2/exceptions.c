@@ -104,11 +104,11 @@ void sysCreate(state_PTR state)
         copyState((state_PTR) state -> s_a1, (state_PTR) &(newProc -> pcb_s));
         insertChild(currentProcess, newProc);
         insertProcQ(readyQueue, newProc);
-        state -> s_v0 = 0;
+        state -> s_v0 = SUCCESS;
     }
     else
     {
-        state -> s_v0 = -1; /* const.h custom error defs */
+        state -> s_v0 = FAILURE;
     }
 }
 

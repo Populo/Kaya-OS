@@ -54,6 +54,7 @@ void sysCallHandler()
     debugC(15);
     if((old -> s_status & KUON) == ALLOFF) /* Kernel mode on */
     {
+        debugC(32);
         switch(sysCall)
         {
             case CREATE_PROCESS:

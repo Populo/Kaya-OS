@@ -180,8 +180,8 @@ void sysPasseren(state_PTR old)
 void sysSpecifyException(state_PTR caller)
 {
     int type = caller -> s_a1;
-    state_PTR old = caller -> s_a2;
-    state_PTR new = caller -> s_a3;
+    state_PTR old = (state_PTR) caller -> s_a2;
+    state_PTR new = (state_PTR) caller -> s_a3;
 
     switch(type)
     {

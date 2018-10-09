@@ -71,6 +71,8 @@ int main()
     initPcbs();
     initASL();
 
+    debugF(0);
+
     /* init first process */
     currentProcess = allocPcb();
     /* penultimate page of physical memory */
@@ -82,13 +84,15 @@ int main()
     /* set the status */
     currentProcess -> pcb_s.s_status = ALLOFF | IEON | IMON | LTON;
 
+    debugF(1);
+
     ++processCount;
 
     insertProcQ(&readyQueue, currentProcess);
     currentProcess = NULL;
     LDIT(INTTIME);
 
-    debugA(0);
+    debugF(2);
     scheduler();
 
     return -1;

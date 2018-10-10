@@ -160,7 +160,7 @@ void test() {
 	debugD(1);
 	SYSCALL(VERHOGEN, (int)&testsem, 0, 0);					/* V(testsem)   */
 	debugD(1);
-	print("p1 v(testsem)\n");
+	print("pOne v(testsem)\n");
 
 	/* set up states of the other processes */
 

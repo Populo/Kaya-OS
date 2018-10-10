@@ -38,7 +38,7 @@ void pbgTrapHandler()
 
 void tlbTrapHandler()
 {
-    pullUpAndDie(PGMTRAP, (state_PTR) TBLMGMTOLDAREA);
+    pullUpAndDie(TLBTRAP, (state_PTR) TBLMGMTOLDAREA);
 }
 
 
@@ -120,7 +120,7 @@ void sysTerminate()
     pcb_PTR death = currentProcess;
     while(death != NULL)
     {
-        if (emptyChild(currentProcess -> pcb_child)) 
+        if (emptyChild(currentProcess)) 
         {
             outChild(currentProcess);
             freePcb(currentProcess);
@@ -286,7 +286,7 @@ void sysWaitIO(state_PTR old)
 
 HIDDEN void pullUpAndDie(int type, state_PTR old)
 {
-    state_PTR newLocation, exState;
+    state_PTR newLocation;
 
     switch(type)
     {

@@ -9,8 +9,6 @@
 
 extern cpu_t TODStarted;
 
-
-cpu_t start;
 cpu_t current;
 
 HIDDEN void sysCreate(state_PTR state);
@@ -236,9 +234,9 @@ void sysCPUTime(state_PTR state)
     cpu_t t;
     STCK(t);
 
-    currentProcess -> cpu_time = currentProcess -> cpu_time + (t - start);
+    currentProcess -> cpu_time = currentProcess -> cpu_time + (t - TODStarted);
     state -> s_v0 = currentProcess -> cpu_time;
-    STCK(start);
+    STCK(TODStarted);
 }
 
 void sysWaitClock(state_PTR old)

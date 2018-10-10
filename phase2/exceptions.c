@@ -202,7 +202,7 @@ void sysSpecifyException(state_PTR caller)
     switch(type)
     {
         case TLBTRAP:
-            if(currentProcess -> newTLB != NULL)
+            if(currentProcess -> oldTLB != NULL)
             {
                 sysTerminate();
             }
@@ -210,7 +210,7 @@ void sysSpecifyException(state_PTR caller)
             currentProcess -> oldTLB = (state_PTR) old;
             break;
         case PROGTRAP:
-            if(currentProcess -> newPGM != NULL)
+            if(currentProcess -> oldPGM != NULL)
             {
                 sysTerminate();
             }
@@ -218,7 +218,7 @@ void sysSpecifyException(state_PTR caller)
             currentProcess -> oldPGM = (state_PTR) old;
             break;
         case SYSTRAP:
-            if(currentProcess -> newSys != NULL)
+            if(currentProcess -> oldSys != NULL)
             {
                 sysTerminate();
             }
@@ -286,7 +286,7 @@ void sysWaitIO(state_PTR old)
 
 HIDDEN void pullUpAndDie(int type, state_PTR old)
 {
-    state_PTR newLocation;
+    state_PTR newLocation, exState;
 
     switch(type)
     {
@@ -297,6 +297,8 @@ HIDDEN void pullUpAndDie(int type, state_PTR old)
             }
 
             newLocation = currentProcess -> newTLB;
+            copyState((state_PTR) TBLMGMTOLDAREA, currentProcess -> oldTLB);
+            copyState(currentProcess -> newTLB, &(currentProcess -> pcb_s));
             
             break;
         case PGMTRAP: 
@@ -306,7 +308,9 @@ HIDDEN void pullUpAndDie(int type, state_PTR old)
             }
             
             newLocation = currentProcess -> newPGM;      
-            
+            copyState((state_PTR) PGMTRAPOLDAREA, currentProcess -> oldPGM);
+            copyState(currentProcess -> newPGM, &(currentProcess -> pcb_s));
+
             break;
         case SYSBP: 
             if(currentProcess -> newSys == NULL)
@@ -316,19 +320,14 @@ HIDDEN void pullUpAndDie(int type, state_PTR old)
             
             newLocation = currentProcess -> newSys;
             
+            copyState((state_PTR) SYSCALLOLDAREA, currentProcess -> oldSys);
+            copyState(currentProcess -> newSys, &(currentProcess -> pcb_s));
+
             break;
         default:
             newLocation = NULL;
             sysTerminate();
             break;
-    }
-    if(currentProcess != NULL)
-    {
-        if (newLocation != NULL)
-        {
-            copyState(old, newLocation);
-            LDST(&newLocation);
-        }
     }
 }
 

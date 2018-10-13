@@ -48,8 +48,10 @@ void scheduler()
         else
         {
             /* wait bit in status register */
-            debugA(15);
-            HALT();
+            debugA(17);
+            setSTATUS((getSTATUS() | ALLOFF | IEON | IECON | IMON)); 
+            debugA(18);
+            WAIT();
         }
     }
   /*   if (processCount > 0 && softBlockCount == 0)

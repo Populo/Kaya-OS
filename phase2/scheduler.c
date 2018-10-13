@@ -48,6 +48,7 @@ void scheduler()
         else
         {
             /* wait bit in status register */
+            debugA(15);
             HALT();
         }
     }
@@ -62,7 +63,6 @@ void scheduler()
     } */
     debugA(3);
     currentProcess = removeProcQ(&readyQueue);
-    --processCount;
     debugA(4);
     STCK(TODStarted);
     debugA(15);

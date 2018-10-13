@@ -20,8 +20,16 @@ extern void copyState(state_PTR old, state_PTR new);
 HIDDEN void finish(cpu_t start);
 HIDDEN int getDeviceNumber(unsigned int* bitMap);
 
+void debugL(int i)
+{
+    int temp;
+    temp = i;
+}
+
+
 void ioTrapHandler()
 {
+    debugL(1);
     unsigned int oldCause;
     cpu_t start, end;
     int deviceNum, interruptNum;

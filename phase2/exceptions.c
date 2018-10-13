@@ -264,14 +264,16 @@ void sysWaitIO(state_PTR old)
         sysTerminate();
     }  
     debugC(4098);
-    if(interruptLine == TERMINT && isTerminal)
-    {
-        debugC(4108);
-        interruptLine++;
-    }  
+    
     debugC(4099);
     index = (int *)(DEVPERINT * (interruptLine - DEVNOSEM) + deviceNum);
     debugC(4100);
+
+    if(interruptLine == TERMINT && isTerminal)
+    {
+        debugC(4108);
+        index = index + DEVPERINT;
+    }  
     *semAdd = &(sem[index]);
     --*semAdd;
     debugC(4101);

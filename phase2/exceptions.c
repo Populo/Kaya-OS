@@ -252,10 +252,10 @@ void sysWaitClock(state_PTR old)
 void sysWaitIO(state_PTR old)
 {
     int *semAdd;
-    int interruptLine, deviceNum, isTerminal, index;
+    int interruptLine, deviceNum, isRead, index;
     interruptLine = old -> s_a1;
     deviceNum = old -> s_a2;
-    isTerminal = old -> s_a3;
+    isRead = old -> s_a3;
     debugC(4097);
 
     if(interruptLine < DISKINT || interruptLine > TERMINT)
@@ -264,20 +264,21 @@ void sysWaitIO(state_PTR old)
         sysTerminate();
     }  
     debugC(4098);
+    if(interruptLine == TERMINT && isRead == TRUE)
+    {
+        debugC(4108);
+        interruptLine++;
+    }
     
     debugC(4099);
     index = (int *)(DEVPERINT * (interruptLine - DEVNOSEM) + deviceNum);
     debugC(4100);
 
-    if(interruptLine == TERMINT && isTerminal)
-    {
-        debugC(4108);
-        index = index + DEVPERINT;
-    }  
-    *semAdd = &(sem[index]);
-    --*semAdd;
+      
+    semAdd = &(sem[index]);
+    --(*semAdd);
     debugC(4101);
-    if(*semAdd < 0)
+    if((*semAdd) < 0)
     {
         debugC(4102);
         insertBlocked(&sem[*semAdd], currentProcess);

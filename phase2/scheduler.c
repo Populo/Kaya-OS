@@ -31,46 +31,37 @@ void scheduler()
         currentProcess -> cpu_time = (currentProcess -> cpu_time) + (currentTOD - TODStarted);
         debugA(110);
     }
-    if (processCount == 0)
+    if(emptyProcQ(readyQueue))
     {
-        debugA(200);
-        HALT();
-    }
+        currentProcess = NULL;
+        debugA(2);
+        if(processCount == 0)
+        {
+            HALT();
+        }
 
-    debugA(2);
-    if (emptyProcQ(readyQueue))
-    {
-        debugA(300);
-        if (softBlockCount == 0)
+        if(processCount > 0 && softBlockCount == 0)
         {
             PANIC();
         }
-        else
+
+        if(processCount > 0 && softBlockCount >0)
         {
-            /* wait bit in status register */
-            debugA(17);
-            setSTATUS(getSTATUS() | ALLOFF | IECON | IMON);
-            debugA(18);
+            debugA(3);
+            setSTATUS(getSTATUS() | ALLOFF | IEON | IMON);
+            debugA(4);
             WAIT();
         }
     }
     else
     {
-    debugA(3);
-    currentProcess = removeProcQ(&readyQueue);
-    debugA(4);
-    STCK(TODStarted);
-    debugA(15);
-    setTIMER(QUANTUM);
-    debugA(16);
-    LDST(&(currentProcess -> pcb_s));
+        debugA(5);
+        currentProcess = removeProcQ(&readyQueue);
+        STCK(TODStarted);
+        setTIMER(QUANTUM);
+        debugA(6);
+        LDST(&(currentProcess -> pcb_s));
 
-    debugA(5);
-    
-
-    
-
-    debugA(6);
     }
     
 }

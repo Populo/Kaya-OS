@@ -132,8 +132,10 @@ void print(char *msg) {
 	devregtr status;
 	
 	SYSCALL(PASSERN, (int)&term_mut, 0, 0);				/* P(term_mut) */
+	debugD(11);
 	while (*s != EOS) {
 		*(base + 3) = PRINTCHR | (((devregtr) *s) << BYTELEN);
+		debugD(12);
 		status = SYSCALL(WAITIO, TERMINT, 0, 0);	
 		debugD(13);
 		if ((status & TERMSTATMASK) != RECVD){

@@ -288,6 +288,9 @@ void sysWaitIO(state_PTR old)
         debugC(4105);
         scheduler();
     }
+    else{
+        currentProcess -> pcb_s.s_v0 = sem[index];
+    }
     debugC(4106);
 
 }

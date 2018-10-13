@@ -291,7 +291,7 @@ void sysWaitIO(state_PTR old)
     else{
         currentProcess -> pcb_s.s_v0 = sem[index];
         debugC(4109);
-        LDST(&currentProcess -> pcb_s);
+        LDST(old);
     }
     debugC(4106);
 

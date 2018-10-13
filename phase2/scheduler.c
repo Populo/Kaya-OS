@@ -49,7 +49,7 @@ void scheduler()
         {
             /* wait bit in status register */
             debugA(17);
-            setSTATUS((getSTATUS() | ALLOFF | IEON | IECON | IMON)); 
+            /*setSTATUS((getSTATUS() | ALLOFF | IEON | IECON | IMON)); */
             debugA(18);
             WAIT();
         }

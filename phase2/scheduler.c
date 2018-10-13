@@ -49,22 +49,13 @@ void scheduler()
         {
             /* wait bit in status register */
             debugA(17);
-            /*setSTATUS((getSTATUS() | ALLOFF | IEON | IECON | IMON)); */
+            setSTATUS((getSTATUS() | ALLOFF | IECON | IMON));
             debugA(18);
             WAIT();
         }
     }
     else
     {
-  /*   if (processCount > 0 && softBlockCount == 0)
-    {
-        PANIC();
-    }
-    if(processCount > 0 && softBlockCount > 0)
-    {
-        setSTATUS((getSTATUS() | ALLOFF | IEON | IECON | IMON)); 
-        WAIT();
-    } */
     debugA(3);
     currentProcess = removeProcQ(&readyQueue);
     debugA(4);

@@ -29,7 +29,7 @@ void debugL(int i)
 
 void ioTrapHandler()
 {
-    debugL(1);
+    debugL(8999);
     unsigned int oldCause;
     cpu_t start, end;
     int deviceNum, interruptNum;

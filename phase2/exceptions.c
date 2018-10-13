@@ -256,29 +256,37 @@ void sysWaitIO(state_PTR old)
     interruptLine = old -> s_a1;
     deviceNum = old -> s_a2;
     isTerminal = old -> s_a3;
-
+    debugC(4097);
 
     if(interruptLine < DISKINT || interruptLine > TERMINT)
     {
+        debugC(4107);
         sysTerminate();
     }  
-
+    debugC(4098);
     if(interruptLine == TERMINT && isTerminal)
     {
+        debugC(4108);
         interruptLine++;
     }  
+    debugC(4099);
     index = (int *)(DEVPERINT * (interruptLine - DEVNOSEM) + deviceNum);
-
+    debugC(4100);
     *semAdd = &(sem[index]);
     --*semAdd;
-
+    debugC(4101);
     if(*semAdd < 0)
     {
+        debugC(4102);
         insertBlocked(&sem[*semAdd], currentProcess);
+        debugC(4103);
         copyState(old, &(currentProcess -> pcb_s));
+        debugC(4104);
         softBlockCount++;
+        debugC(4105);
         scheduler();
     }
+    debugC(4106);
 
 }
 

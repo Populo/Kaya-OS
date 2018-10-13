@@ -51,6 +51,7 @@ void ioTrapHandler()
 
     if((oldCause & FIRST) != 0)
     {
+        debugL(2);
         PANIC();
     }
     else if((oldCause & SECOND) != 0)

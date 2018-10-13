@@ -83,8 +83,8 @@ void ioTrapHandler()
         }
         (*semAdd) = 0;
         finish(start);
-    }
-    debugL(9010);
+        debugL(9010);
+    }  
     else if((oldCause & FOURTH) != 0)
     {
         debugL(9011);

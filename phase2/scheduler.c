@@ -45,10 +45,10 @@ void scheduler()
             PANIC();
         }
 
-        if(processCount > 0 && softBlockCount >0)
+        if(processCount > 0 && softBlockCount > 0)
         {
             debugA(3);
-            setSTATUS(getSTATUS() | IEON | IMON);
+            setSTATUS(getSTATUS()| ALLOFF | IEON | IMON);
             debugA(4);
             WAIT();
         }

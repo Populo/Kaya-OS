@@ -54,6 +54,8 @@ void scheduler()
             WAIT();
         }
     }
+    else
+    {
   /*   if (processCount > 0 && softBlockCount == 0)
     {
         PANIC();
@@ -78,6 +80,7 @@ void scheduler()
     
 
     debugA(6);
+    }
     
 }
 

@@ -48,7 +48,7 @@ void scheduler()
         if(processCount > 0 && softBlockCount >0)
         {
             debugA(3);
-            setSTATUS(getSTATUS() | ALLOFF | IEON | IMON);
+            setSTATUS(getSTATUS() | IEON | IMON);
             debugA(4);
             WAIT();
         }

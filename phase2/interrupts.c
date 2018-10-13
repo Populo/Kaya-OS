@@ -45,7 +45,7 @@ void ioTrapHandler()
 
     oldCause = old -> s_cause;
 
-    oldCause = (oldCause & INTPOLDAREA) >> 8;
+    oldCause = (oldCause & INTPOLDAREAIDK) >> 8;
 
     interruptNum = 0;
     debugL(9000);

@@ -99,7 +99,7 @@ typedef struct pcb_t
 	state_t			pcb_s;			/* processor state */
 	int				*pcb_semAdd;	/* pointer to semaphore on which process is blocked */
 
-	cpu_t 			cpu_time; 		/* time the process has spent on the CPU in microseconds */
+	cpu_t 			pcb_time; 		/* time the process has spent on the CPU in microseconds */
 
 	state_PTR		oldSys,			/* For pull up and die */
 					newSys,

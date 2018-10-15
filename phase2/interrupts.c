@@ -25,7 +25,7 @@ void debugL(int i)
     int temp;
     temp = i;
 }
-
+/* 
 
 void ioTrapHandler()
 {
@@ -77,7 +77,7 @@ void ioTrapHandler()
                 debugL(9008);
                 insertProcQ(&readyQueue, temp);
                 debugL(9009);
-                temp -> cpu_time = temp -> cpu_time + (end + start);
+                temp -> cpu_time = (temp -> cpu_time) + (end + start);
                 softBlockCount--;
             }
         }
@@ -172,7 +172,7 @@ void ioTrapHandler()
     }
     else
     {
-        /* LOL FUCK YOU */
+        /* LOL FUCK YOU 
     }
     debugL(9029);
     finish(start);
@@ -230,5 +230,173 @@ HIDDEN int getDeviceNumber(unsigned int* bitMap) {
 	}
 
 	return -1;
+} */
+
+void ioTrapHandler()
+{
+    int deviceNumber, lineNumber, deviceIndex;
+    unsigned int cause;
+    cpu_t elapsed, startTime, stopTime;
+    device_t *device;
+    state_PTR oldState = (state_PTR)INTPOLDAREA;
+    devregarea_t *deviceArea = (devregarea_t *) RAMBASEADDR;
+    pcb_PTR process;
+
+    cause = oldState -> s_cause;
+    cause = (cause & IMON) >> 8;
+
+    if (currentProcess != NULL)
+    {
+        STCK(startTime);
+
+        elapsed = stopTime - startTOD;
+        currentProcess -> pcb_time = currentProcess -> pcb_time + elapsed;
+
+        copyState(oldState, &(currentProcess -> pcb_s));
+
+        if ((cause & FIRST) != 0)
+        {
+            PANIC();
+        }
+        else if ((cause & SECOND) != 0)
+        {
+            finish(startTOD);
+        }
+        else if ((cause & THIRD) != 0)
+        {
+            int *semAdd;
+            pcb_PTR waiting;
+            LDIT(INTERVALTIME);
+
+            semAdd = (int *) &(semD[TOTALSEM-1]);
+
+            while(headBlocked(semAdd) != NULL)
+            {
+                waiting = removeBlocked(semAdd);
+                STCK(stopTime);
+                if (waiting != NULL)
+                {
+                    insertProcQ(&readyQueue, waiting);
+                    waiting -> pcb_time = (waiting -> pcb_time) + (stopTime - startTime);
+                    --softBlockCount;
+                }
+            }
+            *semAdd = 0;
+            finish(startTime);
+        }
+        else if ((cause & FOURTH) != 0)
+        {
+            lineNumber = DISKINT;
+            deviceNumber = getDeviceNumber(DISKINT);
+        }
+        else if ((cause & FIFTH) != 0)
+        {
+            lineNumber = TAPEINT;
+            deviceNumber = getDeviceNumber(TAPEINT);
+        }
+        else if ((cause & SIXTH) != 0)
+        {
+            lineNumber = NETWINT;
+            deviceNumber = getDeviceNumber(NETWINT);
+        }
+        else if ((cause & SEVENTH) != 0)
+        {
+            lineNumber = PRINTINT;
+            deviceNumber = getDeviceNumber(PRINTINT);
+        }
+        else if ((cause & EIGHTH) != 0)
+        {
+            deviceNumber = getDeviceNumber(TERMINT);
+            int *semAdd = (TERMINT - DEVNOSEM)*DEVPERINT;
+            
+                
+        }
+        else
+        {
+            PANIC();
+        }
+
+        lineNumber = lineNumber - DEVNOSEM;
+        deviceIndex = (DEVPERINT * lineNumber) + deviceNumber;
+
+        device = &(devreg -> devreg[deviceIndex]);
+
+        sem[deviceIndex]++;
+
+        if (sem[deviceIndex] <= 0)
+        {
+            process = removeBlocked(&sem[deviceIndex]);
+            if (process != NULL)
+            {
+                process -> pcb_s.s_v0 = device -> d_status;
+                --softBlockCount;
+
+                insertProcQ(&readyQueue, process);
+            }
+        }
+
+        device -> d_command = ACK;
+
+        if (currentProcess != NULL)
+        {
+            STCK(startTOD);
+            LDST(&currentProcess -> pcb_s);
+        }
+
+        scheduler();
+    }
 }
 
+HIDDEN void finish(cpu_t startTime)
+{
+    cpu_t endTime;
+    state_PTR old = (state_PTR) INTPOLDAREA;
+    if(currentProcess != NULL)
+    {
+        STCK(endTime);
+        TODStarted = TODStarted + (endTime - startTime);
+        copyState(old, &(currentProcess -> pcb_s));
+        insertProcQ(&readyQueue, currentProcess);
+    }
+    scheduler();
+}
+
+
+HIDDEN int getDeviceNumber(unsigned int* bitMap)
+{
+    unsigned int cause = *bitMap;
+    if((cause & FIRST) != 0)
+    {
+        return 0;
+    }
+    else if((cause & SECOND) != 0)
+    {
+        return 1;
+    }
+    else if((cause & THIRD) != 0)
+    {
+        return 2;
+    }
+    else if((cause & FOURTH) != 0)
+    {
+        return 3;
+    }
+    else if((cause & FIFTH) != 0)
+    {
+        return 4;
+    }
+    else if((cause & SIXTH) != 0)
+    {
+        return 5;
+    }
+    else if((cause & SEVENTH) != 0)
+    {
+        return 6;
+    }
+    else if((cause & EIGHTH) != 0)
+    {
+        return 7;
+    }
+
+    return -1;
+}

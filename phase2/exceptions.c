@@ -305,44 +305,31 @@ HIDDEN void pullUpAndDie(int type, state_PTR old)
     switch(type)
     {
         case TLB:
-            if(currentProcess -> newTLB == NULL)
+            if(currentProcess -> newTLB != NULL)
             {
-                sysTerminate();
+                copyState((state_PTR) TBLMGMTOLDAREA, currentProcess -> oldTLB);
+                copyState(currentProcess -> newTLB, &(currentProcess -> pcb_s));
+                LDST(&(currentProcess -> pcb_s));
             }
-
-            newLocation = currentProcess -> newTLB;
-            copyState((state_PTR) TBLMGMTOLDAREA, currentProcess -> oldTLB);
-            copyState(currentProcess -> oldTLB, old);
-            
             break;
         case PGMTRAP: 
-            if(currentProcess -> newPGM == NULL)
-            {
-                sysTerminate();
+            if(currentProcess -> newPGM == NULL)    
+                copyState((state_PTR) PGMTRAPOLDAREA, currentProcess -> oldPGM);
+                copyState(currentProcess -> newPGM, &(currentProcess -> pcb_s));
+                LDST(&(currentProcess -> pcb_s));
             }
-            
-            newLocation = currentProcess -> newPGM;      
-            copyState((state_PTR) PGMTRAPOLDAREA, currentProcess -> oldPGM);
-            copyState(currentProcess -> oldPGM, old);
-
             break;
         case SYSBP: 
             if(currentProcess -> newSys == NULL)
-            {
-                sysTerminate();
+            {         
+                copyState((state_PTR) SYSCALLOLDAREA, currentProcess -> oldSys);
+                copyState(currentProcess -> newSys, &(currentProcess -> pcb_s));
+                LDST(&(currentProcess -> pcb_s));
             }
-            
-            newLocation = currentProcess -> newSys;
-            
-            copyState((state_PTR) SYSCALLOLDAREA, currentProcess -> oldSys);
-            copyState(currentProcess -> oldSys, old);
-
-            break;
-        default:
-            newLocation = NULL;
-            sysTerminate();
-            break;
+            break;        
     }
+
+    sysTerminate();
 }
 
 void copyState(state_PTR old, state_PTR new)

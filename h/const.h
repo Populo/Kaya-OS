@@ -127,6 +127,8 @@
 
 #define ZEROSTATUS  0x0F
 
+#define DEVICEONE	0x00000001
+
 /* Cause Codes */
 #define Int     0 /* external device interrupt */
 #define Mod     1 /* TLB - Modification Exception */

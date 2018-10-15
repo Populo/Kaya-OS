@@ -366,14 +366,14 @@ HIDDEN void finish(cpu_t startTime)
 HIDDEN int getDeviceNumber(int lineNumber)
 {
     unsigned int bitMap;
-    devregarea_t devReg = (devregarea_t *) RAMBASEADDR;
+    devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
     unsigned int currentDevice = DEVICEONE;
     int deviceNum = 0;
     int found = FALSE;
 
     lineNumber = lineNumber -3;
      
-    bitMap = devReg - > interrupt_dev[lineNumber];
+    bitMap = devReg -> interrupt_dev[lineNumber];
 
     while(!found)
     {
@@ -390,4 +390,6 @@ HIDDEN int getDeviceNumber(int lineNumber)
     }
     return deviceNum;
 }
+
+
     

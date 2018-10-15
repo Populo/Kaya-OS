@@ -25,7 +25,7 @@ void debugL(int i)
     int temp;
     temp = i;
 }
-/* 
+
 
 void ioTrapHandler()
 {
@@ -116,7 +116,7 @@ void ioTrapHandler()
         PANIC();
     }
     debugL(9017);
-    deviceNum = getDeviceNumber((unsigned int*) (INTBITMAP + ((interruptNum - DEVNOSEM) * WORDLEN)));
+    deviceNum = getDeviceNumber(interruptNum);
     debugL(9018);
     if(deviceNum == -1)
     {
@@ -172,7 +172,7 @@ void ioTrapHandler()
     }
     else
     {
-        /* LOL FUCK YOU 
+        /* LOL FUCK YOU */
     }
     debugL(9029);
     finish(start);
@@ -193,167 +193,6 @@ HIDDEN void finish(cpu_t start)
         }
         debugL(9032);
         scheduler();
-}
-
-HIDDEN int getDeviceNumber(unsigned int* bitMap) {
-	unsigned int oldCause = *bitMap;
-	if((oldCause & FIRST) != 0) {
-		return 0;
-	}
-
-	else if((oldCause & SECOND) != 0){
-		return 1;
-	}
-
-	else if((oldCause & THIRD) != 0){
-		return 2;
-	}
-
-	else if((oldCause & FOURTH) != 0){
-		return 3;
-	}
-
-	else if((oldCause & FIFTH) != 0){
-		return 4;
-	}
-
-	else if((oldCause & SIXTH) != 0){
-		return 5;
-	}
-
-	else if((oldCause & SEVENTH) != 0){
-		return 6;
-	}
-
-	else if((oldCause & EIGHTH) != 0){
-		return 7;
-	}
-
-	return -1;
-} */
-
-void ioTrapHandler()
-{
-    int deviceNumber, lineNumber, deviceIndex;
-    unsigned int cause;
-    cpu_t elapsed, startTime, stopTime;
-    device_t *device;
-    state_PTR oldState = (state_PTR)INTPOLDAREA;
-    devregarea_t *deviceArea = (devregarea_t *) RAMBASEADDR;
-    pcb_PTR process;
-
-    cause = oldState -> s_cause;
-    cause = (cause & IMON) >> 8;
-
-    if (currentProcess != NULL)
-    {
-        STCK(startTime);
-
-        elapsed = stopTime - TODStarted;
-        currentProcess -> pcb_time = currentProcess -> pcb_time + elapsed;
-
-        copyState(oldState, &(currentProcess -> pcb_s));
-
-        if ((cause & FIRST) != 0)
-        {
-            PANIC();
-        }
-        else if ((cause & SECOND) != 0)
-        {
-            finish(TODStarted);
-        }
-        else if ((cause & THIRD) != 0)
-        {
-            int *semAdd;
-            pcb_PTR waiting;
-            LDIT(INTERVALTMR);
-
-            semAdd = (int *) &(sem[TOTALSEM-1]);
-
-            while(headBlocked(semAdd) != NULL)
-            {
-                waiting = removeBlocked(semAdd);
-                STCK(stopTime);
-                if (waiting != NULL)
-                {
-                    insertProcQ(&readyQueue, waiting);
-                    waiting -> pcb_time = (waiting -> pcb_time) + (stopTime - startTime);
-                    --softBlockCount;
-                }
-            }
-            *semAdd = 0;
-            finish(startTime);
-        }
-        else if ((cause & FOURTH) != 0)
-        {
-            lineNumber = DISKINT;        
-        }
-        else if ((cause & FIFTH) != 0)
-        {
-            lineNumber = TAPEINT;
-        }
-        else if ((cause & SIXTH) != 0)
-        {
-            lineNumber = NETWINT;
-        }
-        else if ((cause & SEVENTH) != 0)
-        {
-            lineNumber = PRNTINT;
-        }
-        else if ((cause & EIGHTH) != 0)
-        {
-            lineNumber = TERMINT;
-        }
-        else
-        {
-            PANIC();
-        }
-
-        deviceNumber = getDeviceNumber(lineNumber);
-
-
-        if(deviceNumber == -1)
-        {
-            PANIC();
-        }
-
-        lineNumber = lineNumber - DEVNOSEM;
-        deviceIndex = (DEVPERINT * lineNumber) + deviceNumber;
-
-        device = &(deviceArea -> devreg[deviceIndex]);
-
-        sem[deviceIndex]++;
-
-        if (sem[deviceIndex] <= 0)
-        {
-            process = removeBlocked(&sem[deviceIndex]);
-            if (process != NULL)
-            {
-                process -> pcb_s.s_v0 = device -> d_status;
-                --softBlockCount;
-
-                insertProcQ(&readyQueue, process);
-            }
-        }
-
-        device -> d_command = ACK;
-
-        finish(startTime);
-    }
-}
-
-HIDDEN void finish(cpu_t startTime)
-{
-    cpu_t endTime;
-    state_PTR old = (state_PTR) INTPOLDAREA;
-    if(currentProcess != NULL)
-    {
-        STCK(endTime);
-        TODStarted = TODStarted + (endTime - startTime);
-        copyState(old, &(currentProcess -> pcb_s));
-        insertProcQ(&readyQueue, currentProcess);
-    }
-    scheduler();
 }
 
 

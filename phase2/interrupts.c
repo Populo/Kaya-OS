@@ -249,7 +249,7 @@ void ioTrapHandler()
     {
         STCK(startTime);
 
-        elapsed = stopTime - startTOD;
+        elapsed = stopTime - TODStarted;
         currentProcess -> pcb_time = currentProcess -> pcb_time + elapsed;
 
         copyState(oldState, &(currentProcess -> pcb_s));
@@ -266,9 +266,9 @@ void ioTrapHandler()
         {
             int *semAdd;
             pcb_PTR waiting;
-            LDIT(INTERVALTIME);
+            LDIT(INTERVALTMR);
 
-            semAdd = (int *) &(semD[TOTALSEM-1]);
+            semAdd = (int *) &(sem[TOTALSEM-1]);
 
             while(headBlocked(semAdd) != NULL)
             {
@@ -298,7 +298,7 @@ void ioTrapHandler()
         }
         else if ((cause & SEVENTH) != 0)
         {
-            lineNumber = PRINTINT;
+            lineNumber = PRNTINT;
         }
         else if ((cause & EIGHTH) != 0)
         {
@@ -309,7 +309,7 @@ void ioTrapHandler()
             PANIC();
         }
 
-        deviceNumber = getDeviceNumber((unsigned int*) (INTBITMAP + ((lineNumber - DEVWOSEM) *WORDLEN)));
+        deviceNumber = getDeviceNumber((unsigned int*) (INTBITMAP + ((lineNumber - DEVNOSEM) *WORDLEN)));
 
         if(deviceNumber == -1)
         {
@@ -319,7 +319,7 @@ void ioTrapHandler()
         lineNumber = lineNumber - DEVNOSEM;
         deviceIndex = (DEVPERINT * lineNumber) + deviceNumber;
 
-        device = &(devreg -> devreg[deviceIndex]);
+        device = &(device -> devreg[deviceIndex]);
 
         sem[deviceIndex]++;
 

@@ -338,13 +338,7 @@ void ioTrapHandler()
 
         device -> d_command = ACK;
 
-        if (currentProcess != NULL)
-        {
-            STCK(TODStarted);
-            LDST(&currentProcess -> pcb_s);
-        }
-
-        scheduler();
+        finish(startTime);
     }
 }
 

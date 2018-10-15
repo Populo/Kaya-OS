@@ -313,7 +313,7 @@ HIDDEN void pullUpAndDie(int type, state_PTR old)
             }
             break;
         case PGMTRAP: 
-            if(currentProcess -> newPGM == NULL)    
+            if(currentProcess -> newPGM != NULL)    
             {
                 copyState((state_PTR) PGMTRAPOLDAREA, currentProcess -> oldPGM);
                 copyState(currentProcess -> newPGM, &(currentProcess -> pcb_s));
@@ -321,7 +321,7 @@ HIDDEN void pullUpAndDie(int type, state_PTR old)
             }
             break;
         case SYSBP: 
-            if(currentProcess -> newSys == NULL)
+            if(currentProcess -> newSys != NULL)
             {         
                 copyState((state_PTR) SYSCALLOLDAREA, currentProcess -> oldSys);
                 copyState(currentProcess -> newSys, &(currentProcess -> pcb_s));

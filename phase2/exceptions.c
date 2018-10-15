@@ -234,8 +234,8 @@ void sysCPUTime(state_PTR state)
     cpu_t t;
     STCK(t);
 
-    currentProcess -> cpu_time = currentProcess -> cpu_time + (t - TODStarted);
-    state -> s_v0 = currentProcess -> cpu_time;
+    currentProcess -> pcb_time = currentProcess -> pcb_time + (t - TODStarted);
+    state -> s_v0 = currentProcess -> pcb_time;
     STCK(TODStarted);
 }
 

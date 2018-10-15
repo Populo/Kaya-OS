@@ -19,7 +19,7 @@ HIDDEN void sysSpecifyException(state_PTR caller);
 HIDDEN void sysCPUTime(state_PTR state);
 HIDDEN void sysWaitClock(state_PTR old);
 HIDDEN void sysWaitIO(state_PTR old);
-HIDDEN void pullUpAndDie(int type, state_PTR old);
+HIDDEN void pullUpAndDie(int type);
 
 void copyState(state_PTR old, state_PTR new);
 
@@ -31,12 +31,12 @@ void debugC(int i)
 
 void pbgTrapHandler()
 {
-    pullUpAndDie(PGMTRAP, (state_PTR) PGMTRAPOLDAREA);
+    pullUpAndDie(PGMTRAP);
 }
 
 void tlbTrapHandler()
 {
-    pullUpAndDie(TLBTRAP, (state_PTR) TBLMGMTOLDAREA);
+    pullUpAndDie(TLBTRAP);
 }
 
 
@@ -80,7 +80,7 @@ void sysCallHandler()
                 sysWaitIO(old);
                 break;
             default: /* handle 9-255 */
-                pullUpAndDie((int) old -> s_a1, (state_PTR)old -> s_a2);
+                pullUpAndDie((int) old -> s_a1);
                 break;
         }
         debugC(43);
@@ -298,7 +298,7 @@ void sysWaitIO(state_PTR old)
 
 }
 
-HIDDEN void pullUpAndDie(int type, state_PTR old)
+HIDDEN void pullUpAndDie(int type)
 {
     switch(type)
     {

@@ -33,6 +33,12 @@ void debugH(int i)
     a = 10;
 }
 
+void debugQ(int i)
+{
+    int a;
+    a = 10;
+}
+
 void pbgTrapHandler()
 {
     pullUpAndDie(PGMTRAP);
@@ -305,6 +311,7 @@ void sysWaitIO(state_PTR old)
 void pullUpAndDie(int type)
 {
     debugH(type);
+    debugQ(1);
     switch(type)
     {
         case TLB:

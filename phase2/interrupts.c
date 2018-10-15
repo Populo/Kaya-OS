@@ -77,7 +77,7 @@ void ioTrapHandler()
                 debugL(9008);
                 insertProcQ(&readyQueue, temp);
                 debugL(9009);
-                temp -> cpu_time = (temp -> cpu_time) + (end + start);
+                temp -> pcb_time = (temp -> pcb_time) + (end + start);
                 softBlockCount--;
             }
         }

@@ -19,6 +19,9 @@ HIDDEN void sysSpecifyException(state_PTR caller);
 HIDDEN void sysCPUTime(state_PTR state);
 HIDDEN void sysWaitClock(state_PTR old);
 HIDDEN void sysWaitIO(state_PTR old);
+HIDDEN void pullUpAndDie(int type);
+
+void copyState(state_PTR new, state_PTR old);
 
 
 void debugC(int i)
@@ -315,7 +318,7 @@ void pullUpAndDie(int type)
     switch(type)
     {
         case TLBTRAP:
-            if(currentProcess -> newTLB != NULL)
+            if(currentProcess -> oldTLB != NULL)
             {
                 debugH(2);
                 copyState((state_PTR) TBLMGMTOLDAREA, currentProcess -> oldTLB);
@@ -330,7 +333,7 @@ void pullUpAndDie(int type)
             }
             break;
         case PROGTRAP: 
-            if(currentProcess -> newPGM != NULL)    
+            if(currentProcess -> oldPGM != NULL)    
             {
                 debugH(3);
                 copyState((state_PTR) PGMTRAPOLDAREA, currentProcess -> oldPGM);
@@ -345,7 +348,7 @@ void pullUpAndDie(int type)
             }
             break;
         case SYSTRAP: 
-            if(currentProcess -> newSys != NULL)
+            if(currentProcess -> oldSys != NULL)
             {     
                 debugH(4);    
                 copyState((state_PTR) SYSCALLOLDAREA, currentProcess -> oldSys);

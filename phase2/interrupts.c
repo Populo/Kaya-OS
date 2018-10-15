@@ -287,31 +287,31 @@ void ioTrapHandler()
         else if ((cause & FOURTH) != 0)
         {
             lineNumber = DISKINT;
-            deviceNumber = getDeviceNumber(*DISKINT);
         }
         else if ((cause & FIFTH) != 0)
         {
             lineNumber = TAPEINT;
-            deviceNumber = getDeviceNumber(*TAPEINT);
         }
         else if ((cause & SIXTH) != 0)
         {
             lineNumber = NETWINT;
-            deviceNumber = getDeviceNumber(*NETWINT);
         }
         else if ((cause & SEVENTH) != 0)
         {
             lineNumber = PRINTINT;
-            deviceNumber = getDeviceNumber(*PRINTINT);
         }
         else if ((cause & EIGHTH) != 0)
         {
-            deviceNumber = getDeviceNumber(*TERMINT);
-            int *semAdd = (TERMINT - DEVNOSEM)*DEVPERINT;
-            
-                
+            lineNumber = TERMINT;
         }
         else
+        {
+            PANIC();
+        }
+
+        deviceNumber = getDeviceNumber((unsigned int*) (INTBITMAP + ((lineNumber - DEVWOSEM) *WORDLEN)));
+
+        if(deviceNumber == -1)
         {
             PANIC();
         }

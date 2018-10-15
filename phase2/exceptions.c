@@ -29,6 +29,12 @@ void debugC(int i)
     a = 10;
 }
 
+void debugH(int i)
+{
+    int a;
+    a = 10;
+}
+
 void pbgTrapHandler()
 {
     pullUpAndDie(PGMTRAP);
@@ -300,11 +306,13 @@ void sysWaitIO(state_PTR old)
 
 HIDDEN void pullUpAndDie(int type)
 {
+    debugH(1);
     switch(type)
     {
         case TLB:
             if(currentProcess -> newTLB != NULL)
             {
+                debugH(2);
                 copyState((state_PTR) TBLMGMTOLDAREA, currentProcess -> oldTLB);
                 copyState(currentProcess -> newTLB, &(currentProcess -> pcb_s));
                 LDST(&(currentProcess -> pcb_s));
@@ -313,6 +321,7 @@ HIDDEN void pullUpAndDie(int type)
         case PGMTRAP: 
             if(currentProcess -> newPGM != NULL)    
             {
+                debugH(3);
                 copyState((state_PTR) PGMTRAPOLDAREA, currentProcess -> oldPGM);
                 copyState(currentProcess -> newPGM, &(currentProcess -> pcb_s));
                 LDST(&(currentProcess -> pcb_s));
@@ -320,14 +329,15 @@ HIDDEN void pullUpAndDie(int type)
             break;
         case SYSBP: 
             if(currentProcess -> newSys != NULL)
-            {         
+            {     
+                debugH(4);    
                 copyState((state_PTR) SYSCALLOLDAREA, currentProcess -> oldSys);
                 copyState(currentProcess -> newSys, &(currentProcess -> pcb_s));
                 LDST(&(currentProcess -> pcb_s));
             }
             break;        
     }
-
+    debugH(5);
     sysTerminate();
     scheduler();
 }

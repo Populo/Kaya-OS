@@ -18,7 +18,7 @@ extern cpu_t TODStarted;
 extern void copyState(state_PTR old, state_PTR new);
 
 HIDDEN void finish(cpu_t start);
-HIDDEN int getDeviceNumber(unsigned int* bitMap);
+HIDDEN int getDeviceNumber(int lineNumber);
 
 void debugL(int i)
 {
@@ -340,7 +340,7 @@ void ioTrapHandler()
 
         if (currentProcess != NULL)
         {
-            STCK(startTOD);
+            STCK(TODStarted);
             LDST(&currentProcess -> pcb_s);
         }
 

@@ -306,7 +306,7 @@ void sysWaitIO(state_PTR old)
 
 HIDDEN void pullUpAndDie(int type)
 {
-    debugH(1);
+    debugH(type);
     switch(type)
     {
         case TLB:

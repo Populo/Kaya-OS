@@ -300,8 +300,6 @@ void sysWaitIO(state_PTR old)
 
 HIDDEN void pullUpAndDie(int type, state_PTR old)
 {
-    state_PTR newLocation;
-
     switch(type)
     {
         case TLB:
@@ -331,6 +329,7 @@ HIDDEN void pullUpAndDie(int type, state_PTR old)
     }
 
     sysTerminate();
+    scheduler();
 }
 
 void copyState(state_PTR old, state_PTR new)

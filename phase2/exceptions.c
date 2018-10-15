@@ -312,6 +312,7 @@ HIDDEN void pullUpAndDie(int type, state_PTR old)
 
             newLocation = currentProcess -> newTLB;
             copyState((state_PTR) TBLMGMTOLDAREA, currentProcess -> oldTLB);
+            copyState(currentProcess -> oldTLB, old);
             
             break;
         case PGMTRAP: 
@@ -322,6 +323,7 @@ HIDDEN void pullUpAndDie(int type, state_PTR old)
             
             newLocation = currentProcess -> newPGM;      
             copyState((state_PTR) PGMTRAPOLDAREA, currentProcess -> oldPGM);
+            copyState(currentProcess -> oldPGM, old);
 
             break;
         case SYSBP: 
@@ -333,6 +335,7 @@ HIDDEN void pullUpAndDie(int type, state_PTR old)
             newLocation = currentProcess -> newSys;
             
             copyState((state_PTR) SYSCALLOLDAREA, currentProcess -> oldSys);
+            copyState(currentProcess -> oldSYS, old);
 
             break;
         default:

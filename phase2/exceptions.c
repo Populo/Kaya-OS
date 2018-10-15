@@ -363,7 +363,8 @@ void pullUpAndDie(int type)
             sysTerminate();
             scheduler();
         }            
-    }     
+    }  
+    debugH(16);   
     
 }
 

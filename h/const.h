@@ -119,7 +119,7 @@
 #define HIDDEN      static
 #define MAXINT      0xEFFFFFFF
 #define QUANTUM     5000 /* 5 milliseconds in microseconds */
-#define INTERVALTMR 100000 /* 100 milliseconds in microseconds */
+#define TWENTYQ     100000 /* 100 milliseconds in microseconds */
 #define TOTALSEM    49 /* max number of semaphores possible plus 1 for timer */ /* SYSCALL8 */
 #define SUCCESS     0 /* successful operation return code */
 #define FAILURE     -1

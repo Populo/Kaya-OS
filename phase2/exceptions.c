@@ -314,7 +314,7 @@ void pullUpAndDie(int type)
     debugQ(1);
     switch(type)
     {
-        case TLB:
+        case TLBTRAP:
             if(currentProcess -> newTLB != NULL)
             {
                 debugH(2);
@@ -329,7 +329,7 @@ void pullUpAndDie(int type)
                 scheduler();
             }
             break;
-        case PGMTRAP: 
+        case PROGTRAP: 
             if(currentProcess -> newPGM != NULL)    
             {
                 debugH(3);
@@ -344,7 +344,7 @@ void pullUpAndDie(int type)
                 scheduler();
             }
             break;
-        case SYSBP: 
+        case SYSTRAP: 
             if(currentProcess -> newSys != NULL)
             {     
                 debugH(4);    

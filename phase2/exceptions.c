@@ -317,6 +317,7 @@ void pullUpAndDie(int type)
     debugQ(1);
     switch(type)
     {
+        debugH(9);
         case TLBTRAP:
             if(currentProcess -> oldTLB != NULL)
             {

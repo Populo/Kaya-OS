@@ -93,7 +93,7 @@ void sysCallHandler()
                 sysWaitIO(old);
                 break;
             default: /* handle 9-255 */
-                pullUpAndDie((int) old -> s_a1);
+                pullUpAndDie(SYSTRAP);
                 break;
         }
         debugC(43);

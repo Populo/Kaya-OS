@@ -304,7 +304,7 @@ void sysWaitIO(state_PTR old)
 
 }
 
-HIDDEN void pullUpAndDie(int type)
+void pullUpAndDie(int type)
 {
     debugH(type);
     switch(type)

@@ -322,6 +322,12 @@ void pullUpAndDie(int type)
                 copyState(currentProcess -> newTLB, &(currentProcess -> pcb_s));
                 LDST(&(currentProcess -> pcb_s));
             }
+            else
+            {
+                debugH(5);
+                sysTerminate();
+                scheduler();
+            }
             break;
         case PGMTRAP: 
             if(currentProcess -> newPGM != NULL)    
@@ -330,6 +336,12 @@ void pullUpAndDie(int type)
                 copyState((state_PTR) PGMTRAPOLDAREA, currentProcess -> oldPGM);
                 copyState(currentProcess -> newPGM, &(currentProcess -> pcb_s));
                 LDST(&(currentProcess -> pcb_s));
+            }
+            else
+            {
+                debugH(5);
+                sysTerminate();
+                scheduler();
             }
             break;
         case SYSBP: 
@@ -340,11 +352,14 @@ void pullUpAndDie(int type)
                 copyState(currentProcess -> newSys, &(currentProcess -> pcb_s));
                 LDST(&(currentProcess -> pcb_s));
             }
+            else
+            {
+                debugH(5);
+                sysTerminate();
+                scheduler();
+            }          
             break;        
     }
-    debugH(5);
-    sysTerminate();
-    scheduler();
 }
 
 void copyState(state_PTR old, state_PTR new)

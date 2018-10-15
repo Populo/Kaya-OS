@@ -260,7 +260,7 @@ void ioTrapHandler()
         }
         else if ((cause & SECOND) != 0)
         {
-            finish(startTOD);
+            finish(TODStarted);
         }
         else if ((cause & THIRD) != 0)
         {
@@ -286,7 +286,7 @@ void ioTrapHandler()
         }
         else if ((cause & FOURTH) != 0)
         {
-            lineNumber = DISKINT;
+            lineNumber = DISKINT;        
         }
         else if ((cause & FIFTH) != 0)
         {
@@ -309,7 +309,8 @@ void ioTrapHandler()
             PANIC();
         }
 
-        deviceNumber = getDeviceNumber((unsigned int*) (INTBITMAP + ((lineNumber - DEVNOSEM) *WORDLEN)));
+        deviceNumber = getDeviceNumber(lineNumber);
+
 
         if(deviceNumber == -1)
         {
@@ -319,7 +320,7 @@ void ioTrapHandler()
         lineNumber = lineNumber - DEVNOSEM;
         deviceIndex = (DEVPERINT * lineNumber) + deviceNumber;
 
-        device = &(device -> devreg[deviceIndex]);
+        device = &(deviceArea -> devreg[deviceIndex]);
 
         sem[deviceIndex]++;
 
@@ -362,41 +363,31 @@ HIDDEN void finish(cpu_t startTime)
 }
 
 
-HIDDEN int getDeviceNumber(unsigned int* bitMap)
+HIDDEN int getDeviceNumber(int lineNumber)
 {
-    unsigned int cause = *bitMap;
-    if((cause & FIRST) != 0)
-    {
-        return 0;
-    }
-    else if((cause & SECOND) != 0)
-    {
-        return 1;
-    }
-    else if((cause & THIRD) != 0)
-    {
-        return 2;
-    }
-    else if((cause & FOURTH) != 0)
-    {
-        return 3;
-    }
-    else if((cause & FIFTH) != 0)
-    {
-        return 4;
-    }
-    else if((cause & SIXTH) != 0)
-    {
-        return 5;
-    }
-    else if((cause & SEVENTH) != 0)
-    {
-        return 6;
-    }
-    else if((cause & EIGHTH) != 0)
-    {
-        return 7;
-    }
+    unsigned int bitMap;
+    devregarea_t devReg = (devregarea_t *) RAMBASEADDR;
+    unsigned int currentDevice = DEVICEONE;
+    int deviceNum = 0;
+    int found = FALSE;
 
-    return -1;
+    lineNumber = lineNumber -3;
+     
+    bitMap = devReg - > interrupt_dev[lineNumber];
+
+    while(!found)
+    {
+        if((currentDevice & bitMap) == currentDevice)
+        {
+            found = TRUE;
+        }
+        else
+        {
+            currentDevice = currentDevice << 1;
+            deviceNum++;
+        }
+
+    }
+    return deviceNum;
 }
+    

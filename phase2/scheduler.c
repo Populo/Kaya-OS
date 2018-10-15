@@ -28,7 +28,7 @@ void scheduler()
     {
         debugA(100);
         STCK(currentTOD);
-        currentProcess -> cpu_time = (currentProcess -> cpu_time) + (currentTOD - TODStarted);
+        currentProcess -> pcb_time = (currentProcess -> pcb_time) + (currentTOD - TODStarted);
         debugA(110);
     }
     if(emptyProcQ(readyQueue))

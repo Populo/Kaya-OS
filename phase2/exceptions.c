@@ -335,7 +335,7 @@ HIDDEN void pullUpAndDie(int type, state_PTR old)
             newLocation = currentProcess -> newSys;
             
             copyState((state_PTR) SYSCALLOLDAREA, currentProcess -> oldSys);
-            copyState(currentProcess -> oldSYS, old);
+            copyState(currentProcess -> oldSys, old);
 
             break;
         default:

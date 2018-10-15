@@ -314,6 +314,7 @@ HIDDEN void pullUpAndDie(int type, state_PTR old)
             break;
         case PGMTRAP: 
             if(currentProcess -> newPGM == NULL)    
+            {
                 copyState((state_PTR) PGMTRAPOLDAREA, currentProcess -> oldPGM);
                 copyState(currentProcess -> newPGM, &(currentProcess -> pcb_s));
                 LDST(&(currentProcess -> pcb_s));

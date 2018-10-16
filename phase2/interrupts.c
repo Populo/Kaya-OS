@@ -24,11 +24,7 @@ void debugL(int i)
 
 void ioTrapHandler()
 {
-    if (currentProcess == NULL)
-    {
-        debugL(MAXINT);
-        PANIC();
-    }
+    
     debugL(8999);
     unsigned int oldCause;
     cpu_t start, end, total;

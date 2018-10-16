@@ -52,7 +52,7 @@ void scheduler()
     {
         currentProcess = newProc;
         STCK(TODStarted);
-        setTimer(QUANTUM);
+        setTIMER(QUANTUM);
         LDST(&(currentProcess -> pcb_s));
     } 
 }

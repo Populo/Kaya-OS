@@ -49,7 +49,7 @@ if(currentProcess != NULL)
 
     currentProcess -> pcb_time = currentProcess -> pcb_time + total;
 
-    moveState(old, &(currentProcess -> pcb_s));
+    copyState(old, &(currentProcess -> pcb_s));
 }
 
 

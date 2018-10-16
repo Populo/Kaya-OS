@@ -146,7 +146,7 @@ void ioTrapHandler()
         {
             temp -> pcb_semAdd = NULL;
 
-            temp -> pcb_s.s_v0 = devReg -> d_status;
+            temp -> pcb_s.s_v0 = devRegNum -> d_status;
             softBlockCount--;
 
             insertProcQ(&(readyQueue), temp);
@@ -235,7 +235,7 @@ void goPowerRangers(int deviceNum)
             {
                 process -> pcb_semAdd = NULL;
 
-                process -> pcb_s.v0 = dev->t_transm_status;
+                process -> pcb_s.s_v0 = dev->t_transm_status;
                 dev-> t_transm_command = ACK;
             }
 

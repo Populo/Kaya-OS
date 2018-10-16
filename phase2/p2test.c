@@ -31,6 +31,12 @@ void debugB(int a)
 	i = 10;
 }
 
+void debugD(int i)
+{
+	int temp;
+	temp = i;
+}
+
 /* hardware constants */
 #define PRINTCHR	2
 #define BYTELEN	8
@@ -145,12 +151,6 @@ void print(char *msg) {
 		s++;	
 	}
 	SYSCALL(VERHOGEN, (int)&term_mut, 0, 0);				/* V(term_mut) */
-}
-
-debugD(int i)
-{
-	int temp;
-	temp = i;
 }
 
 

@@ -15,7 +15,7 @@ cpu_t currentTOD;
 cpu_t TODStarted;
 
 
-int debugA(int i)
+void debugA(int i)
 {
     int temp;
     temp = i;

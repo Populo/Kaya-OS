@@ -55,6 +55,10 @@
 
 #define TRAPTYPES	3
 
+/* 2D array for states */
+#define NEW         0
+#define OLD         1
+
 
 /* device interrupts */
 #define DISKINT		3

@@ -330,7 +330,7 @@ void pullUpAndDie(int type)
             scheduler();
         }
     }
-    if(type == PROGTRAP) 
+    else if(type == PROGTRAP) 
     {
         if(currentProcess -> newPGM != NULL)    
         {
@@ -346,7 +346,7 @@ void pullUpAndDie(int type)
             scheduler();
         }
     }
-    if(type == SYSTRAP) 
+    else if(type == SYSTRAP) 
     {
         if(currentProcess -> newSys != NULL)
         {     

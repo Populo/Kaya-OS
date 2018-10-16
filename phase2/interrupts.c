@@ -7,11 +7,6 @@
 #include "../e/asl.e"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
-extern int processCount;
-extern int softBlockCount;
-extern pcb_PTR currentProcess;
-extern pcb_PTR readyQueue;
-extern int sem[TOTALSEM];
 
 extern cpu_t TODStarted;
 

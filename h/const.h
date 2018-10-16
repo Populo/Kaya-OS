@@ -161,6 +161,16 @@
 #define IEOFF   0xFFFFFFFB /* Turns off global interrupts */
 #define IECON   0x00000001 /* Turns on current interrupts */
 
+/* interrupt line and device bit patterns */
+#define LINEZERO	0x00000100
+#define LINEONE		0x00000200
+#define LINETWO		0x00000400
+#define LINETHREE	0x00000800
+#define LINEFOUR	0x00001000
+#define LINEFIVE	0x00002000
+#define LINESIX		0x00004000
+#define LINESEVEN	0x00008000
+
 
 /* Syscalls */
 #define CREATE_PROCESS                      1

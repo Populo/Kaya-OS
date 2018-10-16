@@ -31,7 +31,7 @@ void ioTrapHandler()
 {
     debugL(8999);
     unsigned int oldCause;
-    cpu_t start, end;
+    cpu_t start, end, total;
     int deviceNum, interruptNum;
     device_t* devRegNum;
     int i, status, tranStatus;
@@ -40,23 +40,26 @@ void ioTrapHandler()
     state_PTR old;
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
 
-    old = (state_PTR) INTPOLDAREA;
+if(currentProcess != NULL)
+{
 
-    STCK(start);
+    STCK(end);
 
-    oldCause = old -> s_cause;
+    total = end - TODStarted;
 
-    oldCause = (oldCause & INTPOLDAREAIDK) >> 8;
+    currentProcess -> pcb_time = currentProcess -> pcb_time + total;
 
-    interruptNum = 0;
-    debugL(9000);
-    if((oldCause & FIRST) != 0)
+    moveState(old, &(currentProcess -> pcb_s));
+}
+
+
+
+    if((oldCause & LINEZERO) != LINEZERO)
     {
-        debugL(9001);
         debugL(9002);
         PANIC();
     }
-    else if((oldCause & SECOND) != 0)
+    else if((oldCause & LINEONE) != LINEONE)
     {
         if(currentProcess != NULL)
         {
@@ -66,7 +69,7 @@ void ioTrapHandler()
         setTIMER(QUANTUM);
         scheduler();
     }
-    else if((oldCause & THIRD) != 0)
+    else if((oldCause & LINETWO) != LINETWO)
     {
         debugL(9004);
         semAdd = (int*) &(sem[TOTALSEM-1]);
@@ -89,27 +92,27 @@ void ioTrapHandler()
         finish();
         debugL(9010);
     }  
-    else if((oldCause & FOURTH) != 0)
+    else if((oldCause & LINETHREE) != LINETHREE)
     {
         debugL(9011);
         interruptNum = DISKINT;
     }
-    else if((oldCause & FIFTH) != 0)
+    else if((oldCause & LINEFOUR) != LINEFOUR)
     {
         debugL(9012);
         interruptNum = TAPEINT;
     }
-    else if((oldCause & SIXTH) != 0)
+    else if((oldCause & LINEFIVE) != LINEFIVE)
     {
         debugL(9013);
         interruptNum = NETWINT;
     }
-    else if((oldCause & SEVENTH) != 0)
+    else if((oldCause & LINESIX) != LINESIX)
     {
         debugL(9014);
         interruptNum = PRNTINT;
     }
-    else if((oldCause & EIGHTH) != 0)
+    else if((oldCause & LINESEVEN) != LINESEVEN)
     {
         debugL(9015);
         interruptNum = TERMINT;

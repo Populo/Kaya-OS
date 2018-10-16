@@ -86,6 +86,9 @@ typedef struct state_t {
 #define s_HI	s_reg[29]
 #define s_LO	s_reg[30]
 
+#define SECTIONS	3
+#define OLDNEW		2
+
 /* process block type */
 typedef struct pcb_t
 {
@@ -101,12 +104,7 @@ typedef struct pcb_t
 
 	cpu_t 			pcb_time; 		/* time the process has spent on the CPU in microseconds */
 
-	state_PTR		oldSys,			/* For pull up and die */
-					newSys,
-					oldPGM,
-					newPGM,
-					oldTLB,
-					newTLB;
+	state_PTR		pcb_states[SECTIONS][OLDNEW]; /* 2D array for states */
 
 } pcb_t, *pcb_PTR;
 

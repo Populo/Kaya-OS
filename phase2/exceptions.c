@@ -212,28 +212,28 @@ void sysSpecifyException(state_PTR caller)
     switch(type)
     {
         case TLBTRAP:
-            if(currentProcess -> oldTLB != NULL)
+            if(currentProcess -> pcb_states[TLBTRAP][NEW] != NULL)
             {
                 sysTerminate();
             }
-            currentProcess -> newTLB = (state_PTR) new;
-            currentProcess -> oldTLB = (state_PTR) old;
+            currentProcess -> pcb_states[TLBTRAP][NEW] = (state_PTR) new;
+            currentProcess -> pcb_states[TLBTRAP][OLD] = (state_PTR) old;
             break;
         case PROGTRAP:
-            if(currentProcess -> oldPGM != NULL)
+            if(currentProcess -> pcb_states[PGMTRAP][NEW] != NULL)
             {
                 sysTerminate();
             }
-            currentProcess -> newPGM = (state_PTR) new;
-            currentProcess -> oldPGM = (state_PTR) old;
+            currentProcess -> pcb_states[PGMTRAP][NEW] = (state_PTR) new;
+            currentProcess -> pcb_states[PGMTRAP][OLD] = (state_PTR) old;
             break;
         case SYSTRAP:
-            if(currentProcess -> oldSys != NULL)
+            if(currentProcess -> pcb_states[SYSTRAP][NEW] != NULL)
             {
                 sysTerminate();
             }
-            currentProcess -> newSys = (state_PTR) new;
-            currentProcess -> oldSys = (state_PTR) old;
+            currentProcess -> pcb_states[SYSTRAP][NEW] = (state_PTR) new;
+            currentProcess -> pcb_states[SYSTRAP][OLD] = (state_PTR) old;
             break;
         default:
             sysTerminate();
@@ -316,11 +316,11 @@ void pullUpAndDie(int type)
     debugQ(1);
     if(type == TLBTRAP)
     {
-        if(currentProcess -> newTLB != NULL)
+        if(currentProcess -> pcb_states[TLBTRAP][NEW] != NULL)
         {
             debugH(2);
-            copyState((state_PTR) TBLMGMTOLDAREA, currentProcess -> oldTLB);
-            copyState(currentProcess -> newTLB, &(currentProcess -> pcb_s));
+            copyState((state_PTR) TBLMGMTOLDAREA, currentProcess -> pcb_states[TLBTRAP][OLD]);
+            copyState(currentProcess -> pcb_states[TLBTRAP][NEW], &(currentProcess -> pcb_s));
             LDST(&(currentProcess -> pcb_s));
         }
         else
@@ -332,11 +332,11 @@ void pullUpAndDie(int type)
     }
     else if(type == PROGTRAP) 
     {
-        if(currentProcess -> newPGM != NULL)    
+        if(currentProcess -> pcb_states[PGMTRAP][NEW] != NULL)
         {
-            debugH(3);
-            copyState((state_PTR) PGMTRAPOLDAREA, currentProcess -> oldPGM);
-            copyState(currentProcess -> newPGM, &(currentProcess -> pcb_s));
+            debugH(2);
+            copyState((state_PTR) PGMTRAPOLDAREA, currentProcess -> pcb_states[PGMTRAP][OLD]);
+            copyState(currentProcess -> pcb_states[PGMTRAP][NEW], &(currentProcess -> pcb_s));
             LDST(&(currentProcess -> pcb_s));
         }
         else
@@ -348,11 +348,11 @@ void pullUpAndDie(int type)
     }
     else if(type == SYSTRAP) 
     {
-        if(currentProcess -> newSys != NULL)
-        {     
-            debugH(4);    
-            copyState((state_PTR) SYSCALLOLDAREA, currentProcess -> oldSys);
-            copyState(currentProcess -> newSys, &(currentProcess -> pcb_s));
+        if(currentProcess -> pcb_states[SYSTRAP][NEW] != NULL)
+        {
+            debugH(2);
+            copyState((state_PTR) SYSCALLOLDAREA, currentProcess -> pcb_states[SYSTRAP][OLD]);
+            copyState(currentProcess -> pcb_states[SYSTRAP][NEW], &(currentProcess -> pcb_s));
             LDST(&(currentProcess -> pcb_s));
         }
         else

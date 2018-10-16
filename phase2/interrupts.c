@@ -156,7 +156,7 @@ void ioTrapHandler()
             sem[i] = devRegNum -> d_status;
         }
     }
-    dev -> d_command = ACK;
+    devRegNum -> d_command = ACK;
 
     debugL(9029);
     finish();

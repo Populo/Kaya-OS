@@ -28,6 +28,7 @@ void scheduler()
 
     if(newProc == NULL)
     {
+        debugA(2);
         currentProcess = NULL;
 
         if(processCount == 0)
@@ -42,6 +43,7 @@ void scheduler()
             }
             if(softBlockCount > 0)
             {
+                debugA(3);
                 setSTATUS(getSTATUS()| ALLOFF | IEON | IMON);
                 WAIT();
             }
@@ -50,9 +52,11 @@ void scheduler()
     }
     else
     {
+        debugA(4);
         currentProcess = newProc;
         STCK(TODStarted);
         setTIMER(QUANTUM);
+        debugA(5);
         LDST(&(currentProcess -> pcb_s));
     } 
 }

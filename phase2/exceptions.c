@@ -314,55 +314,55 @@ void pullUpAndDie(int type)
 {
     debugH(type);
     debugQ(1);
-        if(type == TLBTRAP)
+    if(type == TLBTRAP)
+    {
+        if(currentProcess -> newTLB != NULL)
         {
-            if(currentProcess -> newTLB != NULL)
-            {
-                debugH(2);
-                copyState((state_PTR) TBLMGMTOLDAREA, currentProcess -> oldTLB);
-                copyState(currentProcess -> newTLB, &(currentProcess -> pcb_s));
-                LDST(&(currentProcess -> pcb_s));
-            }
-            else
-            {
-                debugH(5);
-                sysTerminate();
-                scheduler();
-            }
+            debugH(2);
+            copyState((state_PTR) TBLMGMTOLDAREA, currentProcess -> oldTLB);
+            copyState(currentProcess -> newTLB, &(currentProcess -> pcb_s));
+            LDST(&(currentProcess -> pcb_s));
         }
-        if(type == PROGTRAP) 
+        else
         {
-            if(currentProcess -> newPGM != NULL)    
-            {
-                debugH(3);
-                copyState((state_PTR) PGMTRAPOLDAREA, currentProcess -> oldPGM);
-                copyState(currentProcess -> newPGM, &(currentProcess -> pcb_s));
-                LDST(&(currentProcess -> pcb_s));
-            }
-            else
-            {
-                debugH(5);
-                sysTerminate();
-                scheduler();
-            }
+            debugH(5);
+            sysTerminate();
+            scheduler();
         }
-        if(type == SYSTRAP) 
-        {
-            if(currentProcess -> newSys != NULL)
-            {     
-                debugH(4);    
-                copyState((state_PTR) SYSCALLOLDAREA, currentProcess -> oldSys);
-                copyState(currentProcess -> newSys, &(currentProcess -> pcb_s));
-                LDST(&(currentProcess -> pcb_s));
-            }
-            else
-            {
-                debugH(5);
-                sysTerminate();
-                scheduler();
-            }          
-        }        
     }
+    if(type == PROGTRAP) 
+    {
+        if(currentProcess -> newPGM != NULL)    
+        {
+            debugH(3);
+            copyState((state_PTR) PGMTRAPOLDAREA, currentProcess -> oldPGM);
+            copyState(currentProcess -> newPGM, &(currentProcess -> pcb_s));
+            LDST(&(currentProcess -> pcb_s));
+        }
+        else
+        {
+            debugH(5);
+            sysTerminate();
+            scheduler();
+        }
+    }
+    if(type == SYSTRAP) 
+    {
+        if(currentProcess -> newSys != NULL)
+        {     
+            debugH(4);    
+            copyState((state_PTR) SYSCALLOLDAREA, currentProcess -> oldSys);
+            copyState(currentProcess -> newSys, &(currentProcess -> pcb_s));
+            LDST(&(currentProcess -> pcb_s));
+        }
+        else
+        {
+            debugH(5);
+            sysTerminate();
+            scheduler();
+        }          
+    }        
+    
 }
 
 void copyState(state_PTR old, state_PTR new)

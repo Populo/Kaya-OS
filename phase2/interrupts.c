@@ -17,7 +17,7 @@ extern cpu_t TODStarted;
 
 extern void copyState(state_PTR old, state_PTR new);
 
-HIDDEN void finish(cpu_t start);
+HIDDEN void finish();
 HIDDEN int getDeviceNumber(int lineNumber);
 
 void debugL(int i)
@@ -33,7 +33,7 @@ void ioTrapHandler()
     unsigned int oldCause;
     cpu_t start, end;
     int deviceNum, interruptNum;
-    device_t *devRegNum;
+    device_t* devRegNum;
     int i, status, tranStatus;
     int* semAdd;
     pcb_PTR temp;
@@ -86,7 +86,7 @@ void ioTrapHandler()
         }
         (*semAdd) = 0;
         LDIT(INTTIME);
-        finish(start);
+        finish();
         debugL(9010);
     }  
     else if((oldCause & FOURTH) != 0)
@@ -133,36 +133,36 @@ void ioTrapHandler()
     }
     interruptNum = interruptNum - DISKINT;
 
-    i = (DEVPERINT * interruptNum) + deviveNum;
+    i = (DEVPERINT * interruptNum) + deviceNum;
 
-    dev = &(devReg -> devreg[i]);
+    devRegNum = &(devReg -> devreg[i]);
 
     sem[i] = sem[i] + 1;
 
     if(sem[i] <= 0)
     {
         temp = removeBlocked(&(sem[i]));
-        if(temp != null)
+        if(temp != NULL)
         {
             temp -> pcb_semAdd = NULL;
 
-            process -> pcb_s.s_v0 = dev -> d_status;
+            temp -> pcb_s.s_v0 = dev -> d_status;
             softBlockCount--;
 
             insertProcQ(&(readyQueue), temp);
         }
         else
         {
-            devStatus[i] = dev -> d_status;
+            sem[i] = dev -> d_status;
         }
     }
     dev -> d_command = ACK;
 
     debugL(9029);
-    finish(start);
+    finish();
 }
 
-HIDDEN void finish(cpu_t start)
+HIDDEN void finish()
 {
     if(currentProcess != NULL)
     {
@@ -202,13 +202,13 @@ HIDDEN int getDeviceNumber(int lineNumber)
     return deviceNum;
 }
 
-void goPowerRangers(int deviveNum)
+void goPowerRangers(int deviceNum)
 {
     pcb_PTR process;
-    int semAdd = (TERMINT - DISKINT)* DEVPERINT + devNumber;
-    int recieve = TRUE;
+    int semAdd = (TERMINT - DISKINT)* DEVPERINT + deviceNum;
+    int receive = TRUE;
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
-    device_PTR dev = &(devReg -> devreg[semAdd]);
+    device_t* dev = &(devReg -> devreg[semAdd]);
 
     if((dev -> t_transm_status & 0x0F) != READY)
     {

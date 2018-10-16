@@ -92,12 +92,12 @@ pcb_PTR allocPcb ()
     newPcb -> pcb_semAdd = NULL;
 
     /* PULL UP AND DIE MF */
-    newPcb -> oldPGM = NULL;
-    newPcb -> newPGM = NULL;
-    newPcb -> oldSys = NULL;
-    newPcb -> newSys = NULL;
-    newPcb -> oldTLB = NULL;
-    newPcb -> oldTLB = NULL;
+    int i;
+    for (i = 0; i < SECTIONS; i++)
+    {
+        newPcb -> pcb_states[i][OLD] = NULL;
+        newPcb -> pcb_states[i][NEW] = NULL;
+    }
 
 
     return newPcb;

@@ -57,20 +57,22 @@ void ioTrapHandler()
     }
     else if((oldCause & SECOND) != 0)
     {
-        debugL(9003);
-        finish(start);
+        if(currentProcess != NULL)
+        {
+            insertProcQ(&(readyQueue), currentProcess);
+            currentProcess = NULL;
+        }
+        setTIMER(QUANTUM);
+        scheduler();
     }
     else if((oldCause & THIRD) != 0)
     {
         debugL(9004);
-        LDIT(INTTIME);
         semAdd = (int*) &(sem[TOTALSEM-1]);
         while(headBlocked(semAdd) != NULL)
         {
             debugL(9005);
             temp = removeBlocked(semAdd);
-            debugL(9006);
-            STCK(end);
             debugL(9007);
             if(temp != NULL)
             {
@@ -82,6 +84,7 @@ void ioTrapHandler()
             }
         }
         (*semAdd) = 0;
+        LDIT(INTTIME);
         finish(start);
         debugL(9010);
     }  
@@ -117,82 +120,56 @@ void ioTrapHandler()
     }
     debugL(9017);
     deviceNum = getDeviceNumber(interruptNum);
+    if(interruptNum == TERMINT)
+    {
+        goPowerRangers();
+    }
     debugL(9018);
     if(deviceNum == -1)
     {
         debugL(9019);
         PANIC();
     }
-    debugL(9020);
-    devRegNum = (device_t *) (INTDEVREG + ((interruptNum - DEVNOSEM) * DEVREGSIZE * DEVPERINT) + (deviceNum + DEVREGSIZE));
-    debugL(9021);
-    if(interruptNum != 7)
-    {
-        debugL(9022);
-        status = devRegNum -> d_status;
-        devRegNum -> d_command = ACK;
-        i = DEVPERINT * (interruptNum - DEVNOSEM) + deviceNum;
-    }
-    else
-    {
-        debugL(9023);
-        tranStatus = (devRegNum -> t_transm_status & 0xFF);
+    interruptNum = interruptNum - DISKINT;
 
-        if(tranStatus == 3 || tranStatus == 4 || tranStatus == 5)
+    i = (DEVPERINT * interruptNum) + deviveNum;
+
+    dev = &(devReg -> devreg[i]);
+
+    sem[i] = sem[i] + 1;
+
+    if(sem[i] <= 0)
+    {
+        temp = removeBlocked(&(sem[i]));
+        if(temp != null)
         {
-            debugL(9024);
-            i = (DEVPERINT * (interruptNum - DEVNOSEM)) + deviceNum;
-            status = devRegNum -> t_recv_status;
-            devRegNum -> t_recv_command = ACK;
-        } 
+            temp -> p_semAdd = NULL;
+
+            process -> p_s.s_v0 = dev -> d_status;
+            softBlockCount--;
+
+            insertProcQ(&(readyQueue), temp);
+        }
         else
         {
-            debugL(9025);
-            i = DEVPERINT * (interruptNum - DEVNOSEM + 1) + deviceNum;
-            status = devRegNum -> t_recv_status;
-            devRegNum -> t_recv_command = ACK;
+            devStatus[i] = dev -> d_status
         }
     }
-    debugL(9026);
-    semAdd = &(sem[i]);
-    ++(*semAdd);
+    dev -> d_command = ACK;
 
-    if((*semAdd) <= 0)
-    {
-        debugL(9027);
-        temp = removeBlocked(semAdd);
-        if(temp != NULL)
-        {
-            debugL(9028);
-            temp -> pcb_s.s_v0 = status;
-            insertProcQ(&readyQueue, temp);
-            softBlockCount--;
-        }
-        
-    }
-    else
-    {
-        /* LOL FUCK YOU */
-    }
     debugL(9029);
     finish(start);
 }
 
 HIDDEN void finish(cpu_t start)
 {
-    debugL(9030);
-        cpu_t end;
-        state_PTR old = (state_PTR) INTPOLDAREA;
-        if(currentProcess != NULL)
-        {
-            debugL(9031);
-            STCK(end);
-            TODStarted = TODStarted + (end - start);
-            copyState(old, &(currentProcess -> pcb_s));
-            insertProcQ(&readyQueue, currentProcess);
-        }
-        debugL(9032);
-        scheduler();
+    if(currentProcess != NULL)
+    {
+        STCK(TODStarted);
+        LDST(&(currentProcess -> pcb_s));
+    }
+    debugL(9032);
+    scheduler();
 }
 
 
@@ -224,5 +201,49 @@ HIDDEN int getDeviceNumber(int lineNumber)
     return deviceNum;
 }
 
+void goPowerRangers(int deviveNum)
+{
+    pcb_PTR process;
+    int semAdd = (TERMINT - DISKINT)* DEVPERINT + devNumber;
+    int recieve = TRUE;
+    devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
+    device_PTR dev = &(devReg -> devreg[semAdd]);
 
+    if((dev -> t_transm_status & 0x0F) != READY)
+    {
+        semAdd = semAdd + DEVPERINT;
+        receive = FALSE;
+    }
+
+    sem[semAdd] = sem[semAdd] + 1;
+
+    if(sem[semAdd] <= 0)
+    {
+        process = removeBlocked(&(sem[semAdd]));
+        if(process != NULL)
+        {
+            process -> p_semAdd = NULL;
+
+            if(recieve)
+            {
+                process -> p_s.s_v0 = dev->t_transm_status;
+                dev->t_transm_command = ACK;
+            }
+
+            else
+            {
+                process -> p_semAdd = NULL;
+
+                process -> p_s.v0 = dev->t_transm_status;
+                dev-> t_transm_command = ACK;
+            }
+
+            softBlockCount--;
+
+            insertProcQ(&(readyQueue), process);
+        }
+    }
+
+    finish();
+}
     

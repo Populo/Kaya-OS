@@ -153,7 +153,7 @@ void ioTrapHandler()
         }
         else
         {
-            sem[i] = dev -> d_status;
+            sem[i] = devRegNum -> d_status;
         }
     }
     dev -> d_command = ACK;

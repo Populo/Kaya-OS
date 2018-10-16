@@ -8,6 +8,7 @@
 #include "../e/exceptions.e"
 
 extern cpu_t TODStarted;
+cpu_t TODStopped;
 
 cpu_t current;
 
@@ -173,13 +174,12 @@ void sysVerhogen(state_PTR old)
     {
         debugC(9);
         new = removeBlocked(semAdd);
+        new -> pcb_semAdd = NULL;
         debugC(11);
-        if(!emptyProcQ(new))
-        {
-            debugC(13);
-            insertProcQ(&readyQueue, new);
-            debugC(4);
-        }
+        debugC(13);
+        insertProcQ(&(readyQueue), new);
+        debugC(4);
+        
     } 
     debugC(42);
 }
@@ -188,15 +188,17 @@ void sysPasseren(state_PTR old)
 {
     debugC(2);
     int* semAdd = (int *)old -> s_a1;
+    
     debugC(48);
     (*semAdd)--;
     debugC(64);
     if((*semAdd) < 0)
     {
-        debugC(80);
-        copyState(old, &(currentProcess -> pcb_s));
-        debugC(96);
+        STCK(TODStopped);
+        current = TODStopped - TODStarted;
+        currentProcess -> pcb_time = currentProcess -> pcb_time + current;
         insertBlocked(semAdd, currentProcess);
+        currentProcess = NULL;
         debugC(112);
         scheduler();
     }

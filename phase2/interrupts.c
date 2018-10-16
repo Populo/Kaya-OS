@@ -169,6 +169,7 @@ HIDDEN void finish()
 {
     if(currentProcess != NULL)
     {
+        debugL(9031);
         STCK(TODStarted);
         LDST(&(currentProcess -> pcb_s));
     }

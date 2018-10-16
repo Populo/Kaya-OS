@@ -19,7 +19,7 @@ HIDDEN void sysSpecifyException(state_PTR caller);
 HIDDEN void sysCPUTime(state_PTR state);
 HIDDEN void sysWaitClock(state_PTR old);
 HIDDEN void sysWaitIO(state_PTR old);
-HIDDEN void pullUpAndDie(int type);
+
 
 
 

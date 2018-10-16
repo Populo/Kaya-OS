@@ -97,7 +97,7 @@ void sysCallHandler()
                 break;
         }
         debugC(43);
-        LDST(old);
+        LDST(&(currentProcess -> pcb_s));
     }
     else /* User mode */
     {
@@ -306,7 +306,7 @@ void sysWaitIO(state_PTR old)
     else{
         currentProcess -> pcb_s.s_v0 = sem[index];
         debugC(4109);
-        LDST(old);
+        LDST(&(currentProcess -> pcb_s));
     }
     debugC(4106);
 

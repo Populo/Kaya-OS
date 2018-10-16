@@ -59,7 +59,7 @@ if(currentProcess != NULL)
         debugL(9002);
         PANIC();
     }
-    else if((oldCause -> s_cause & LINEONE) == LINEONE)
+    else if((old -> s_cause & LINEONE) == LINEONE)
     {
         if(currentProcess != NULL)
         {
@@ -69,7 +69,7 @@ if(currentProcess != NULL)
         setTIMER(QUANTUM);
         scheduler();
     }
-    else if((oldCause -> s_cause & LINETWO) == LINETWO)
+    else if((old -> s_cause & LINETWO) == LINETWO)
     {
         debugL(9004);
         semAdd = (int*) &(sem[TOTALSEM-1]);
@@ -92,27 +92,27 @@ if(currentProcess != NULL)
         finish();
         debugL(9010);
     }  
-    else if((oldCause -> s_cause & LINETHREE) == LINETHREE)
+    else if((old -> s_cause & LINETHREE) == LINETHREE)
     {
         debugL(9011);
         interruptNum = DISKINT;
     }
-    else if((oldCause -> s_cause & LINEFOUR) == LINEFOUR)
+    else if((old -> s_cause & LINEFOUR) == LINEFOUR)
     {
         debugL(9012);
         interruptNum = TAPEINT;
     }
-    else if((oldCause -> s_cause & LINEFIVE) == LINEFIVE)
+    else if((old -> s_cause & LINEFIVE) == LINEFIVE)
     {
         debugL(9013);
         interruptNum = NETWINT;
     }
-    else if((oldCause -> s_cause & LINESIX) == LINESIX)
+    else if((old -> s_cause & LINESIX) == LINESIX)
     {
         debugL(9014);
         interruptNum = PRNTINT;
     }
-    else if((oldCause -> s_cause & LINESEVEN) == LINESEVEN)
+    else if((old -> s_cause & LINESEVEN) == LINESEVEN)
     {
         debugL(9015);
         interruptNum = TERMINT;

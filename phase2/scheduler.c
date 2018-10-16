@@ -24,45 +24,36 @@ void debugA(int i)
 void scheduler()
 {
     debugA(1);
-    if(currentProcess != NULL)
-    {
-        debugA(100);
-        STCK(currentTOD);
-        currentProcess -> pcb_time = (currentProcess -> pcb_time) + (currentTOD - TODStarted);
-        debugA(110);
-    }
-    if(emptyProcQ(readyQueue))
+    pcb_PTR newProc = removeProcQ(&(readyQueue));
+
+    if(newProc == NULL)
     {
         currentProcess = NULL;
-        debugA(2);
+
         if(processCount == 0)
         {
             HALT();
         }
-
-        if(processCount > 0 && softBlockCount == 0)
+        else if(processCount > 0)
         {
-            PANIC();
+            if(softBlockCount == 0)
+            {
+                PANIC();
+            }
+            if(softBlockCount > 0)
+            {
+                setSTATUS(getSTATUS()| ALLOFF | IEON | IMON);
+                WAIT();
+            }
         }
 
-        if(processCount > 0 && softBlockCount > 0)
-        {
-            debugA(3);
-            setSTATUS(getSTATUS()| ALLOFF | IEON | IMON);
-            debugA(4);
-            WAIT();
-        }
     }
     else
     {
-        debugA(5);
-        currentProcess = removeProcQ(&readyQueue);
+        currentProcess = newProc;
         STCK(TODStarted);
-        setTIMER(QUANTUM);
-        debugA(6);
+        setTimer(QUANTUM);
         LDST(&(currentProcess -> pcb_s));
-
-    }
-    
+    } 
 }
 

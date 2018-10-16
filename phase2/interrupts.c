@@ -38,6 +38,7 @@ void ioTrapHandler()
     int* semAdd;
     pcb_PTR temp;
     state_PTR old;
+    devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
 
     old = (state_PTR) INTPOLDAREA;
 
@@ -143,9 +144,9 @@ void ioTrapHandler()
         temp = removeBlocked(&(sem[i]));
         if(temp != null)
         {
-            temp -> p_semAdd = NULL;
+            temp -> pcb_semAdd = NULL;
 
-            process -> p_s.s_v0 = dev -> d_status;
+            process -> pcb_s.s_v0 = dev -> d_status;
             softBlockCount--;
 
             insertProcQ(&(readyQueue), temp);
@@ -222,19 +223,19 @@ void goPowerRangers(int deviveNum)
         process = removeBlocked(&(sem[semAdd]));
         if(process != NULL)
         {
-            process -> p_semAdd = NULL;
+            process -> pcb_semAdd = NULL;
 
             if(recieve)
             {
-                process -> p_s.s_v0 = dev->t_transm_status;
+                process -> pcb_s.s_v0 = dev->t_transm_status;
                 dev->t_transm_command = ACK;
             }
 
             else
             {
-                process -> p_semAdd = NULL;
+                process -> pcb_semAdd = NULL;
 
-                process -> p_s.v0 = dev->t_transm_status;
+                process -> pcb_s.v0 = dev->t_transm_status;
                 dev-> t_transm_command = ACK;
             }
 
@@ -246,4 +247,6 @@ void goPowerRangers(int deviveNum)
 
     finish();
 }
+
+
     

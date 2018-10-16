@@ -37,7 +37,7 @@ void ioTrapHandler()
     int i, status, tranStatus;
     int* semAdd;
     pcb_PTR temp;
-    state_PTR old;
+    state_PTR old = (state_PTR) INTPOLDAREA;
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
 
 if(currentProcess != NULL)
@@ -54,12 +54,12 @@ if(currentProcess != NULL)
 
 
 
-    if((oldCause & LINEZERO) != LINEZERO)
+    if((old -> s_cause & LINEZERO) == LINEZERO)
     {
         debugL(9002);
         PANIC();
     }
-    else if((oldCause & LINEONE) != LINEONE)
+    else if((oldCause -> s_cause & LINEONE) == LINEONE)
     {
         if(currentProcess != NULL)
         {
@@ -69,7 +69,7 @@ if(currentProcess != NULL)
         setTIMER(QUANTUM);
         scheduler();
     }
-    else if((oldCause & LINETWO) != LINETWO)
+    else if((oldCause -> s_cause & LINETWO) == LINETWO)
     {
         debugL(9004);
         semAdd = (int*) &(sem[TOTALSEM-1]);
@@ -92,27 +92,27 @@ if(currentProcess != NULL)
         finish();
         debugL(9010);
     }  
-    else if((oldCause & LINETHREE) != LINETHREE)
+    else if((oldCause -> s_cause & LINETHREE) == LINETHREE)
     {
         debugL(9011);
         interruptNum = DISKINT;
     }
-    else if((oldCause & LINEFOUR) != LINEFOUR)
+    else if((oldCause -> s_cause & LINEFOUR) == LINEFOUR)
     {
         debugL(9012);
         interruptNum = TAPEINT;
     }
-    else if((oldCause & LINEFIVE) != LINEFIVE)
+    else if((oldCause -> s_cause & LINEFIVE) == LINEFIVE)
     {
         debugL(9013);
         interruptNum = NETWINT;
     }
-    else if((oldCause & LINESIX) != LINESIX)
+    else if((oldCause -> s_cause & LINESIX) == LINESIX)
     {
         debugL(9014);
         interruptNum = PRNTINT;
     }
-    else if((oldCause & LINESEVEN) != LINESEVEN)
+    else if((oldCause -> s_cause & LINESEVEN) == LINESEVEN)
     {
         debugL(9015);
         interruptNum = TERMINT;

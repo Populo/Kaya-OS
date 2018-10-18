@@ -1,376 +1,170 @@
-#include "../h/types.h"
 #include "../h/const.h"
+#include "../h/types.h"
 
-#include "../e/pcb.e"
 #include "../e/asl.e"
+#include "../e/pcb.e"
 #include "../e/initial.e"
-
 #include "../e/exceptions.e"
+#include "../e/scheduler.e"
 
-extern cpu_t TODStarted;
-cpu_t TODStopped;
-
-cpu_t current;
-
-HIDDEN void sysCreate(state_PTR state);
-HIDDEN void sysTerminate();
-HIDDEN void sysVerhogen(state_PTR old);
-HIDDEN void sysPasseren(state_PTR old);
-HIDDEN void sysSpecifyException(state_PTR caller);
-HIDDEN void sysCPUTime(state_PTR state);
-HIDDEN void sysWaitClock(state_PTR old);
-HIDDEN void sysWaitIO(state_PTR old);
+extern pcb_PTR currentProcess;
+extern pcb_PTR readyQueue;
+extern int softBlockCount;
+extern int processCount;
+extern int sem[TOTALSEM];
 
 
 
+/* Handle Process Exception */
+void pullUpAndDie(int type, state_PTR state);
+/* Load State */
+void putALoadInMeDaddy(state_PTR state);
+/* Copy State to New Location */
+void copyState(state_PTR old, state_PTR new);
 
-void debugC(int i)
-{
-    int a;
-    a = 10;
-}
+/* SYS 1 - Create Process */
+void sysCreate(state_PTR state);
+/* SYS 2 - Terminate Process */
+void sysTerminate(state_PTR state);
+/* SYS 3 - Unblock Process */
+void sysSignal(state_PTR state);
+/* SYS 4 - Block Process */
+void sysWait(state_PTR state);
+/* SYS 5 - Specify Handler For Exception */
+void sysBYOL(state_PTR state);
+/* SYS 6 - Get CPU Time */
+void sysGetCPUTime(state_PTR state);
+/* SYS 7 - Wait For Clock */
+void sysWaitForClock(state_PTR state);
+/* SYS 8 - Wait For IO */
+void sysWaitForIO(state_PTR state);
 
-void debugH(int i)
-{
-    int a;
-    a = 10;
-}
 
-void debugQ(int i)
-{
-    int a;
-    a = 10;
-}
 
 void pbgTrapHandler()
 {
-    pullUpAndDie(PROGTRAP);
-}
+	pullUpAndDie(PGMTRAP, (state_PTR) PGMTRAPOLDAREA);
+}	
 
 void tlbTrapHandler()
 {
-    pullUpAndDie(TLBTRAP);
-}
+	pullUpAndDie(TLBTRAP, (state_PTR) TBLMGMTOLDAREA);
 
+}
 
 void sysCallHandler()
 {
-    state_PTR old;
-    int sysCall;
 
-    old  = (state_PTR) SYSCALLOLDAREA;
-    sysCall = old -> s_a0; /* which syscall was executed */
-    old -> s_pc = old -> s_pc + 4;
-    old -> s_t9 = old -> s_t9 + 4;
-    debugC(15);
-    if((old -> s_status & KUON) == ALLOFF) /* Kernel mode on */
-    {
-        debugC(32);
-        switch(sysCall)
-        {
-            case CREATE_PROCESS:
-                sysCreate((state_PTR)old -> s_a1);
-                break;
-            case TERMINATE_PROCESS:
-                sysTerminate();
-                break;
-            case VERHOGEN:
-                sysVerhogen(old);
-                break;
-            case PASSEREN:
-                sysPasseren(old);
-                break;
-            case SPECIFY_EXCEPTION_STATE_VECTOR:
-                sysSpecifyException(old);
-                break;
-            case GET_CPU_TIME:
-                sysCPUTime(old);
-                break;
-            case WAIT_FOR_CLOCK:
-                sysWaitClock(old);
-                break;
-            case WAIT_FOR_IO_DEVICE:
-                sysWaitIO(old);
-                break;
-            default: /* handle 9-255 */
-                pullUpAndDie((int) old -> s_a1);
-                break;
-        }
-        debugC(43);
-        LDST(&(currentProcess -> pcb_s));
-    }
-    else /* User mode */
-    {
-        state_PTR oldTrap = (state_PTR)PGMTRAPOLDAREA;
-        copyState(old, oldTrap);
-        oldTrap -> s_cause = RI;
-        pbgTrapHandler();
-    }
-    
+	state_PTR state = (state_PTR) SYSCALLOLDAREA;
+	int call = state -> s_a0;
+
+	if((call >= CREATE_PROCESS && call <= WAITFORIO)) /* valid syscall */
+	{
+		if((state -> s_status & KUON) != ALLOFF) /* user mode */
+		{
+			state -> s_cause = RI;
+			copyState(state, (state_PTR) PGMTRAPOLDAREA);
+			pbgTrapHandler();
+		}
+	}
+	else
+	{
+		pullUpAndDie(SYSTRAP, state);
+	}
+
+	state -> s_pc = state -> s_pc + 4;
+
+	switch (call)
+	{
+		case(CREATE_PROCESS):
+			sysCreate(state);
+			break;
+		case(TERMINATE_PROCESS):
+			sysTerminate(state);
+			break;
+		case(VERHOGEN):
+			sysSignal(state);
+			break;
+		case(PASSEREN):
+			sysWait(state);
+			break;
+		case(SPECIFY_STATE_EXECUTION_VECTOR):
+			sysBYOL(state);
+			break;
+		case(GET_CPU_TIME):
+			sysGetCPUTime(state);
+			break;
+		case(WAIT_FOR_CLOCK):
+			sysWaitForClock(state);
+			break;
+		case(WAIT_FOR_IO_DEVICE):
+			sysWaitForIO(state);
+			break;
+	}
+
+	putALoadInMeDaddy(state);
 }
 
 void sysCreate(state_PTR state)
 {
-    pcb_PTR newProc = allocPcb();
-    if(newProc != NULL)
-    {
-        ++processCount;
-        copyState((state_PTR) state -> s_a1, (state_PTR) &(newProc -> pcb_s));
-        insertChild(currentProcess, newProc);
-        insertProcQ(readyQueue, newProc);
-        state -> s_v0 = SUCCESS;
-    }
-    else
-    {
-        state -> s_v0 = FAILURE;
-    }
+	pcb_PTR newProcess = allocPCB();
+
+	if (!emptyProcQ(newProcess)) /* there was a free pcb */
+	{
+		++processCount;
+		insertChild(currentProcess, newProcess);
+		insertProcQ(&readyQueue, newProcess);
+		copyState((state_PTR)state -> s_a1, newProcess -> pcb_state);
+
+		state -> s_v0 = SUCCESS;
+	}
+	else /* there was not a free pcb */
+	{
+		state -> s_v0 = FAILURE;
+	}
+
+
+	putALoadInMeDaddy(state);
 }
 
-void sysTerminate()
+void sysTerminate(state_PTR state)
 {
-    pcb_PTR death = currentProcess;
-    while(death != NULL)
-    {
-        if (emptyChild(currentProcess)) 
-        {
-            outChild(currentProcess);
-            freePcb(currentProcess);
-            --processCount;
-            death = NULL;
-            currentProcess = NULL;
-        }
-        else
-        {
-            if(!emptyChild(death -> pcb_child))
-            {
-                death = death -> pcb_child;
-            }
-            else
-            {
-                if (death -> pcb_semAdd != NULL) /* probably needs something */
-                {
-                    removeBlocked(death -> pcb_semAdd);
-                    softBlockCount--;
-                }
-                death = death -> pcb_parent;
-                freePcb(removeChild(death));
-                --processCount;           
-            }
-        }
-    }
-    scheduler();
+	/* genocide */
 }
 
-void sysVerhogen(state_PTR old)
+void sysSignal(state_PTR state)
 {
-    pcb_PTR new = NULL;
-    int semAdd = old -> s_a1;
-    semAdd++;
-    if(semAdd <= 0)
-    {
-        new = removeBlocked(semAdd);
-        new -> pcb_semAdd = NULL;
+	int *mutex = state -> s_a1;
+	++*mutex;
 
-        insertProcQ(&(readyQueue), new);
-        
-    } 
+	if (*mutex <= 0)
+	{
+		pcb_PTR process = removeBlocked(mutex);
+		process -> pcb_semAdd = NULL;
+
+		insertProcQ(&readyQueue, process);
+
+		putALoadInMeDaddy(state);
+	}
 }
 
-void sysPasseren(state_PTR old)
+void sysWait(state_PTR state)
 {
-    int semAdd = old -> s_a1;
-    semAdd--;
-    if(semAdd < 0)
-    {
-        STCK(TODStopped);
-        current = TODStopped - TODStarted;
-        currentProcess -> pcb_time = currentProcess -> pcb_time + current;
-        insertBlocked(semAdd, currentProcess);
-        currentProcess = NULL;
-        scheduler();
-    }
+	int *mutex = state -> s_a1;
+
+	--*mutex;
+
+	if (*mutex < 0)
+	{
+		insertBlocked(mutex, currentProcess);
+		currentProcess = NULL;
+		scheduler();
+	}
+
 }
 
-void sysSpecifyException(state_PTR caller)
+
+void sysBYOL(state_PTR state)
 {
-    int type = caller -> s_a1;
-    state_PTR old = (state_PTR) caller -> s_a2;
-    state_PTR new = (state_PTR) caller -> s_a3;
-
-    switch(type)
-    {
-        case TLBTRAP:
-            if(currentProcess -> pcb_states[TLBTRAP][NEW] != NULL)
-            {
-                sysTerminate();
-            }
-            currentProcess -> pcb_states[TLBTRAP][NEW] = (state_PTR) new;
-            currentProcess -> pcb_states[TLBTRAP][OLD] = (state_PTR) old;
-            break;
-        case PROGTRAP:
-            if(currentProcess -> pcb_states[PGMTRAP][NEW] != NULL)
-            {
-                sysTerminate();
-            }
-            currentProcess -> pcb_states[PGMTRAP][NEW] = (state_PTR) new;
-            currentProcess -> pcb_states[PGMTRAP][OLD] = (state_PTR) old;
-            break;
-        case SYSTRAP:
-            if(currentProcess -> pcb_states[SYSTRAP][NEW] != NULL)
-            {
-                sysTerminate();
-            }
-            currentProcess -> pcb_states[SYSTRAP][NEW] = (state_PTR) new;
-            currentProcess -> pcb_states[SYSTRAP][OLD] = (state_PTR) old;
-            break;
-        default:
-            sysTerminate();
-            break; /* fuck you */
-    }
+	if ();
 }
-
-void sysCPUTime(state_PTR state)
-{
-    cpu_t t;
-    STCK(t);
-
-    currentProcess -> pcb_time = currentProcess -> pcb_time + (t - TODStarted);
-    currentProcess -> pcb_s.s_v0 = currentProcess -> pcb_time;
-    STCK(TODStarted);
-}
-
-void sysWaitClock(state_PTR old)
-{
-    int device = sem[TOTALSEM-1];
-    device--;
-    if(device < 0)
-    {
-        STCK(TODStopped);
-        int total = TODStopped - TODStarted;
-        currentProcess -> pcb_time = currentProcess -> pcb_time + total;
-
-        insertBlocked(&(device), currentProcess);
-        currentProcess = NULL;
-        softBlockCount++;
-
-        scheduler();
-    }
-    PANIC();
-}
-
-void sysWaitIO(state_PTR old)
-{
-    int *semAdd;
-    int interruptLine, deviceNum, isRead, index;
-    interruptLine = old -> s_a1;
-    deviceNum = old -> s_a2;
-    isRead = old -> s_a3;
-    debugC(4097);
-
-    if(interruptLine < DISKINT || interruptLine > TERMINT)
-    {
-        debugC(4107);
-        sysTerminate();
-    }  
-    debugC(4098);
-    if(interruptLine == TERMINT && isRead == TRUE)
-    {
-        debugC(4108);
-        interruptLine++;
-    }
-    
-    debugC(4099);
-    index = (int *)(DEVPERINT * (interruptLine - DEVNOSEM) + deviceNum);
-    debugC(4100);
-
-      
-    semAdd = &(sem[index]);
-    --(*semAdd);
-    debugC(4101);
-    if((*semAdd) < 0)
-    {
-        debugC(4102);
-        insertBlocked(&sem[*semAdd], currentProcess);
-        debugC(4103);
-        copyState(old, &(currentProcess -> pcb_s));
-        debugC(4104);
-        softBlockCount++;
-        debugC(4105);
-        scheduler();
-    }
-    else{
-        currentProcess -> pcb_s.s_v0 = sem[index];
-        debugC(4109);
-        LDST(&(currentProcess -> pcb_s));
-    }
-    debugC(4106);
-
-}
-
-void pullUpAndDie(int type)
-{
-    debugH(type);
-    debugQ(1);
-    if(type == TLBTRAP)
-    {
-        if(currentProcess -> pcb_states[TLBTRAP][NEW] != NULL)
-        {
-            debugH(2);
-            copyState((state_PTR) TBLMGMTOLDAREA, currentProcess -> pcb_states[TLBTRAP][OLD]);
-            copyState(currentProcess -> pcb_states[TLBTRAP][NEW], &(currentProcess -> pcb_s));
-            LDST(&(currentProcess -> pcb_s));
-        }
-        else
-        {
-            debugH(5);
-            sysTerminate();
-            scheduler();
-        }
-    }
-    else if(type == PROGTRAP) 
-    {
-        if(currentProcess -> pcb_states[PGMTRAP][NEW] != NULL)
-        {
-            debugH(2);
-            copyState((state_PTR) PGMTRAPOLDAREA, currentProcess -> pcb_states[PGMTRAP][OLD]);
-            copyState(currentProcess -> pcb_states[PGMTRAP][NEW], &(currentProcess -> pcb_s));
-            LDST(&(currentProcess -> pcb_s));
-        }
-        else
-        {
-            debugH(5);
-            sysTerminate();
-            scheduler();
-        }
-    }
-    else if(type == SYSTRAP) 
-    {
-        if(currentProcess -> pcb_states[SYSTRAP][NEW] != NULL)
-        {
-            debugH(2);
-            copyState((state_PTR) SYSCALLOLDAREA, currentProcess -> pcb_states[SYSTRAP][OLD]);
-            copyState(currentProcess -> pcb_states[SYSTRAP][NEW], &(currentProcess -> pcb_s));
-            LDST(&(currentProcess -> pcb_s));
-        }
-        else
-        {
-            debugH(5);
-            sysTerminate();
-            scheduler();
-        }          
-    }  
-    debugH(16);      
-    
-}
-
-void copyState(state_PTR old, state_PTR new)
-{
-    int i;
-    new -> s_asid = old -> s_asid;
-    new -> s_status = old -> s_status;
-    new -> s_pc = old -> s_pc;
-    new -> s_cause = old -> s_cause;
-    for(i = 0; i<STATEREGNUM; i++)
-        new -> s_reg[i] = old -> s_reg[i];
-}
-

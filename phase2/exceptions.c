@@ -163,46 +163,32 @@ void sysTerminate()
 
 void sysVerhogen(state_PTR old)
 {
-    debugC(1);
     pcb_PTR new = NULL;
-    debugC(3);
-    int* semAdd = (int*) old -> s_a1;
-    debugC(5);
-    (*semAdd)++;
-    debugC(7);
-    if((*semAdd) <= 0)
+    int semAdd = old -> s_a1;
+    semAdd++;
+    if(semAdd <= 0)
     {
-        debugC(9);
         new = removeBlocked(semAdd);
         new -> pcb_semAdd = NULL;
-        debugC(11);
-        debugC(13);
+
         insertProcQ(&(readyQueue), new);
-        debugC(4);
         
     } 
-    debugC(42);
 }
 
 void sysPasseren(state_PTR old)
 {
-    debugC(2);
-    int* semAdd = (int *)old -> s_a1;
-    
-    debugC(48);
-    (*semAdd)--;
-    debugC(64);
-    if((*semAdd) < 0)
+    int semAdd = old -> s_a1;
+    semAdd--;
+    if(semAdd < 0)
     {
         STCK(TODStopped);
         current = TODStopped - TODStarted;
         currentProcess -> pcb_time = currentProcess -> pcb_time + current;
         insertBlocked(semAdd, currentProcess);
         currentProcess = NULL;
-        debugC(112);
         scheduler();
     }
-    debugC(25);
 }
 
 void sysSpecifyException(state_PTR caller)
@@ -249,18 +235,27 @@ void sysCPUTime(state_PTR state)
     STCK(t);
 
     currentProcess -> pcb_time = currentProcess -> pcb_time + (t - TODStarted);
-    state -> s_v0 = currentProcess -> pcb_time;
+    currentProcess -> pcb_s.s_v0 = currentProcess -> pcb_time;
     STCK(TODStarted);
 }
 
 void sysWaitClock(state_PTR old)
 {
-    int *semAdd = (int *)&(sem[TOTALSEM - 1]); /* final semAdd is timer */
-    *semAdd--;
-    insertBlocked(semAdd, currentProcess);
-    copyState(old, &(currentProcess -> pcb_s));
-    softBlockCount++;
-    scheduler();
+    int device = sem[TOTALSEM-1];
+    device--;
+    if(device < 0)
+    {
+        STCK(TODStopped);
+        int total = TODStopped - TODStarted;
+        currentProcess -> pcb_time = currentProcess -> pcb_time + total;
+
+        insertBlocked(&(device), currentProcess);
+        currentProcess = NULL;
+        softBlockCount++;
+
+        scheduler();
+    }
+    PANIC();
 }
 
 void sysWaitIO(state_PTR old)

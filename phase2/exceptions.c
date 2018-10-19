@@ -22,6 +22,7 @@ HIDDEN void sysWaitClock(state_PTR old);
 HIDDEN void sysWaitIO(state_PTR old);
 
 void pullUpAndDie(int type);
+void copyState(state_PTR old, state_PTR new);
 
 
 

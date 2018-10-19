@@ -281,17 +281,16 @@ void sysWaitIO(state_PTR old)
         
         index = index + 8;
     }  
-    semAdd = &(sem[index]);
-    --(*semAdd);
+    sem[index] = sem[index] - 1;
     debugQ(4);
-    if((*semAdd) < 0)
+    if(sem[index] < 0)
     {
-        debugQ(semAdd);
+        debugQ(sem[index]);
         STCK(TODStopped);
         total = TODStopped - TODStarted;
         currentProcess -> pcb_time = currentProcess -> pcb_time + total;
         copyState(old, &(currentProcess -> pcb_s));
-        insertBlocked(&(sem[*semAdd]), currentProcess);
+        insertBlocked(&(sem[index]), currentProcess);
         currentProcess = NULL;
         softBlockCount++;
         scheduler();

@@ -122,9 +122,6 @@ if(currentProcess != NULL)
     debugL(9017);
     deviceNum = getDeviceNumber(interruptNum);
     if(interruptNum == TERMINT)
-    {
-        goPowerRangers();
-    }
     debugL(9018);
     if(deviceNum == -1)
     {
@@ -202,7 +199,7 @@ HIDDEN int getDeviceNumber(int lineNumber)
     }
     return deviceNum;
 }
-
+/*
 void goPowerRangers(int deviceNum)
 {
     pcb_PTR process;
@@ -248,6 +245,6 @@ void goPowerRangers(int deviceNum)
 
     finish();
 }
-
+*/
 
     

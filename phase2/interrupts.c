@@ -22,6 +22,12 @@ void debugL(int i)
     temp = i;
 }
 
+void debugREEE(int u)
+{
+    int fuck;
+    fuck = u;
+}
+
 
 void ioTrapHandler()
 {
@@ -135,7 +141,7 @@ if(currentProcess != NULL)
     devRegNum = &(devReg -> devreg[i]);
 
     sem[i] = sem[i] + 1;
-
+    debugREEE(i);
     if(sem[i] <= 0)
     {
         temp = removeBlocked(&(sem[i]));

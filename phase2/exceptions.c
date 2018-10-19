@@ -266,46 +266,36 @@ void sysWaitIO(state_PTR old)
     interruptLine = old -> s_a1;
     deviceNum = old -> s_a2;
     isRead = old -> s_a3;
-    debugC(4097);
+    cpu_t total;
 
     if(interruptLine < DISKINT || interruptLine > TERMINT)
     {
-        debugC(4107);
         sysTerminate(); /* 김정은 다시 공격하다 */
     }  
-    debugC(4098);
     if(interruptLine == TERMINT && isRead == TRUE)
     {
-        debugC(4108);
         interruptLine++;
     }
     
-    debugC(4099);
     index = (int *)(DEVPERINT * (interruptLine - DEVNOSEM) + deviceNum);
-    debugC(4100);
 
       
     semAdd = &(sem[index]);
     --(*semAdd);
-    debugC(4101);
     if((*semAdd) < 0)
     {
-        debugC(4102);
-        insertBlocked(&sem[*semAdd], currentProcess);
-        debugC(4103);
-        copyState(old, &(currentProcess -> pcb_s));
-        debugC(4104);
+        STCK(TODStopped);
+        total = TODStopped - TODStarted;
+        currentProcess -> pcb_time = currentProcess -> pcb_time + total;
+        insertBlocked(&(sem[*semAdd]), currentProcess);
+        currentProcess = NULL;
         softBlockCount++;
-        debugC(4105);
         scheduler();
     }
     else{
         currentProcess -> pcb_s.s_v0 = sem[index];
-        debugC(4109);
         LDST(old);
     }
-    debugC(4106);
-
 }
 
 void pullUpAndDie(int type)

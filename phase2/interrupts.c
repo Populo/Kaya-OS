@@ -163,9 +163,8 @@ HIDDEN void finish()
     if(currentProcess != NULL)
     {
         debugL(9031);
-        STCK(TODStarted);
-        LDST((state_PTR)INTPOLDAREA);
         currentProcess = NULL;
+        LDST((state_PTR)INTPOLDAREA);       
     }
     debugL(9032);
     scheduler();

@@ -286,7 +286,7 @@ void sysWaitIO(state_PTR old)
     debugQ(4);
     if((*semAdd) < 0)
     {
-        debugQ(*(semAdd));
+        debugQ(semAdd);
         STCK(TODStopped);
         total = TODStopped - TODStarted;
         currentProcess -> pcb_time = currentProcess -> pcb_time + total;

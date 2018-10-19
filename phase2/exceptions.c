@@ -14,7 +14,7 @@ cpu_t current;
 
 HIDDEN void sysCreate(state_PTR state);
 HIDDEN void sysTerminate();
-HIDDEN void sysVerhogen(state_PTR old);
+void sysVerhogen(state_PTR old);
 HIDDEN void sysPasseren(state_PTR old);
 HIDDEN void sysSpecifyException(state_PTR caller);
 HIDDEN void sysCPUTime(state_PTR state);

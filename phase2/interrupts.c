@@ -11,6 +11,7 @@
 extern cpu_t TODStarted;
 
 extern void copyState(state_PTR old, state_PTR new);
+extern void sysVerhogen(state_PTR old);
 
 HIDDEN void finish();
 HIDDEN int getDeviceNumber(int lineNumber);
@@ -156,7 +157,9 @@ if(currentProcess != NULL)
         }
     }
     devRegNum -> d_command = ACK;
-
+    old -> s_a1 = &(sem[i]);
+    sysVerhogen(old);
+    --softBlockCount;
     debugL(9029);
     finish();
 }

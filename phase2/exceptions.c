@@ -270,25 +270,23 @@ void sysWaitIO(state_PTR old)
     deviceNum = old -> s_a2;
     isRead = old -> s_a3;
     cpu_t total;
-    debugQ(1);
     if(interruptLine < DISKINT || interruptLine > TERMINT)
     {
-        debugQ(2);
+        
         sysTerminate(); 
     }  
     index = (int *)(DEVPERINT * (interruptLine - DEVNOSEM) + deviceNum);
     if(interruptLine == TERMINT && isRead == TRUE)
     {
-        debugQ(3);
+        
         index = index + 8;
-    }
-      
+    }  
     semAdd = &(sem[index]);
     --(*semAdd);
     debugQ(4);
     if((*semAdd) < 0)
     {
-        debugQ(index);
+        debugQ(*(semAdd));
         STCK(TODStopped);
         total = TODStopped - TODStarted;
         currentProcess -> pcb_time = currentProcess -> pcb_time + total;
@@ -296,11 +294,9 @@ void sysWaitIO(state_PTR old)
         insertBlocked(&(sem[*semAdd]), currentProcess);
         currentProcess = NULL;
         softBlockCount++;
-        debugQ(6);
         scheduler();
     }
     else{
-        debugQ(7);
         currentProcess -> pcb_s.s_v0 = sem[index];
         LDST(old);
     }

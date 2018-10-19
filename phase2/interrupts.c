@@ -141,7 +141,7 @@ if(currentProcess != NULL)
     devRegNum = &(devReg -> devreg[i]);
 
     sem[i] = sem[i] + 1;
-    debugREEE(i);
+    debugREEE(sem[i]);
     if(sem[i] <= 0)
     {
         temp = removeBlocked(&(sem[i]));

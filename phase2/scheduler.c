@@ -21,9 +21,16 @@ void debugA(int i)
     temp = i;
 }
 
+void debugSBC(int myAss)
+{
+    int fuck;
+    fuck = myAss;
+}
+
 void scheduler()
 {
     debugA(1);
+    debugSBC(softBlockCount);
     pcb_PTR newProc = removeProcQ(&(readyQueue));
 
     if(newProc == NULL)

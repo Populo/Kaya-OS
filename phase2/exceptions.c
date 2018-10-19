@@ -21,6 +21,8 @@ HIDDEN void sysCPUTime(state_PTR state);
 HIDDEN void sysWaitClock(state_PTR old);
 HIDDEN void sysWaitIO(state_PTR old);
 
+void pullUpAndDie(int type);
+
 
 
 void debugC(int i)

@@ -39,6 +39,7 @@ void scheduler()
         {
             if(softBlockCount == 0)
             {
+                debugA(3);
                 PANIC();
             }
             if(softBlockCount > 0)

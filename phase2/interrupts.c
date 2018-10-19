@@ -167,7 +167,7 @@ HIDDEN void finish()
     {
         debugL(9031);
         STCK(TODStarted);
-        LDST((state_PTR) SYSCALLOLDAREA);
+        LDST(&(old));
         currentProcess = NULL;
     }
     debugL(9032);

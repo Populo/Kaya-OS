@@ -22,7 +22,6 @@ HIDDEN void sysWaitClock(state_PTR old);
 HIDDEN void sysWaitIO(state_PTR old);
 
 
-/*    카야     */
 
 void debugC(int i)
 {
@@ -204,7 +203,7 @@ void sysSpecifyException(state_PTR caller)
         case TLBTRAP:
             if(currentProcess -> pcb_states[TLBTRAP][NEW] != NULL)
             {
-                sysTerminate(); /* 김정은 다시 공격하다 */
+                sysTerminate(); 
             }
             currentProcess -> pcb_states[TLBTRAP][NEW] = (state_PTR) new;
             currentProcess -> pcb_states[TLBTRAP][OLD] = (state_PTR) old;
@@ -212,7 +211,7 @@ void sysSpecifyException(state_PTR caller)
         case PROGTRAP:
             if(currentProcess -> pcb_states[PGMTRAP][NEW] != NULL)
             {
-                sysTerminate(); /* 김정은 다시 공격하다 */
+                sysTerminate(); 
             }
             currentProcess -> pcb_states[PGMTRAP][NEW] = (state_PTR) new;
             currentProcess -> pcb_states[PGMTRAP][OLD] = (state_PTR) old;
@@ -220,13 +219,13 @@ void sysSpecifyException(state_PTR caller)
         case SYSTRAP:
             if(currentProcess -> pcb_states[SYSTRAP][NEW] != NULL)
             {
-                sysTerminate(); /* 김정은 다시 공격하다 */
+                sysTerminate();
             }
             currentProcess -> pcb_states[SYSTRAP][NEW] = (state_PTR) new;
             currentProcess -> pcb_states[SYSTRAP][OLD] = (state_PTR) old;
             break;
         default:
-            sysTerminate(); /* 김정은 다시 공격하다 */
+            sysTerminate(); 
             break; /* fuck you */
     }
 }
@@ -272,7 +271,7 @@ void sysWaitIO(state_PTR old)
     if(interruptLine < DISKINT || interruptLine > TERMINT)
     {
         debugQ(2);
-        sysTerminate(); /* 김정은 다시 공격하다 */
+        sysTerminate(); 
     }  
     index = (int *)(DEVPERINT * (interruptLine - DEVNOSEM) + deviceNum);
     if(interruptLine == TERMINT && isRead == TRUE)
@@ -320,7 +319,7 @@ void pullUpAndDie(int type)
         else
         {
             debugH(5);
-            sysTerminate(); /* 김정은 다시 공격하다 */
+            sysTerminate(); 
             scheduler();
         }
     }
@@ -336,7 +335,7 @@ void pullUpAndDie(int type)
         else
         {
             debugH(5);
-            sysTerminate(); /* 김정은 다시 공격하다 */
+            sysTerminate(); 
             scheduler();
         }
     }
@@ -352,7 +351,7 @@ void pullUpAndDie(int type)
         else
         {
             debugH(5);
-            sysTerminate(); /* 김정은 다시 공격하다 */
+            sysTerminate(); 
             scheduler();
         }          
     }  

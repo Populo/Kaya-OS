@@ -314,7 +314,7 @@ void pullUpAndDie(int type)
             debugH(2);
             copyState((state_PTR) TBLMGMTOLDAREA, currentProcess -> pcb_states[TLBTRAP][OLD]);
             copyState(currentProcess -> pcb_states[TLBTRAP][NEW], &(currentProcess -> pcb_s));
-            LDST(currentProcess -> pcb_s);
+            LDST(&(currentProcess -> pcb_s));
         }
         else
         {
@@ -330,7 +330,7 @@ void pullUpAndDie(int type)
             debugH(2);
             copyState((state_PTR) PGMTRAPOLDAREA, currentProcess -> pcb_states[PGMTRAP][OLD]);
             copyState(currentProcess -> pcb_states[PGMTRAP][NEW], &(currentProcess -> pcb_s));
-            LDST(currentProcess -> pcb_s);
+            LDST(&(currentProcess -> pcb_s));
         }
         else
         {
@@ -346,7 +346,7 @@ void pullUpAndDie(int type)
             debugH(2);
             copyState((state_PTR) SYSCALLOLDAREA, currentProcess -> pcb_states[SYSTRAP][OLD]);
             copyState(currentProcess -> pcb_states[SYSTRAP][NEW], &(currentProcess -> pcb_s));
-            LDST(currentProcess -> pcb_s);
+            LDST(&(currentProcess -> pcb_s));
         }
         else
         {

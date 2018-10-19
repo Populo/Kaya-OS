@@ -157,9 +157,6 @@ if(currentProcess != NULL)
         }
     }
     devRegNum -> d_command = ACK;
-    old -> s_a1 = &(sem[i]);
-    sysVerhogen(old);
-    --softBlockCount;
     debugL(9029);
     finish();
 }

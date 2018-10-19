@@ -167,8 +167,7 @@ HIDDEN void finish()
     {
         debugL(9031);
         STCK(TODStarted);
-        /*LDST(&(currentProcess -> pcb_s)); */
-        insertProcQ(&readyQueue, currentProcess);
+        LDST((state_PTR) SYSCALLOLDAREA);
         currentProcess = NULL;
     }
     debugL(9032);

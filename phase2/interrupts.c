@@ -170,7 +170,7 @@ HIDDEN void finish()
     {
         debugL(9031);
         STCK(TODStarted);
-        LDST(&(old));
+        LDST((state_PTR)INTPOLDAREA);
         currentProcess = NULL;
     }
     debugL(9032);

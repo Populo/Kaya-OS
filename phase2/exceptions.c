@@ -93,7 +93,7 @@ void sysCallHandler()
                 sysWaitIO(old);
                 break;
             default: /* handle 9-255 */
-                pullUpAndDie((int) old -> s_a1);
+                pullUpAndDie(SYSTRAP);
                 break;
         }
         debugC(43);
@@ -165,9 +165,9 @@ void sysTerminate()
 void sysVerhogen(state_PTR old)
 {
     pcb_PTR new = NULL;
-    int semAdd = old -> s_a1;
-    semAdd++;
-    if(semAdd <= 0)
+    int* semAdd = old -> s_a1;
+    (*semAdd)++;
+    if((*semAdd) <= 0)
     {
         new = removeBlocked(semAdd);
         new -> pcb_semAdd = NULL;
@@ -179,13 +179,14 @@ void sysVerhogen(state_PTR old)
 
 void sysPasseren(state_PTR old)
 {
-    int semAdd = old -> s_a1;
-    semAdd--;
-    if(semAdd < 0)
+    int* semAdd = old -> s_a1;
+    (*semAdd)--;
+    if((*semAdd) < 0)
     {
         STCK(TODStopped);
         current = TODStopped - TODStarted;
         currentProcess -> pcb_time = currentProcess -> pcb_time + current;
+        copyState(old, &(currentProcess -> pcb_s));
         insertBlocked(semAdd, currentProcess);
         currentProcess = NULL;
         scheduler();
@@ -289,6 +290,7 @@ void sysWaitIO(state_PTR old)
         STCK(TODStopped);
         total = TODStopped - TODStarted;
         currentProcess -> pcb_time = currentProcess -> pcb_time + total;
+        copyState(old, &(currentProcess -> pcb_s));
         insertBlocked(&(sem[*semAdd]), currentProcess);
         currentProcess = NULL;
         softBlockCount++;

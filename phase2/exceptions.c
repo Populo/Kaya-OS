@@ -272,13 +272,11 @@ void sysWaitIO(state_PTR old)
     {
         sysTerminate(); /* 김정은 다시 공격하다 */
     }  
+    index = (int *)(DEVPERINT * (interruptLine - DEVNOSEM) + deviceNum);
     if(interruptLine == TERMINT && isRead == TRUE)
     {
-        interruptLine++;
+        index = index + 8;
     }
-    
-    index = (int *)(DEVPERINT * (interruptLine - DEVNOSEM) + deviceNum);
-
       
     semAdd = &(sem[index]);
     --(*semAdd);

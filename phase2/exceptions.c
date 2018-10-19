@@ -22,7 +22,7 @@ HIDDEN void sysWaitClock(state_PTR old);
 HIDDEN void sysWaitIO(state_PTR old);
 
 
-
+/*    카야     */
 
 void debugC(int i)
 {
@@ -97,7 +97,7 @@ void sysCallHandler()
                 break;
         }
         debugC(43);
-        LDST(&(currentProcess -> pcb_s));
+        LDST(old);
     }
     else /* User mode */
     {
@@ -126,6 +126,7 @@ void sysCreate(state_PTR state)
     }
 }
 
+/* 김정은 다시 공격하다 */
 void sysTerminate()
 {
     pcb_PTR death = currentProcess;
@@ -202,7 +203,7 @@ void sysSpecifyException(state_PTR caller)
         case TLBTRAP:
             if(currentProcess -> pcb_states[TLBTRAP][NEW] != NULL)
             {
-                sysTerminate();
+                sysTerminate(); /* 김정은 다시 공격하다 */
             }
             currentProcess -> pcb_states[TLBTRAP][NEW] = (state_PTR) new;
             currentProcess -> pcb_states[TLBTRAP][OLD] = (state_PTR) old;
@@ -210,7 +211,7 @@ void sysSpecifyException(state_PTR caller)
         case PROGTRAP:
             if(currentProcess -> pcb_states[PGMTRAP][NEW] != NULL)
             {
-                sysTerminate();
+                sysTerminate(); /* 김정은 다시 공격하다 */
             }
             currentProcess -> pcb_states[PGMTRAP][NEW] = (state_PTR) new;
             currentProcess -> pcb_states[PGMTRAP][OLD] = (state_PTR) old;
@@ -218,13 +219,13 @@ void sysSpecifyException(state_PTR caller)
         case SYSTRAP:
             if(currentProcess -> pcb_states[SYSTRAP][NEW] != NULL)
             {
-                sysTerminate();
+                sysTerminate(); /* 김정은 다시 공격하다 */
             }
             currentProcess -> pcb_states[SYSTRAP][NEW] = (state_PTR) new;
             currentProcess -> pcb_states[SYSTRAP][OLD] = (state_PTR) old;
             break;
         default:
-            sysTerminate();
+            sysTerminate(); /* 김정은 다시 공격하다 */
             break; /* fuck you */
     }
 }
@@ -270,7 +271,7 @@ void sysWaitIO(state_PTR old)
     if(interruptLine < DISKINT || interruptLine > TERMINT)
     {
         debugC(4107);
-        sysTerminate();
+        sysTerminate(); /* 김정은 다시 공격하다 */
     }  
     debugC(4098);
     if(interruptLine == TERMINT && isRead == TRUE)
@@ -301,7 +302,7 @@ void sysWaitIO(state_PTR old)
     else{
         currentProcess -> pcb_s.s_v0 = sem[index];
         debugC(4109);
-        LDST(&(currentProcess -> pcb_s));
+        LDST(old);
     }
     debugC(4106);
 
@@ -318,12 +319,12 @@ void pullUpAndDie(int type)
             debugH(2);
             copyState((state_PTR) TBLMGMTOLDAREA, currentProcess -> pcb_states[TLBTRAP][OLD]);
             copyState(currentProcess -> pcb_states[TLBTRAP][NEW], &(currentProcess -> pcb_s));
-            LDST(&(currentProcess -> pcb_s));
+            LDST((state_PTR) SYSCALLOLDAREA);
         }
         else
         {
             debugH(5);
-            sysTerminate();
+            sysTerminate(); /* 김정은 다시 공격하다 */
             scheduler();
         }
     }
@@ -334,12 +335,12 @@ void pullUpAndDie(int type)
             debugH(2);
             copyState((state_PTR) PGMTRAPOLDAREA, currentProcess -> pcb_states[PGMTRAP][OLD]);
             copyState(currentProcess -> pcb_states[PGMTRAP][NEW], &(currentProcess -> pcb_s));
-            LDST(&(currentProcess -> pcb_s));
+            LDST((state_PTR) SYSCALLOLDAREA);
         }
         else
         {
             debugH(5);
-            sysTerminate();
+            sysTerminate(); /* 김정은 다시 공격하다 */
             scheduler();
         }
     }
@@ -350,12 +351,12 @@ void pullUpAndDie(int type)
             debugH(2);
             copyState((state_PTR) SYSCALLOLDAREA, currentProcess -> pcb_states[SYSTRAP][OLD]);
             copyState(currentProcess -> pcb_states[SYSTRAP][NEW], &(currentProcess -> pcb_s));
-            LDST(&(currentProcess -> pcb_s));
+            LDST((state_PTR) SYSCALLOLDAREA);
         }
         else
         {
             debugH(5);
-            sysTerminate();
+            sysTerminate(); /* 김정은 다시 공격하다 */
             scheduler();
         }          
     }  

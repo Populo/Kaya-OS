@@ -43,7 +43,7 @@ void sysWaitForIO(state_PTR state);
 
 void pbgTrapHandler()
 {
-	pullUpAndDie(PGMTRAP, (state_PTR) PGMTRAPOLDAREA);
+	pullUpAndDie(PROGTRAP, (state_PTR) PGMTRAPOLDAREA);
 }	
 
 void tlbTrapHandler()
@@ -58,7 +58,7 @@ void sysCallHandler()
 	state_PTR state = (state_PTR) SYSCALLOLDAREA;
 	int call = state -> s_a0;
 
-	if((call >= CREATE_PROCESS && call <= WAITFORIO)) /* valid syscall */
+	if((call >= CREATE_PROCESS && call <= WAIT_FOR_IO_DEVICE)) /* valid syscall */
 	{
 		if((state -> s_status & KUON) != ALLOFF) /* user mode */
 		{
@@ -88,7 +88,7 @@ void sysCallHandler()
 		case(PASSEREN):
 			sysWait(state);
 			break;
-		case(SPECIFY_STATE_EXECUTION_VECTOR):
+		case(SPECIFY_EXCEPTION_STATE_VECTOR):
 			sysBYOL(state);
 			break;
 		case(GET_CPU_TIME):
@@ -166,5 +166,5 @@ void sysWait(state_PTR state)
 
 void sysBYOL(state_PTR state)
 {
-	if ();
+	if (TRUE);
 }

@@ -168,7 +168,7 @@ HIDDEN void finish()
     {
         debugL(9031);
         /*currentProcess = NULL;*/
-        copyState((state_PTR)INTPOLDAREA, &(currentProcess -> p_s));
+        copyState((state_PTR)INTPOLDAREA, &(currentProcess -> pcb_s));
         insertProcQ(&readyQueue, currentProcess);
     }
     debugL(9032);

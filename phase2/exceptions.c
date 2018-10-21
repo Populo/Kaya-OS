@@ -276,10 +276,10 @@ void sysWaitIO(state_PTR old)
         sysTerminate(); 
     }  
     index = (int *)(DEVPERINT * (interruptLine - DEVNOSEM) + deviceNum);
-    if(interruptLine == TERMINT && isRead == TRUE)
+    if(interruptLine == TERMINT && isRead == FALSE)
     {
         
-        index = index + 8;
+        index = index + DEVPERINT;
     }  
     sem[index] = sem[index] - 1;
     debugQ(4);

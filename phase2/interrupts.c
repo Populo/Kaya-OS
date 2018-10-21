@@ -168,7 +168,8 @@ HIDDEN void finish()
     {
         debugL(9031);
         /*currentProcess = NULL;*/
-        LDST((state_PTR)INTPOLDAREA);       
+        copyState((state_PTR)INTPOLDAREA, &(currentProcess -> p_s));
+        insertProcQ(&readyQueue, currentProcess);
     }
     debugL(9032);
     scheduler();

@@ -157,7 +157,7 @@ if(currentProcess != NULL)
             sem[i] = devRegNum -> d_status;
         }
     }
-    devRegNum -> d_command = ACK;
+    devRegNum -> t_transm_command = ACK;
     debugL(9029);
     finish();
 }

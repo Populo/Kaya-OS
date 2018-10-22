@@ -147,7 +147,7 @@ if(currentProcess != NULL)
         {
             temp -> pcb_semAdd = NULL;
 
-            temp -> pcb_s.s_v0 = devRegNum -> d_status;
+            temp -> pcb_s.s_v0 = devRegNum -> t_transm_status;
             softBlockCount--;
 
             insertProcQ(&(readyQueue), temp);

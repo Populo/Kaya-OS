@@ -45,7 +45,7 @@ void ioTrapHandler()
 
 if(currentProcess != NULL)
 {
-
+    debugREEE(9999);
     STCK(end);
 
     total = end - TODStarted;

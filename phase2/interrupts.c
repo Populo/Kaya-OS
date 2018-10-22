@@ -127,8 +127,6 @@ if(currentProcess != NULL)
     }
     debugL(9017);
     deviceNum = getDeviceNumber(interruptNum);
-    if(interruptNum == TERMINT)
-    debugL(9018);
     if(deviceNum == -1)
     {
         debugL(9019);
@@ -169,8 +167,8 @@ HIDDEN void finish()
     if(currentProcess != NULL)
     {
         debugL(9031);
-        currentProcess = NULL;
-        LDST((state_PTR)INTPOLDAREA);       
+        /*currentProcess = NULL;*/
+        LDST(&(currentProcess -> pcb_s));
     }
     debugL(9032);
     scheduler();

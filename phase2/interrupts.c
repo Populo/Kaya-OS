@@ -46,8 +46,8 @@ void ioTrapHandler()
 if(currentProcess != NULL)
 {
     debugREEE(9999);
-    STCK(end);
-
+    /*STCK(end);*/
+    debugREEE(58008);
     total = end - TODStarted;
 
     currentProcess -> pcb_time = currentProcess -> pcb_time + total;

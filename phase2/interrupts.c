@@ -16,6 +16,8 @@ extern void sysVerhogen(state_PTR old);
 HIDDEN void finish();
 HIDDEN int getDeviceNumber(int lineNumber);
 
+extern int sem[TOTALSEM];
+
 void debugL(int i)
 {
     int temp;

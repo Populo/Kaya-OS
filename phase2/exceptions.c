@@ -128,7 +128,6 @@ void sysCreate(state_PTR state)
     }
 }
 
-/* 김정은 다시 공격하다 */
 void sysTerminate()
 {
     pcb_PTR death = currentProcess;
@@ -197,40 +196,18 @@ void sysPasseren(state_PTR old)
 
 void sysSpecifyException(state_PTR caller)
 {
-    int type = caller -> s_a1;
+    int type = (int) caller -> s_a1;
     state_PTR old = (state_PTR) caller -> s_a2;
     state_PTR new = (state_PTR) caller -> s_a3;
 
-    switch(type)
+    if (currentProcess -> pcb_states[type][NEW] != NULL)
     {
-        case TLBTRAP:
-            if(currentProcess -> pcb_states[TLBTRAP][NEW] != NULL)
-            {
-                sysTerminate(); 
-            }
-            currentProcess -> pcb_states[TLBTRAP][NEW] = (state_PTR) new;
-            currentProcess -> pcb_states[TLBTRAP][OLD] = (state_PTR) old;
-            break;
-        case PROGTRAP:
-            if(currentProcess -> pcb_states[PGMTRAP][NEW] != NULL)
-            {
-                sysTerminate(); 
-            }
-            currentProcess -> pcb_states[PGMTRAP][NEW] = (state_PTR) new;
-            currentProcess -> pcb_states[PGMTRAP][OLD] = (state_PTR) old;
-            break;
-        case SYSTRAP:
-            if(currentProcess -> pcb_states[SYSTRAP][NEW] != NULL)
-            {
-                sysTerminate();
-            }
-            currentProcess -> pcb_states[SYSTRAP][NEW] = (state_PTR) new;
-            currentProcess -> pcb_states[SYSTRAP][OLD] = (state_PTR) old;
-            break;
-        default:
-            sysTerminate(); 
-            break; /* fuck you */
+        sysTerminate();
+        scheduler();
     }
+    
+    currentProcess -> pcb_states[type][NEW] = (state_PTR) new;
+    currentProcess -> pcb_states[type][OLD] = (state_PTR) old;
 }
 
 void sysCPUTime(state_PTR state)
@@ -306,54 +283,35 @@ void pullUpAndDie(int type)
 {
     debugH(type);
     
-    if(type == TLBTRAP)
+    state_PTR location;
+
+    switch(type)
     {
-        if(currentProcess -> pcb_states[TLBTRAP][NEW] != NULL)
-        {
-            debugH(2);
-            copyState((state_PTR) TBLMGMTOLDAREA, currentProcess -> pcb_states[TLBTRAP][OLD]);
-            copyState(currentProcess -> pcb_states[TLBTRAP][NEW], &(currentProcess -> pcb_s));
-            LDST(&(currentProcess -> pcb_s));
-        }
-        else
-        {
-            debugH(5);
-            sysTerminate(); 
-            scheduler();
-        }
+        case TLBTRAP:
+            location = (state_PTR) TBLMGMTOLDAREA;
+            break;
+        case PROGTRAP:
+            location = (state_PTR) PGMTRAPOLDAREA;
+            break;
+        case SYSTRAP:
+            location = (state_PTR) SYSCALLOLDAREA;
+            break;
+        default:
+            location = NULL;
+            break;
     }
-    else if(type == PROGTRAP) 
+
+    if (location == NULL || currentProcess -> pcb_states[type][NEW] == NULL)
     {
-        if(currentProcess -> pcb_states[PGMTRAP][NEW] != NULL)
-        {
-            debugH(2);
-            copyState((state_PTR) PGMTRAPOLDAREA, currentProcess -> pcb_states[PGMTRAP][OLD]);
-            copyState(currentProcess -> pcb_states[PGMTRAP][NEW], &(currentProcess -> pcb_s));
-            LDST(&(currentProcess -> pcb_s));
-        }
-        else
-        {
-            debugH(5);
-            sysTerminate(); 
-            scheduler();
-        }
+        sysTerminate();
+        scheduler();
     }
-    else if(type == SYSTRAP) 
-    {
-        if(currentProcess -> pcb_states[SYSTRAP][NEW] != NULL)
-        {
-            debugH(2);
-            copyState((state_PTR) SYSCALLOLDAREA, currentProcess -> pcb_states[SYSTRAP][OLD]);
-            copyState(currentProcess -> pcb_states[SYSTRAP][NEW], &(currentProcess -> pcb_s));
-            LDST(&(currentProcess -> pcb_s));
-        }
-        else
-        {
-            debugH(5);
-            sysTerminate(); 
-            scheduler();
-        }          
-    }  
+
+
+    copyState(location, currentProcess -> pcb_states[type][OLD]);
+    copyState(currentProcess -> pcb_states[type][NEW], &(currentProcess -> pcb_s));
+    LDST(&(currentProcess -> pcb_s));
+
     debugH(16);      
     
 }

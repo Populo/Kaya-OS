@@ -14,18 +14,21 @@ extern int processCount;
 extern int sem[TOTALSEM];
 extern cpu_t TODStarted;
 
+cpu_t currentTOD;
 
 /* Handle Process Exception */
-void pullUpAndDie(int type, state_PTR state);
+void pullUpAndDie(int type);
 /* Load State */
 void putALoadInMeDaddy(state_PTR state);
 /* Copy State to New Location */
 void copyState(state_PTR old, state_PTR new);
+/* kill the process */
+void pullAMacMiller(pcb_PTR proc);
 
 /* SYS 1 - Create Process */
 void sysCreate(state_PTR state);
 /* SYS 2 - Terminate Process */
-void sysTerminate(state_PTR state);
+void sysSendToNorthKorea();
 /* SYS 3 - Unblock Process */
 void sysSignal(state_PTR state);
 /* SYS 4 - Block Process */
@@ -33,9 +36,9 @@ void sysWait(state_PTR state);
 /* SYS 5 - Specify Handler For Exception */
 void sysBYOL(state_PTR state);
 /* SYS 6 - Get CPU Time */
-void sysGetCPUTime(state_PTR state);
+void sysGetCPUTime();
 /* SYS 7 - Wait For Clock */
-void sysWaitForClock(state_PTR state);
+void sysWaitForClock();
 /* SYS 8 - Wait For IO */
 void sysWaitForIO(state_PTR state);
 
@@ -57,6 +60,7 @@ void sysCallHandler()
 
 	state_PTR state = (state_PTR) SYSCALLOLDAREA;
 	int call = state -> s_a0;
+	state -> s_pc = state -> s_pc + 4;
 
 	if((call >= CREATE_PROCESS && call <= WAIT_FOR_IO_DEVICE)) /* valid syscall */
 	{
@@ -80,7 +84,7 @@ void sysCallHandler()
 			sysCreate(state);
 			break;
 		case(TERMINATE_PROCESS):
-			sysTerminate(state);
+			sysSendToNorthKorea();
 			break;
 		case(VERHOGEN):
 			sysSignal(state);
@@ -127,9 +131,11 @@ void sysCreate(state_PTR state)
 	putALoadInMeDaddy(state);
 }
 
-void sysTerminate(state_PTR state)
+void sysSendToNorthKorea()
 {
-	/* genocide */
+	pullAMacMiller(currentProcess);
+
+	scheduler();
 }
 
 void sysSignal(state_PTR state)
@@ -158,6 +164,8 @@ void sysWait(state_PTR state)
 
 	if (*mutex < 0)
 	{
+		copyState(state, currentProcess -> pcb_state);
+
 		/* block the process */
 		insertBlocked(mutex, currentProcess);
 		currentProcess = NULL;
@@ -176,15 +184,15 @@ void sysBYOL(state_PTR state)
 	state_PTR new = (state_PTR) state -> s_a3;
 
 
-	state_PTR lookingAt = currentProcess -> pcb_states[NEW][type];
+	state_PTR lookingAt = currentProcess -> pcb_states[type][NEW];
 
 	if (lookingAt != NULL)
 	{
-		sysTerminate();
+		sysSendToNorthKorea();
 	}
 
-	currentProcess -> pcb_states[OLD][type] = old;
-	currentProcess -> pcb_states[NEW][type] = new;
+	currentProcess -> pcb_states[type][OLD] = old;
+	currentProcess -> pcb_states[type][NEW] = new;
 
 	putALoadInMeDaddy(currentProcess -> pcb_state);
 }
@@ -212,15 +220,81 @@ void sysWaitForIO(state_PTR state)
 	int deviceIndex = interruptNumber - DEVNOSEM + isRead;
 	
 	/* 8 devices per interrupt */
-	deviceIndex = deviceIndex * ;
+	deviceIndex = deviceIndex * DEVPERINT;
 	
 	/* specific device */
 	deviceIndex = deviceIndex + deviceNumber;
 
+	/* decrement sem value */
 	sem[deviceIndex] = sem[deviceIndex] - 1;
 
 	if (sem[deviceIndex] < 0)
 	{
-					
+		copyState(state, currentProcess -> pcb_state);
+		insertBlocked((int *)&(sem[deviceIndex]), currentProcess);
+		++softBlockCount;
+
+		scheduler();
 	}
+}
+
+void pullAMacMiller(pcb_PTR proc)
+{
+	/* while the process has children */
+	while(!emptyChild(proc))
+	{
+		/* recursively kill children */
+		pullAMacMiller(removeChild(proc));
+	}
+
+	/* we have arrived at the root cause of the genocide */
+	if (currentProcess == proc)
+	{
+		outChild(proc);
+	}
+
+	/* if process is not blocked */
+	if (proc -> pcb_semAdd == NULL)
+	{
+		outProcQ(&readyQueue, proc);
+	}
+	else /* process is blocked */
+	{
+		int *semAdd = proc -> pcb_semAdd;
+		outBlocked(proc);
+
+		/* blocked on device semaphore */
+		if (semAdd <= &(sem[0]) && semAdd >= &(sem[TOTALSEM]))
+		{
+			--softBlockCount;
+		}
+		else /* normal block */
+		{
+			++*semAdd;
+		}
+	}
+
+	freePcb(proc);
+	processCount--;
+}
+
+void pullUpAndDie(int type)
+{
+	state_PTR lookingAt, newLocation;
+	lookingAt = currentProcess -> pcb_states[type][NEW];
+
+	switch(type)
+	{
+		case TLBTRAP:
+			newLocation = (state_PTR) TBLMGMTNEWAREA;
+	}
+
+	if (lookingAt == NULL)
+	{
+		sysSendToNorthKorea();
+	}
+
+	copyState();
+
+	putALoadInMeDaddy(currentProcess -> pcb_state);
 }

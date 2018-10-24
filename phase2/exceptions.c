@@ -290,7 +290,8 @@ void sysWaitIO(state_PTR old)
         total = TODStopped - TODStarted;
         currentProcess -> pcb_time = currentProcess -> pcb_time + total;
         copyState(old, &(currentProcess -> pcb_s));
-        insertBlocked(&(sem[index]), currentProcess);
+        currentProcess -> pcb_semAdd = &(sem[index]);
+	insertBlocked(&(sem[index]), currentProcess);
         currentProcess = NULL;
         softBlockCount++;
         scheduler();

@@ -12,7 +12,7 @@ extern pcb_PTR readyQueue;
 extern int softBlockCount;
 extern int processCount;
 extern int sem[TOTALSEM];
-
+extern cpu_t TODStarted;
 
 
 /* Handle Process Exception */
@@ -92,10 +92,10 @@ void sysCallHandler()
 			sysBYOL(state);
 			break;
 		case(GET_CPU_TIME):
-			sysGetCPUTime(state);
+			sysGetCPUTime();
 			break;
 		case(WAIT_FOR_CLOCK):
-			sysWaitForClock(state);
+			sysWaitForClock();
 			break;
 		case(WAIT_FOR_IO_DEVICE):
 			sysWaitForIO(state);
@@ -139,9 +139,11 @@ void sysSignal(state_PTR state)
 
 	if (*mutex <= 0)
 	{
+		/* remove process from semaphore */
 		pcb_PTR process = removeBlocked(mutex);
 		process -> pcb_semAdd = NULL;
-
+		
+		/* insert to readyQ) */
 		insertProcQ(&readyQueue, process);
 
 		putALoadInMeDaddy(state);
@@ -156,8 +158,11 @@ void sysWait(state_PTR state)
 
 	if (*mutex < 0)
 	{
+		/* block the process */
 		insertBlocked(mutex, currentProcess);
 		currentProcess = NULL;
+		
+		/* we need a new process */
 		scheduler();
 	}
 
@@ -166,5 +171,56 @@ void sysWait(state_PTR state)
 
 void sysBYOL(state_PTR state)
 {
+	int type = (int)state -> s_a1;
+	state_PTR old = (state_PTR) state -> s_a2;
+	state_PTR new = (state_PTR) state -> s_a3;
+
+
+	state_PTR lookingAt = currentProcess -> pcb_states[NEW][type];
+
+	if (lookingAt != NULL)
+	{
+		sysTerminate();
+	}
+
+	currentProcess -> pcb_states[OLD][type] = old;
+	currentProcess -> pcb_states[NEW][type] = new;
+
+	putALoadInMeDaddy(currentProcess -> pcb_state);
+}
+
+void sysGetCPUTime()
+{
+	STCK(currentTOD);
+	int elapsedTime = currentTOD - TODStarted;
+
+	currentProcess -> pcb_time = currentProcess -> pcb_time + elapsedTime;
+}
+
+void sysWaitForClock()
+{
+	/* P in the V */
+}
+
+void sysWaitForIO(state_PTR state)
+{
+	int interruptNumber = (int) state -> s_a1;
+	int deviceNumber = (int) state -> s_a2;
+	int isRead = (int) state -> s_a3;
+
+	/* appropriate line number */
+	int deviceIndex = interruptNumber - DEVNOSEM + isRead;
 	
+	/* 8 devices per interrupt */
+	deviceIndex = deviceIndex * ;
+	
+	/* specific device */
+	deviceIndex = deviceIndex + deviceNumber;
+
+	sem[deviceIndex] = sem[deviceIndex] - 1;
+
+	if (sem[deviceIndex] < 0)
+	{
+					
+	}
 }

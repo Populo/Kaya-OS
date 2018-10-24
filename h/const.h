@@ -69,7 +69,8 @@
 
 #define DEVREGLEN	4	/* device register field length in bytes & regs per dev */
 #define DEVREGSIZE	16 	/* device register size in bytes */
-#define DEVNOSEM    3   /* we dont know what the first three devices are */
+#define DEVNOSEM    	3   	/* we dont know what the first three devices are */
+#define DEVPERINT	8	/* devices per interrupt */
 
 /* device & line number bits on */
 #define FIRST			0x1

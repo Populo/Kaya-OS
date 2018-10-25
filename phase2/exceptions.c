@@ -113,7 +113,7 @@ void sysCallHandler()
 
 void sysCreate(state_PTR state)
 {
-	pcb_PTR newProcess = allocPCB();
+	pcb_PTR newProcess = allocPcb();
 
 	if (!emptyProcQ(newProcess)) /* there was a free pcb */
 	{

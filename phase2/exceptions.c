@@ -7,6 +7,8 @@
 #include "../e/exceptions.e"
 #include "../e/scheduler.e"
 
+#include "/usr/local/include/umps2/umps/libumps.e"
+
 extern pcb_PTR currentProcess;
 extern pcb_PTR readyQueue;
 extern int softBlockCount;
@@ -38,7 +40,7 @@ void sysBYOL(state_PTR state);
 /* SYS 6 - Get CPU Time */
 void sysGetCPUTime();
 /* SYS 7 - Wait For Clock */
-void sysWaitForClock();
+void sysWaitForClock(state_PTR state);
 /* SYS 8 - Wait For IO */
 void sysWaitForIO(state_PTR state);
 
@@ -46,12 +48,12 @@ void sysWaitForIO(state_PTR state);
 
 void pbgTrapHandler()
 {
-	pullUpAndDie(PROGTRAP, (state_PTR) PGMTRAPOLDAREA);
+	pullUpAndDie(PROGTRAP);
 }	
 
 void tlbTrapHandler()
 {
-	pullUpAndDie(TLBTRAP, (state_PTR) TBLMGMTOLDAREA);
+	pullUpAndDie(TLBTRAP);
 
 }
 
@@ -73,7 +75,7 @@ void sysCallHandler()
 	}
 	else
 	{
-		pullUpAndDie(SYSTRAP, state);
+		pullUpAndDie(SYSTRAP);
 	}
 
 	state -> s_pc = state -> s_pc + 4;
@@ -99,7 +101,7 @@ void sysCallHandler()
 			sysGetCPUTime();
 			break;
 		case(WAIT_FOR_CLOCK):
-			sysWaitForClock();
+			sysWaitForClock(state);
 			break;
 		case(WAIT_FOR_IO_DEVICE):
 			sysWaitForIO(state);
@@ -205,9 +207,18 @@ void sysGetCPUTime()
 	currentProcess -> pcb_time = currentProcess -> pcb_time + elapsedTime;
 }
 
-void sysWaitForClock()
+void sysWaitForClock(state_PTR state)
 {
-	/* P in the V */
+	/* last item in semaphore array */
+	int *semAdd = (int *)&(sem[TOTALSEM - 1]);
+	--*semAdd;
+
+	copyState(state, currentProcess -> pcb_state);
+	insertBlocked(semAdd, currentProcess);
+
+	++softBlockCount;
+
+	scheduler();
 }
 
 void sysWaitForIO(state_PTR state)
@@ -280,21 +291,20 @@ void pullAMacMiller(pcb_PTR proc)
 
 void pullUpAndDie(int type)
 {
-	state_PTR lookingAt, newLocation;
+	state_PTR lookingAt;
 	lookingAt = currentProcess -> pcb_states[type][NEW];
-
-	switch(type)
-	{
-		case TLBTRAP:
-			newLocation = (state_PTR) TBLMGMTNEWAREA;
-	}
 
 	if (lookingAt == NULL)
 	{
 		sysSendToNorthKorea();
 	}
 
-	copyState();
+	copyState(lookingAt, currentProcess -> pcb_state);
 
 	putALoadInMeDaddy(currentProcess -> pcb_state);
+}
+
+void putALoadInMeDaddy(state_PTR state)
+{
+	LDST(state);
 }

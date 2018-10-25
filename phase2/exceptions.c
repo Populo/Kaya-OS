@@ -308,3 +308,16 @@ void putALoadInMeDaddy(state_PTR state)
 {
 	LDST(state);
 }
+
+void copyState(state_PTR old, state_PTR new)
+{
+	new -> s_cause = old -> s_cause;
+	new -> s_asid = old -> s_asid;
+	new -> s_status = new -> s_status;
+	new -> s_pc = new -> s_pc;
+	int i;
+	for(i = 0; i < STATEREGNUM; ++i)
+	{
+		new -> s_reg[i] = old -> s_reg[i];
+	}
+}

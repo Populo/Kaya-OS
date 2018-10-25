@@ -159,15 +159,14 @@ if(currentProcess != NULL)
                 devRegNum -> t_recv_command = ACK;
         }
     }
-
-    sem[i] = sem[i] + 1;
+    semAdd = &(sem[i]);
+    ++(*semAdd);
     debugREEE(sem[i]);
-    if(sem[i] <= 0)
+    if((*semAdd) <= 0)
     {
-        temp = removeBlocked(&(sem[i]));
+        temp = removeBlocked(semAdd);
         if(temp != NULL)
         {
-            temp -> pcb_semAdd = NULL;
 
             temp -> pcb_state.s_v0 = status;
 

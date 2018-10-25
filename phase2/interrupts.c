@@ -190,7 +190,7 @@ HIDDEN void finish()
         STCK(endTime);
         TODStarted = TODStarted + (endTime - fuckyourClock);
         debugL(9031);
-        insertProcQ(&readyQueue, currentProcess);
+        LDST(&(currentProcess -> pcb_state));
     }
     debugL(9032);
     scheduler();

@@ -82,28 +82,28 @@ void sysCallHandler()
 
 	switch (call)
 	{
-		case(CREATE_PROCESS):
+		case CREATE_PROCESS:
 			sysCreate(state);
 			break;
-		case(TERMINATE_PROCESS):
+		case TERMINATE_PROCESS:
 			sysSendToNorthKorea();
 			break;
-		case(VERHOGEN):
+		case VERHOGEN:
 			sysSignal(state);
 			break;
-		case(PASSEREN):
+		case PASSEREN:
 			sysWait(state);
 			break;
-		case(SPECIFY_EXCEPTION_STATE_VECTOR):
+		case SPECIFY_EXCEPTION_STATE_VECTOR:
 			sysBYOL(state);
 			break;
-		case(GET_CPU_TIME):
+		case GET_CPU_TIME:
 			sysGetCPUTime();
 			break;
-		case(WAIT_FOR_CLOCK):
+		case WAIT_FOR_CLOCK:
 			sysWaitForClock(state);
 			break;
-		case(WAIT_FOR_IO_DEVICE):
+		case WAIT_FOR_IO_DEVICE:
 			sysWaitForIO(state);
 			break;
 	}

@@ -142,7 +142,7 @@ if(currentProcess != NULL)
 
     sem[i] = sem[i] + 1;
     debugREEE(sem[i]);
-    if(sem[i] >= 0)
+    if(sem[i] <= 0)
     {
         temp = removeBlocked(&(sem[i]));
         if(temp != NULL)

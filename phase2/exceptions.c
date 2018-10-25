@@ -236,14 +236,15 @@ void sysWaitForIO(state_PTR state)
 	
 	/* specific device */
 	deviceIndex = deviceIndex + deviceNumber;
-
+    int* semADD;
+	semADD = &(sem[deviceIndex]);
 	/* decrement sem value */
-	sem[deviceIndex] = sem[deviceIndex] - 1;
+	*semADD--;
 
-	if (sem[deviceIndex] < 0)
+	if ((*semADD) < 0)
 	{
 		copyState(state, currentProcess -> pcb_state);
-		insertBlocked(&(sem[deviceIndex]), currentProcess);
+		insertBlocked(semADD, currentProcess);
 		++softBlockCount;
 
 		scheduler();

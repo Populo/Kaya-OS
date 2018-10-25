@@ -148,7 +148,7 @@ void sysSignal(state_PTR state)
 	if (*mutex <= 0)
 	{
 		/* remove process from semaphore */
-		pcb_PTR process = removeBlocked(mutex);
+		pcb_PTR process = removeBlocked(*mutex);
 		process -> pcb_semAdd = NULL;
 		
 		/* insert to readyQ) */
@@ -169,7 +169,7 @@ void sysWait(state_PTR state)
 		copyState(state, currentProcess -> pcb_state);
 
 		/* block the process */
-		insertBlocked(mutex, currentProcess);
+		insertBlocked(*mutex, currentProcess);
 		currentProcess = NULL;
 		
 		/* we need a new process */

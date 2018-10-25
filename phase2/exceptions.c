@@ -142,7 +142,7 @@ void sysSendToNorthKorea()
 
 void sysSignal(state_PTR state)
 {
-	int *mutex = state -> s_a1;
+	int *mutex = (int *)state -> s_a1;
 	++*mutex;
 
 	if (*mutex <= 0)
@@ -153,14 +153,14 @@ void sysSignal(state_PTR state)
 		
 		/* insert to readyQ) */
 		insertProcQ(&readyQueue, process);
-
-		putALoadInMeDaddy(state);
 	}
+
+	putALoadInMeDaddy(state);
 }
 
 void sysWait(state_PTR state)
 {
-	int *mutex = state -> s_a1;
+	int *mutex = (int *)state -> s_a1;
 
 	--*mutex;
 
@@ -176,6 +176,7 @@ void sysWait(state_PTR state)
 		scheduler();
 	}
 
+	putALoadInMeDaddy(state);
 }
 
 

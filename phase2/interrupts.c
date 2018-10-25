@@ -185,12 +185,10 @@ if(currentProcess != NULL)
 HIDDEN void finish()
 {
     cpu_t endTime;
-    state_PTR oldArea = (state_PTR) INTPOLDAREA;
     if(currentProcess != NULL)
     {
         STCK(endTime);
         TODStarted = TODStarted + (endTime - fuckyourClock);
-        copyState(oldArea, &(currentProcess -> pcb_state));
         debugL(9031);
         insertProcQ(&readyQueue, currentProcess);
     }

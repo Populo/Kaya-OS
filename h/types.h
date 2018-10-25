@@ -99,7 +99,7 @@ typedef struct pcb_t
 				 	*pcb_prevSib,	/* pointer to the previous sibling */
 					*pcb_nextSib;	/* pointer to the next sibling */
 
-	state_PTR		pcb_state;		/* processor state */
+	state_t			pcb_state;		/* processor state */
 	int				*pcb_semAdd;	/* pointer to semaphore on which process is blocked */
 
 	cpu_t 			pcb_time; 		/* time the process has spent on the CPU in microseconds */

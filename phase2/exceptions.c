@@ -120,7 +120,7 @@ void sysCreate(state_PTR state)
 		++processCount;
 		insertChild(currentProcess, newProcess);
 		insertProcQ(&readyQueue, newProcess);
-		copyState((state_PTR)state -> s_a1, newProcess -> pcb_state);
+		copyState((state_PTR)state -> s_a1, &(newProcess -> pcb_state));
 
 		state -> s_v0 = SUCCESS;
 	}
@@ -168,7 +168,7 @@ void sysWait(state_PTR state)
 
 	if (*mutex < 0)
 	{
-		copyState(state, currentProcess -> pcb_state);
+		copyState(state, &(currentProcess -> pcb_state));
 
 		/* block the process */
 		insertBlocked(mutex, currentProcess);
@@ -199,7 +199,7 @@ void sysBYOL(state_PTR state)
 	currentProcess -> pcb_states[type][OLD] = old;
 	currentProcess -> pcb_states[type][NEW] = new;
 
-	putALoadInMeDaddy(currentProcess -> pcb_state);
+	putALoadInMeDaddy(&(currentProcess -> pcb_state));
 }
 
 void sysGetCPUTime()
@@ -216,7 +216,7 @@ void sysWaitForClock(state_PTR state)
 	int *semAdd = (int *)&(sem[TOTALSEM - 1]);
 	--*semAdd;
 
-	copyState(state, currentProcess -> pcb_state);
+	copyState(state, &(currentProcess -> pcb_state));
 	insertBlocked(semAdd, currentProcess);
 
 	++softBlockCount;
@@ -245,7 +245,7 @@ void sysWaitForIO(state_PTR state)
 
 	if ((*semADD) < 0)
 	{
-		copyState(state, currentProcess -> pcb_state);
+		copyState(state, &(currentProcess -> pcb_state));
 		insertBlocked(semADD, currentProcess);
 		++softBlockCount;
 
@@ -320,9 +320,9 @@ void pullUpAndDie(int type)
 	}
 
 	copyState(location, currentProcess -> pcb_states[type][OLD]);
-	copyState(lookingAt, currentProcess -> pcb_state);
+	copyState(lookingAt, &(currentProcess -> pcb_state));
 
-	putALoadInMeDaddy(currentProcess -> pcb_state);
+	putALoadInMeDaddy(&(currentProcess -> pcb_state));
 }
 
 void putALoadInMeDaddy(state_PTR state)

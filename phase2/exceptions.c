@@ -235,10 +235,10 @@ void sysWaitForIO(state_PTR state)
 	debugNickStone(1);
 	int interruptNumber = (int) state -> s_a1;
 	int deviceNumber = (int) state -> s_a2;
-	int isRead = (int) state -> s_a3;
+	int isWrite = (int) state -> s_a3;
 	debugNickStone(2);
 	/* appropriate line number */
-	int deviceIndex = interruptNumber - DEVNOSEM + isRead;
+	int deviceIndex = interruptNumber - DEVNOSEM + isWrite;
 	
 	/* 8 devices per interrupt */
 	deviceIndex = deviceIndex * DEVPERINT;
@@ -259,10 +259,15 @@ void sysWaitForIO(state_PTR state)
 		copyState(state, &(currentProcess -> pcb_state));
 		debugNickStone(6); 
 		insertBlocked(semADD, currentProcess);	
+		currentProcess = NULL;
 		debugNickStone(7);
 		++softBlockCount;
 
 		scheduler();
+	}
+	else{
+		state -> s_v0 = SUCCESS;
+		putALoadInMeDaddy(state);
 	}
 }
 

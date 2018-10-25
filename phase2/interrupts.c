@@ -149,16 +149,18 @@ if(currentProcess != NULL)
         {
             temp -> pcb_semAdd = NULL;
 
-            temp -> pcb_state.s_v0 = devRegNum -> d_status;
+            temp -> pcb_state.s_v0 = devRegNum -> t_transm_status;
+
             softBlockCount--;
 
             insertProcQ(&(readyQueue), temp);
         }
-        else
+/*         else
         {
             sem[i] = devRegNum -> t_transm_status;
-        }
+        } */
     }
+
     devRegNum -> t_transm_command = ACK;
     debugL(9029);
     finish();

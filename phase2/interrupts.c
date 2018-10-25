@@ -9,6 +9,7 @@
 
 
 extern cpu_t TODStarted;
+cpu_t fuckyourClock;
 
 extern void copyState(state_PTR old, state_PTR new);
 extern void sysVerhogen(state_PTR old);
@@ -33,7 +34,7 @@ void debugREEE(int u)
 
 void ioTrapHandler()
 {
-    
+    STCK(fuckyourClock);
     debugL(8999);
     unsigned int oldCause;
     cpu_t start, end, total;
@@ -142,7 +143,8 @@ if(currentProcess != NULL)
 
         devRegNum -> d_command = ACK;
     }
-    else {
+    else 
+    {
         tranStatus = (devRegNum -> t_transm_status & 0xFF);
 
         switch (tranStatus)
@@ -154,7 +156,7 @@ if(currentProcess != NULL)
                 devRegNum -> t_transm_command = ACK;
                 break;
             default:
-                i += DEVPERINT;
+                i = i + DEVPERINT;
                 status = devRegNum -> t_recv_status;
                 devRegNum -> t_recv_command = ACK;
         }
@@ -182,9 +184,12 @@ if(currentProcess != NULL)
 
 HIDDEN void finish()
 {
+    cpu_t endTime;
     state_PTR oldArea = (state_PTR) INTPOLDAREA;
     if(currentProcess != NULL)
     {
+        STCK(endTime);
+        TODStarted = TODStarted + (endTime - fuckyourClock);
         copyState(oldArea, &(currentProcess -> pcb_state));
         debugL(9031);
         insertProcQ(&readyQueue, currentProcess);

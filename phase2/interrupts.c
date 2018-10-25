@@ -143,7 +143,7 @@ if(currentProcess != NULL)
         devRegNum -> d_command = ACK;
     }
     else {
-        tranStatus - (devRegNum -> t_transm_status & 0xFF);
+        tranStatus = (devRegNum -> t_transm_status & 0xFF);
 
         switch (tranStatus)
         {

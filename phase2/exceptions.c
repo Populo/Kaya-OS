@@ -291,17 +291,31 @@ void pullAMacMiller(pcb_PTR proc)
 
 void pullUpAndDie(int type)
 {
-	state_PTR lookingAt;
+	state_PTR lookingAt, location;
 	lookingAt = currentProcess -> pcb_states[type][NEW];
+
 
 	if (lookingAt == NULL)
 	{
 		sysSendToNorthKorea();
 	}
 
-	state_PTR old = currentProcess[type][OLD];
+	switch(type)
+	{
+		case TLBTRAP:
+			location = (state_PTR) TBLMGMTOLDAREA;
+			break;
+		case PROGTRAP:
+			location = (state_PTR) PGMTRAPOLDAREA;
+			break;
+		case SYSTRAP:
+			location = (state_PTR) SYSCALLOLDAREA;
+			break;
+		default:
+			sysSendToNorthKorea();
+	}
 
-	copyState(currentProcess -> pcb_state, old);
+	copyState(location, old);
 	copyState(lookingAt, currentProcess -> pcb_state);
 
 	putALoadInMeDaddy(currentProcess -> pcb_state);

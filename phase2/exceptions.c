@@ -1,15 +1,15 @@
-#include "../h/types.h"
 #include "../h/const.h"
+#include "../h/types.h"
 
-#include "../e/pcb.e"
 #include "../e/asl.e"
+#include "../e/pcb.e"
 #include "../e/initial.e"
-
 #include "../e/exceptions.e"
+#include "../e/scheduler.e"
 
-extern cpu_t TODStarted;
-cpu_t TODStopped;
+#include "/usr/local/include/umps2/umps/libumps.e"
 
+<<<<<<< HEAD
 cpu_t current;
 
 HIDDEN void sysCreate(state_PTR state);
@@ -23,38 +23,122 @@ HIDDEN void sysWaitIO(state_PTR old);
 
 void pullUpAndDie(int type);
 void copyState(state_PTR old, state_PTR new);
+=======
+extern pcb_PTR currentProcess;
+extern pcb_PTR readyQueue;
+extern int softBlockCount;
+extern int processCount;
+extern int sem[TOTALSEM];
+extern cpu_t TODStarted;
+
+cpu_t currentTOD;
+
+/* Handle Process Exception */
+void pullUpAndDie(int type);
+/* Load State */
+void putALoadInMeDaddy(state_PTR state);
+/* Copy State to New Location */
+void copyState(state_PTR old, state_PTR new);
+/* kill the process */
+void pullAMacMiller(pcb_PTR proc);
+
+/* SYS 1 - Create Process */
+void sysCreate(state_PTR state);
+/* SYS 2 - Terminate Process */
+void sysSendToNorthKorea();
+/* SYS 3 - Unblock Process */
+void sysSignal(state_PTR state);
+/* SYS 4 - Block Process */
+void sysWait(state_PTR state);
+/* SYS 5 - Specify Handler For Exception */
+void sysBYOL(state_PTR state);
+/* SYS 6 - Get CPU Time */
+void sysGetCPUTime();
+/* SYS 7 - Wait For Clock */
+void sysWaitForClock(state_PTR state);
+/* SYS 8 - Wait For IO */
+void sysWaitForIO(state_PTR state);
+>>>>>>> exceptions
 
 
-
-void debugC(int i)
-{
-    int a;
-    a = 10;
-}
-
-void debugH(int i)
-{
-    int a;
-    a = 10;
-}
-
-void debugQ(int i)
-{
-    int a;
-    a = 10;
-}
 
 void pbgTrapHandler()
 {
-    pullUpAndDie(PROGTRAP);
-}
+	pullUpAndDie(PROGTRAP);
+}	
 
 void tlbTrapHandler()
 {
-    pullUpAndDie(TLBTRAP);
+	pullUpAndDie(TLBTRAP);
+
 }
 
+void sysCallHandler()
+{
 
+	state_PTR state = (state_PTR) SYSCALLOLDAREA;
+	int call = state -> s_a0;
+	state -> s_pc = state -> s_pc + 4;
+
+	if((call >= CREATE_PROCESS && call <= WAIT_FOR_IO_DEVICE)) /* valid syscall */
+	{
+		if((state -> s_status & KUON) != ALLOFF) /* user mode */
+		{
+			state -> s_cause = RI;
+			copyState(state, (state_PTR) PGMTRAPOLDAREA);
+			pbgTrapHandler();
+		}
+	}
+	else
+	{
+		pullUpAndDie(SYSTRAP);
+	}
+
+	state -> s_pc = state -> s_pc + 4;
+
+	switch (call)
+	{
+		case(CREATE_PROCESS):
+			sysCreate(state);
+			break;
+		case(TERMINATE_PROCESS):
+			sysSendToNorthKorea();
+			break;
+		case(VERHOGEN):
+			sysSignal(state);
+			break;
+		case(PASSEREN):
+			sysWait(state);
+			break;
+		case(SPECIFY_EXCEPTION_STATE_VECTOR):
+			sysBYOL(state);
+			break;
+		case(GET_CPU_TIME):
+			sysGetCPUTime();
+			break;
+		case(WAIT_FOR_CLOCK):
+			sysWaitForClock(state);
+			break;
+		case(WAIT_FOR_IO_DEVICE):
+			sysWaitForIO(state);
+			break;
+	}
+
+	putALoadInMeDaddy(state);
+}
+
+void sysCreate(state_PTR state)
+{
+	pcb_PTR newProcess = allocPCB();
+
+	if (!emptyProcQ(newProcess)) /* there was a free pcb */
+	{
+		++processCount;
+		insertChild(currentProcess, newProcess);
+		insertProcQ(&readyQueue, newProcess);
+		copyState((state_PTR)state -> s_a1, newProcess -> pcb_state);
+
+<<<<<<< HEAD
 void sysCallHandler()
 {
     state_PTR old;
@@ -109,62 +193,47 @@ void sysCallHandler()
         pbgTrapHandler();
     }
     
+=======
+		state -> s_v0 = SUCCESS;
+	}
+	else /* there was not a free pcb */
+	{
+		state -> s_v0 = FAILURE;
+	}
+
+
+	putALoadInMeDaddy(state);
+>>>>>>> exceptions
 }
 
-void sysCreate(state_PTR state)
+void sysSendToNorthKorea()
 {
-    pcb_PTR newProc = allocPcb();
-    if(newProc != NULL)
-    {
-        ++processCount;
-        copyState((state_PTR) state -> s_a1, (state_PTR) &(newProc -> pcb_s));
-        insertChild(currentProcess, newProc);
-        insertProcQ(readyQueue, newProc);
-        state -> s_v0 = SUCCESS;
-    }
-    else
-    {
-        state -> s_v0 = FAILURE;
-    }
+	pullAMacMiller(currentProcess);
+
+	scheduler();
 }
 
-void sysTerminate()
+void sysSignal(state_PTR state)
 {
-    pcb_PTR death = currentProcess;
-    while(death != NULL)
-    {
-        if (emptyChild(currentProcess)) 
-        {
-            outChild(currentProcess);
-            freePcb(currentProcess);
-            --processCount;
-            death = NULL;
-            currentProcess = NULL;
-        }
-        else
-        {
-            if(!emptyChild(death -> pcb_child))
-            {
-                death = death -> pcb_child;
-            }
-            else
-            {
-                if (death -> pcb_semAdd != NULL) /* probably needs something */
-                {
-                    removeBlocked(death -> pcb_semAdd);
-                    softBlockCount--;
-                }
-                death = death -> pcb_parent;
-                freePcb(removeChild(death));
-                --processCount;           
-            }
-        }
-    }
-    scheduler();
+	int *mutex = state -> s_a1;
+	++*mutex;
+
+	if (*mutex <= 0)
+	{
+		/* remove process from semaphore */
+		pcb_PTR process = removeBlocked(mutex);
+		process -> pcb_semAdd = NULL;
+		
+		/* insert to readyQ) */
+		insertProcQ(&readyQueue, process);
+
+		putALoadInMeDaddy(state);
+	}
 }
 
-void sysVerhogen(state_PTR old)
+void sysWait(state_PTR state)
 {
+<<<<<<< HEAD
     pcb_PTR new = NULL;
     int* semAdd = old -> s_a1;
     (*semAdd)++;
@@ -176,10 +245,30 @@ void sysVerhogen(state_PTR old)
         insertProcQ(&(readyQueue), new);
         
     } 
+=======
+	int *mutex = state -> s_a1;
+
+	--*mutex;
+
+	if (*mutex < 0)
+	{
+		copyState(state, currentProcess -> pcb_state);
+
+		/* block the process */
+		insertBlocked(mutex, currentProcess);
+		currentProcess = NULL;
+		
+		/* we need a new process */
+		scheduler();
+	}
+
+>>>>>>> exceptions
 }
 
-void sysPasseren(state_PTR old)
+
+void sysBYOL(state_PTR state)
 {
+<<<<<<< HEAD
     int* semAdd = old -> s_a1;
     (*semAdd)--;
     if((*semAdd) < 0)
@@ -192,10 +281,29 @@ void sysPasseren(state_PTR old)
         currentProcess = NULL;
         scheduler();
     }
+=======
+	int type = (int)state -> s_a1;
+	state_PTR old = (state_PTR) state -> s_a2;
+	state_PTR new = (state_PTR) state -> s_a3;
+
+
+	state_PTR lookingAt = currentProcess -> pcb_states[type][NEW];
+
+	if (lookingAt != NULL)
+	{
+		sysSendToNorthKorea();
+	}
+
+	currentProcess -> pcb_states[type][OLD] = old;
+	currentProcess -> pcb_states[type][NEW] = new;
+
+	putALoadInMeDaddy(currentProcess -> pcb_state);
+>>>>>>> exceptions
 }
 
-void sysSpecifyException(state_PTR caller)
+void sysGetCPUTime()
 {
+<<<<<<< HEAD
     int type = (int) caller -> s_a1;
     state_PTR old = (state_PTR) caller -> s_a2;
     state_PTR new = (state_PTR) caller -> s_a3;
@@ -208,39 +316,59 @@ void sysSpecifyException(state_PTR caller)
     
     currentProcess -> pcb_states[type][NEW] = (state_PTR) new;
     currentProcess -> pcb_states[type][OLD] = (state_PTR) old;
+=======
+	STCK(currentTOD);
+	int elapsedTime = currentTOD - TODStarted;
+
+	currentProcess -> pcb_time = currentProcess -> pcb_time + elapsedTime;
+>>>>>>> exceptions
 }
 
-void sysCPUTime(state_PTR state)
+void sysWaitForClock(state_PTR state)
 {
-    cpu_t t;
-    STCK(t);
+	/* last item in semaphore array */
+	int *semAdd = (int *)&(sem[TOTALSEM - 1]);
+	--*semAdd;
 
-    currentProcess -> pcb_time = currentProcess -> pcb_time + (t - TODStarted);
-    currentProcess -> pcb_s.s_v0 = currentProcess -> pcb_time;
-    STCK(TODStarted);
+	copyState(state, currentProcess -> pcb_state);
+	insertBlocked(semAdd, currentProcess);
+
+	++softBlockCount;
+
+	scheduler();
 }
 
-void sysWaitClock(state_PTR old)
+void sysWaitForIO(state_PTR state)
 {
-    int device = sem[TOTALSEM-1];
-    device--;
-    if(device < 0)
-    {
-        STCK(TODStopped);
-        int total = TODStopped - TODStarted;
-        currentProcess -> pcb_time = currentProcess -> pcb_time + total;
+	int interruptNumber = (int) state -> s_a1;
+	int deviceNumber = (int) state -> s_a2;
+	int isRead = (int) state -> s_a3;
 
-        insertBlocked(&(device), currentProcess);
-        currentProcess = NULL;
-        softBlockCount++;
+	/* appropriate line number */
+	int deviceIndex = interruptNumber - DEVNOSEM + isRead;
+	
+	/* 8 devices per interrupt */
+	deviceIndex = deviceIndex * DEVPERINT;
+	
+	/* specific device */
+	deviceIndex = deviceIndex + deviceNumber;
 
-        scheduler();
-    }
-    PANIC();
+	/* decrement sem value */
+	sem[deviceIndex] = sem[deviceIndex] - 1;
+
+	if (sem[deviceIndex] < 0)
+	{
+		copyState(state, currentProcess -> pcb_state);
+		insertBlocked((int *)&(sem[deviceIndex]), currentProcess);
+		++softBlockCount;
+
+		scheduler();
+	}
 }
 
-void sysWaitIO(state_PTR old)
+void pullAMacMiller(pcb_PTR proc)
 {
+<<<<<<< HEAD
     int *semAdd;
     int interruptLine, deviceNum, isRead, index;
     interruptLine = old -> s_a1;
@@ -277,10 +405,49 @@ void sysWaitIO(state_PTR old)
         currentProcess -> pcb_s.s_v0 = sem[index];
         LDST(old);
     }
+=======
+	/* while the process has children */
+	while(!emptyChild(proc))
+	{
+		/* recursively kill children */
+		pullAMacMiller(removeChild(proc));
+	}
+
+	/* we have arrived at the root cause of the genocide */
+	if (currentProcess == proc)
+	{
+		outChild(proc);
+	}
+
+	/* if process is not blocked */
+	if (proc -> pcb_semAdd == NULL)
+	{
+		outProcQ(&readyQueue, proc);
+	}
+	else /* process is blocked */
+	{
+		int *semAdd = proc -> pcb_semAdd;
+		outBlocked(proc);
+
+		/* blocked on device semaphore */
+		if (semAdd <= &(sem[0]) && semAdd >= &(sem[TOTALSEM]))
+		{
+			--softBlockCount;
+		}
+		else /* normal block */
+		{
+			++*semAdd;
+		}
+	}
+
+	freePcb(proc);
+	processCount--;
+>>>>>>> exceptions
 }
 
 void pullUpAndDie(int type)
 {
+<<<<<<< HEAD
     debugH(type);
     
     state_PTR location;
@@ -315,15 +482,22 @@ void pullUpAndDie(int type)
     debugH(16);      
     
 }
+=======
+	state_PTR lookingAt;
+	lookingAt = currentProcess -> pcb_states[type][NEW];
+>>>>>>> exceptions
 
-void copyState(state_PTR old, state_PTR new)
-{
-    int i;
-    new -> s_asid = old -> s_asid;
-    new -> s_status = old -> s_status;
-    new -> s_pc = old -> s_pc;
-    new -> s_cause = old -> s_cause;
-    for(i = 0; i<STATEREGNUM; i++)
-        new -> s_reg[i] = old -> s_reg[i];
+	if (lookingAt == NULL)
+	{
+		sysSendToNorthKorea();
+	}
+
+	copyState(lookingAt, currentProcess -> pcb_state);
+
+	putALoadInMeDaddy(currentProcess -> pcb_state);
 }
 
+void putALoadInMeDaddy(state_PTR state)
+{
+	LDST(state);
+}

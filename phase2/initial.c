@@ -74,13 +74,13 @@ int main()
     /* init first process */
     currentProcess = allocPcb();
     /* penultimate page of physical memory */
-    currentProcess -> pcb_s.s_sp = (RAMTOP - PAGESIZE);
+    currentProcess -> pcb_state -> s_sp = (RAMTOP - PAGESIZE);
     /* stack pointer to run test function because we should run the test */
-    currentProcess -> pcb_s.s_pc = (memaddr) test;
+    currentProcess -> pcb_state -> s_pc = (memaddr) test;
     /* i dont know what this is but we need to set this too */
-    currentProcess -> pcb_s.s_t9 = (memaddr) test;
+    currentProcess -> pcb_state -> s_t9 = (memaddr) test;
     /* set the status */
-    currentProcess -> pcb_s.s_status = ALLOFF | IEON | IMON | LTON;
+    currentProcess -> pcb_state -> s_status = ALLOFF | IEON | IMON | LTON;
 
     ++processCount;
 

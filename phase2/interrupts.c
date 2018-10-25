@@ -129,21 +129,36 @@ if(currentProcess != NULL)
     }
     debugL(9017);
     deviceNum = getDeviceNumber(interruptNum);
-    if (interruptNum == TERMINT)
+    
+    devRegNum = (device_t *) (INTDEVREG + ((interruptNum - DEVNOSEM)
+                    * DEVREGSIZE * DEVPERINT) + (deviceNum * DEVREGSIZE));
+
+    i = DEVPERINT * (interruptNum - DEVNOSEM) + deviceNum;
+
+    /* Not a terminal */
+    if (interruptNum != TERMINT)
     {
-        goPowerRangers(deviceNum);
+        status = devRegNum -> d_status;
+
+        devRegNum -> d_command = ACK;
     }
+    else {
+        tranStatus - (devRegNum -> t_transm_status & 0xFF);
 
-    if(deviceNum == -1)
-    {
-        debugL(9019);
-        PANIC();
+        switch (tranStatus)
+        {
+            case 3:
+            case 4:
+            case 5:
+                status = devRegNum -> t_transm_status;
+                devRegNum -> t_transm_command = ACK;
+                break;
+            default:
+                i += DEVPERINT;
+                status = devRegNum -> t_recv_status;
+                devRegNum -> t_recv_command = ACK;
+        }
     }
-    interruptNum = interruptNum - DISKINT;
-
-    i = (DEVPERINT * interruptNum) + deviceNum;
-
-    devRegNum = &(devReg -> devreg[i]);
 
     sem[i] = sem[i] + 1;
     debugREEE(sem[i]);
@@ -154,19 +169,14 @@ if(currentProcess != NULL)
         {
             temp -> pcb_semAdd = NULL;
 
-            temp -> pcb_state.s_v0 = devRegNum -> d_status;
+            temp -> pcb_state.s_v0 = status;
 
             softBlockCount--;
 
             insertProcQ(&(readyQueue), temp);
         }
-/*          else
-        {
-            sem[i] = devRegNum -> t_transm_status;
-        }  */
     }
 
-    devRegNum -> d_command = ACK;
     debugL(9029);
     finish();
 }
@@ -213,51 +223,3 @@ HIDDEN int getDeviceNumber(int lineNumber)
 }
 
 
-void goPowerRangers(int deviceNum)
-{
-    pcb_PTR process;
-    int semAdd = (TERMINT - DISKINT)* DEVPERINT + deviceNum;
-    int receive = TRUE;
-    devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
-    device_t* dev = &(devReg -> devreg[semAdd]);
-
-    if((dev -> t_transm_status & 0x0F) != READY)
-    {
-        semAdd = semAdd + DEVPERINT;
-        receive = FALSE;
-    }
-
-    sem[semAdd] = sem[semAdd] + 1;
-
-    if(sem[semAdd] <= 0)
-    {
-        process = removeBlocked(&(sem[semAdd]));
-        if(process != NULL)
-        {
-            process -> pcb_semAdd = NULL;
-
-            if(receive)
-            {
-                process -> pcb_state.s_v0 = dev->t_recv_status;
-                dev->t_recv_command = ACK;
-            }
-
-            else
-            {
-                process -> pcb_semAdd = NULL;
-
-                process -> pcb_state.s_v0 = dev->t_transm_status;
-                dev-> t_transm_command = ACK;
-            }
-
-            softBlockCount--;
-
-            insertProcQ(&(readyQueue), process);
-        }
-    }
-
-    finish();
-}
-
-
-    

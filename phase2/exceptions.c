@@ -299,6 +299,9 @@ void pullUpAndDie(int type)
 		sysSendToNorthKorea();
 	}
 
+	state_PTR old = currentProcess[type][OLD];
+
+	copyState(currentProcess -> pcb_state, old);
 	copyState(lookingAt, currentProcess -> pcb_state);
 
 	putALoadInMeDaddy(currentProcess -> pcb_state);

@@ -170,7 +170,7 @@ HIDDEN void finish()
     {
         debugL(9031);
         /*currentProcess = NULL;*/
-        LDST(&(currentProcess -> pcb_state));
+        LDST(currentProcess -> pcb_state);
     }
     debugL(9032);
     scheduler();

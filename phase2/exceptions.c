@@ -245,8 +245,9 @@ void sysWaitForIO(state_PTR state)
 
 	if ((*semADD) < 0)
 	{
-		copyState(state, &(currentProcess -> pcb_state));
+		
 		insertBlocked(semADD, currentProcess);
+        copyState(state, &(currentProcess -> pcb_state));
 		++softBlockCount;
 
 		scheduler();

@@ -246,17 +246,17 @@ void sysWaitForIO(state_PTR state)
 	/* specific device */
 	deviceIndex = deviceIndex + deviceNumber;
 	debugNickStone(3);
-    int semADD;
-	semADD = sem[deviceIndex];
+    int *semADD;
+	semADD = &(sem[deviceIndex]);
 	debugNickStone(4);
-	debugNickStone(semADD);
+	debugNickStone(*semADD);
 	/* decrement sem value */
-	--semADD;
-	debugNickStone(semADD);
-	if (semADD < 0)
+	--*semADD;
+	debugNickStone(*semADD);
+	if ((*semADD) < 0)
 	{
 		debugNickStone(5);
-		insertBlocked(&semADD, currentProcess);
+		insertBlocked(semADD, currentProcess);
 		debugNickStone(6);
         copyState(state, &(currentProcess -> pcb_state));
 		debugNickStone(7);

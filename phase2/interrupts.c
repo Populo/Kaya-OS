@@ -183,11 +183,12 @@ if(currentProcess != NULL)
 
 HIDDEN void finish()
 {
+    state_PTR oldArea = (state_PTR) INTPOLDAREA;
     if(currentProcess != NULL)
     {
+        copyState(oldArea, &(currentProcess -> pcb_state));
         debugL(9031);
-        /*currentProcess = NULL;*/
-        LDST((state_PTR) INTPOLDAREA);
+        insertProcQ(&readyQueue, currentProcess);
     }
     debugL(9032);
     scheduler();

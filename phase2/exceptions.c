@@ -256,9 +256,9 @@ void sysWaitForIO(state_PTR state)
 	if ((*semADD) < 0)
 	{
 		debugNickStone(5);
-		insertBlocked(semADD, currentProcess);
-		debugNickStone(6);
-        copyState(state, &(currentProcess -> pcb_state));
+		copyState(state, &(currentProcess -> pcb_state));
+		debugNickStone(6); 
+		insertBlocked(semADD, currentProcess);	
 		debugNickStone(7);
 		++softBlockCount;
 

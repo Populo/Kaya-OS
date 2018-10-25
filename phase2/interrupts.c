@@ -54,7 +54,7 @@ if(currentProcess != NULL)
 
     currentProcess -> pcb_time = currentProcess -> pcb_time + total;
 
-    copyState(old, &(currentProcess -> pcb_s));
+    copyState(old, currentProcess -> pcb_state);
 }
 
 
@@ -149,7 +149,7 @@ if(currentProcess != NULL)
         {
             temp -> pcb_semAdd = NULL;
 
-            temp -> pcb_s.s_v0 = devRegNum -> t_transm_status;
+            temp -> pcb_state -> s_v0 = devRegNum -> t_transm_status;
             softBlockCount--;
 
             insertProcQ(&(readyQueue), temp);
@@ -170,7 +170,7 @@ HIDDEN void finish()
     {
         debugL(9031);
         /*currentProcess = NULL;*/
-        LDST(&(currentProcess -> pcb_s));
+        LDST(&(currentProcess -> pcb_state));
     }
     debugL(9032);
     scheduler();

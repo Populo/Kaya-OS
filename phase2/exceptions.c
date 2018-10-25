@@ -44,6 +44,12 @@ void sysWaitForClock(state_PTR state);
 /* SYS 8 - Wait For IO */
 void sysWaitForIO(state_PTR state);
 
+void debugNickStone(int fuckhisass)
+{
+	int ree;
+	ree = fuckhisass;
+}
+
 
 
 void pbgTrapHandler()
@@ -226,10 +232,11 @@ void sysWaitForClock(state_PTR state)
 
 void sysWaitForIO(state_PTR state)
 {
+	debugNickStone(1);
 	int interruptNumber = (int) state -> s_a1;
 	int deviceNumber = (int) state -> s_a2;
 	int isRead = (int) state -> s_a3;
-
+	debugNickStone(2);
 	/* appropriate line number */
 	int deviceIndex = interruptNumber - DEVNOSEM + isRead;
 	
@@ -238,16 +245,21 @@ void sysWaitForIO(state_PTR state)
 	
 	/* specific device */
 	deviceIndex = deviceIndex + deviceNumber;
+	debugNickStone(3);
     int* semADD;
 	semADD = &(sem[deviceIndex]);
+	debugNickStone(4);
+	debugNickStone(*semADD);
 	/* decrement sem value */
 	*semADD--;
-
+	debugNickStone(*semADD);
 	if ((*semADD) < 0)
 	{
-		
+		debugNickStone(5);
 		insertBlocked(semADD, currentProcess);
+		debugNickStone(6);
         copyState(state, &(currentProcess -> pcb_state));
+		debugNickStone(7);
 		++softBlockCount;
 
 		scheduler();

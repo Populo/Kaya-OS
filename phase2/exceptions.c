@@ -251,7 +251,7 @@ void sysWaitForIO(state_PTR state)
 	debugNickStone(4);
 	debugNickStone(*semADD);
 	/* decrement sem value */
-	--(*semADD);
+	*semADD = *semADD - 1;
 	debugNickStone(*semADD);
 	if ((*semADD) < 0)
 	{

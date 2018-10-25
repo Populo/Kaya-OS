@@ -129,6 +129,11 @@ if(currentProcess != NULL)
     }
     debugL(9017);
     deviceNum = getDeviceNumber(interruptNum);
+    if (interruptNum == TERMINT)
+    {
+        goPowerRangers(deviceNum);
+    }
+
     if(deviceNum == -1)
     {
         debugL(9019);
@@ -149,19 +154,19 @@ if(currentProcess != NULL)
         {
             temp -> pcb_semAdd = NULL;
 
-            temp -> pcb_state.s_v0 = devRegNum -> t_transm_status;
+            temp -> pcb_state.s_v0 = devRegNum -> d_status;
 
             softBlockCount--;
 
             insertProcQ(&(readyQueue), temp);
         }
-/*         else
+/*          else
         {
             sem[i] = devRegNum -> t_transm_status;
-        } */
+        }  */
     }
 
-    devRegNum -> t_transm_command = ACK;
+    devRegNum -> d_command = ACK;
     debugL(9029);
     finish();
 }
@@ -207,7 +212,7 @@ HIDDEN int getDeviceNumber(int lineNumber)
     return deviceNum;
 }
 
-/*
+
 void goPowerRangers(int deviceNum)
 {
     pcb_PTR process;
@@ -233,7 +238,7 @@ void goPowerRangers(int deviceNum)
 
             if(receive)
             {
-                process -> pcb_s.s_v0 = dev->t_recv_status;
+                process -> pcb_state.s_v0 = dev->t_recv_status;
                 dev->t_recv_command = ACK;
             }
 
@@ -241,7 +246,7 @@ void goPowerRangers(int deviceNum)
             {
                 process -> pcb_semAdd = NULL;
 
-                process -> pcb_s.s_v0 = dev->t_transm_status;
+                process -> pcb_state.s_v0 = dev->t_transm_status;
                 dev-> t_transm_command = ACK;
             }
 
@@ -253,6 +258,6 @@ void goPowerRangers(int deviceNum)
 
     finish();
 }
-*/
+
 
     

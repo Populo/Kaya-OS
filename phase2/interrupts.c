@@ -46,18 +46,6 @@ void ioTrapHandler()
     state_PTR old = (state_PTR) INTPOLDAREA;
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
 
-if(currentProcess != NULL)
-{
-    debugREEE(9999);
-    STCK(end);
-    debugREEE(58008);
-    total = end - TODStarted;
-
-    currentProcess -> pcb_time = currentProcess -> pcb_time + total;
-
-    copyState(old, &(currentProcess -> pcb_state));
-}
-
 
 
     if((old -> s_cause & LINEZERO) == LINEZERO)
@@ -185,11 +173,13 @@ if(currentProcess != NULL)
 HIDDEN void finish()
 {
     cpu_t endTime;
+    state_PTR oldArea = (state_PTR) INTPOLDAREA;
     if(currentProcess != NULL)
     {
         STCK(endTime);
         TODStarted = TODStarted + (endTime - fuckyourClock);
         debugL(9031);
+        copyState(oldArea, &(currentProcess -> pcb_state));
         LDST(&(currentProcess -> pcb_state));
     }
     debugL(9032);

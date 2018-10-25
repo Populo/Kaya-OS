@@ -149,7 +149,7 @@ void sysSendToNorthKorea()
 void sysSignal(state_PTR state)
 {
 	int *mutex = (int *)state -> s_a1;
-	++*mutex;
+	++(*mutex);
 
 	if (*mutex <= 0)
 	{
@@ -170,7 +170,7 @@ void sysWait(state_PTR state)
 {
 	int *mutex = (int *)state -> s_a1;
 
-	--*mutex;
+	--(*mutex);
 
 	if (*mutex < 0)
 	{
@@ -220,7 +220,7 @@ void sysWaitForClock(state_PTR state)
 {
 	/* last item in semaphore array */
 	int *semAdd = (int *)&(sem[TOTALSEM - 1]);
-	--*semAdd;
+	--(*semAdd);
 
 	copyState(state, &(currentProcess -> pcb_state));
 	insertBlocked(semAdd, currentProcess);
@@ -251,7 +251,7 @@ void sysWaitForIO(state_PTR state)
 	debugNickStone(4);
 	debugNickStone(*semADD);
 	/* decrement sem value */
-	*semADD--;
+	--(*semADD);
 	debugNickStone(*semADD);
 	if ((*semADD) < 0)
 	{

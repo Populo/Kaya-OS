@@ -149,10 +149,12 @@ void sysSignal(state_PTR state)
 	{
 		/* remove process from semaphore */
 		pcb_PTR process = removeBlocked(mutex);
-		process -> pcb_semAdd = NULL;
-		
-		/* insert to readyQ) */
-		insertProcQ(&readyQueue, process);
+		if(process != NULL)
+		{
+			process -> pcb_semAdd = NULL;
+			/* insert to readyQ) */
+			insertProcQ(&readyQueue, process);
+		}
 	}
 
 	putALoadInMeDaddy(state);

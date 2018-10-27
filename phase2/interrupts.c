@@ -147,10 +147,13 @@ void ioTrapHandler()
                 i = i + DEVPERINT;
                 status = devRegNum -> t_recv_status;
                 devRegNum -> t_recv_command = ACK;
+                break;
         }
     }
+
     semAdd = &(sem[i]);
     ++(*semAdd);
+    
     debugREEE(sem[i]);
     if((*semAdd) <= 0)
     {

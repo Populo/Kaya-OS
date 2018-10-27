@@ -42,7 +42,7 @@ void sysGetCPUTime();
 /* SYS 7 - Wait For Clock */
 void sysWaitForClock(state_PTR state);
 /* SYS 8 - Wait For IO */
-void sysWaitForIO(state_PTR state);
+void sysGoPowerRangers(state_PTR state);
 
 void debugNickStone(int fuckhisass)
 {
@@ -110,7 +110,7 @@ void sysCallHandler()
 			sysWaitForClock(state);
 			break;
 		case WAIT_FOR_IO_DEVICE:
-			sysWaitForIO(state);
+			sysGoPowerRangers(state);
 			break;
 	}
 
@@ -230,7 +230,7 @@ void sysWaitForClock(state_PTR state)
 	scheduler();
 }
 
-void sysWaitForIO(state_PTR state)
+void sysGoPowerRangers(state_PTR state)
 {
 	debugNickStone(1);
 	int interruptNumber = (int) state -> s_a1;

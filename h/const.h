@@ -132,8 +132,6 @@
 
 #define ZEROSTATUS  0x0F
 
-#define DEVICEONE	0x00000001
-
 /* Cause Codes */
 #define Int     0 /* external device interrupt */
 #define Mod     1 /* TLB - Modification Exception */
@@ -175,6 +173,16 @@
 #define LINEFIVE	0x00002000
 #define LINESIX		0x00004000
 #define LINESEVEN	0x00008000
+
+#define DEVICEZERO	0x00000001
+#define DEVICEONE	0x00000002
+#define DEVICETWO	0x00000004
+#define DEVICETHREE	0x00000008
+#define DEVICEFOUR	0x00000010
+#define DEVICEFIVE	0x00000020
+#define DEVICESIX	0x00000040
+#define DEVICESEVEN	0x00000080
+
 
 
 /* Syscalls */

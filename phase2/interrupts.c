@@ -195,11 +195,31 @@ HIDDEN int getDeviceNumber(int lineNumber)
     int deviceNum = 0;
     int found = FALSE;
 
-    lineNumber = lineNumber -3;
+    lineNumber = lineNumber - DEVNOSEM;
      
     bitMap = devReg -> interrupt_dev[lineNumber];
 
-    while(!found)
+    unsigned int deviceArray[] =
+        {
+            DEVICEZERO,
+            DEVICEONE,
+            DEVICETWO,
+            DEVICETHREE,
+            DEVICEFOUR,
+            DEVICEFIVE,
+            DEVICESIX,
+            DEVICESEVEN
+        };
+
+    for (deviceNum = 0; deviceNum < DEVPERINT; ++deviceNum)
+    {
+        if (bitMap == deviceArray[deviceNum])
+        {
+            break;
+        }
+    }
+    
+    /* while(!found)
     {
         if((currentDevice & bitMap) == currentDevice)
         {
@@ -207,11 +227,11 @@ HIDDEN int getDeviceNumber(int lineNumber)
         }
         else
         {
-            currentDevice = currentDevice << 1;
+            currentDevice =  currentDevice << 1;
             deviceNum++;
         }
 
-    }
+    } */
     return deviceNum;
 }
 

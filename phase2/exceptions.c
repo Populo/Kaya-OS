@@ -16,6 +16,8 @@ extern int processCount;
 extern int sem[TOTALSEM];
 extern cpu_t TODStarted;
 
+extern debugDevice(int line, int device, int index, int sem);
+
 cpu_t currentTOD;
 
 /* Handle Process Exception */
@@ -252,6 +254,9 @@ void sysGoPowerRangers(state_PTR state)
 	debugNickStone(*semADD);
 	/* decrement sem value */
 	--*semADD;
+
+	debugDevice(interruptNumber, deviceNumber, deviceIndex, *semADD);
+
 	debugNickStone(*semADD);
 	if ((*semADD) < 0)
 	{

@@ -31,6 +31,11 @@ void debugREEE(int u)
     fuck = u;
 }
 
+void debugDevice(int line, int device, int index, int sem)
+{
+    int ree;
+    ree = index;
+}
 
 void ioTrapHandler()
 {
@@ -154,6 +159,8 @@ void ioTrapHandler()
     semAdd = &(sem[i]);
     ++(*semAdd);
     
+    debugDevice(interruptNum, deviceNum, i, *semAdd);
+
     debugREEE(sem[i]);
     if((*semAdd) <= 0)
     {

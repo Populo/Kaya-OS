@@ -160,20 +160,23 @@ void ioTrapHandler()
     ++(*semAdd);
     
     debugDevice(interruptNum, deviceNum, i, *semAdd);
-
+    debugL(20);
     debugREEE(sem[i]);
     if((*semAdd) <= 0)
     {
+        debugL(21);
         temp = removeBlocked(semAdd);
         if(temp != NULL)
         {
-
+            debugL(22);
             temp -> pcb_state.s_v0 = status;
 
             softBlockCount--;
-
+            debugL(23);
             insertProcQ(&(readyQueue), temp);
+            debugL(24);
         }
+        debugL(25);
     }
 
     debugL(9029);

@@ -212,7 +212,7 @@ void sysGetCPUTime(state_PTR state)
 	cpu_t theTime;
 	STCK(theTime);
 	(currentProcess -> pcb_time) = (currentProcess -> pcb_time) + (theTime - TODStarted);
-	(state -> s_v0)= (currentProcess -> pcb_time);
+	(state -> s_v0) = (currentProcess -> pcb_time);
 	STCK(TODStarted);
 	putALoadInMeDaddy(state);
 }
@@ -222,10 +222,15 @@ void sysWaitForClock(state_PTR state)
 	/* last item in semaphore array */
 	int *semAdd = (int *)&(sem[TOTALSEM - 1]);
 	--(*semAdd);
-	insertBlocked(semAdd, currentProcess);
-	copyState(state, &(currentProcess -> pcb_state));
-	++softBlockCount;
-	scheduler();
+	if(semAdd < 0)
+	{
+		STCK(currentTOD);
+		(currentProcess -> pcb_time) = (currentProcess -> pcb_time) + (currentTOD - TODStarted);
+		insertBlocked(semAdd, currentProcess);
+		copyState(state, &(currentProcess -> pcb_state));
+		++softBlockCount;
+		scheduler();
+	}	
 }
 
 void sysGoPowerRangers(state_PTR state)

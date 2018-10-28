@@ -204,7 +204,7 @@ void sysBYOL(state_PTR state)
 	currentProcess -> pcb_states[type][OLD] = old;
 	currentProcess -> pcb_states[type][NEW] = new;
 
-	putALoadInMeDaddy(&(currentProcess -> pcb_state));
+	putALoadInMeDaddy(state);
 }
 
 void sysGetCPUTime(state_PTR state)

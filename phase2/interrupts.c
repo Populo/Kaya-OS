@@ -147,10 +147,12 @@ void ioTrapHandler()
             case 3:
             case 4:
             case 5:
+                debugNickStone(55);
                 status = devRegNum -> t_transm_status;
                 devRegNum -> t_transm_command = ACK;
                 break;
             default:
+                debugNickStone(66);
                 i = i + DEVPERINT;
                 status = devRegNum -> t_recv_status;
                 devRegNum -> t_recv_command = ACK;
@@ -171,7 +173,7 @@ void ioTrapHandler()
         if(temp != NULL)
         {
             debugL(22);
-            temp -> pcb_state.s_v0 = devRegNum -> d_status;
+            temp -> pcb_state.s_v0 = status;
 
             softBlockCount--;
             debugL(23);

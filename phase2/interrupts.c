@@ -22,7 +22,6 @@ extern int sem[TOTALSEM];
 
 void ioTrapHandler()
 {
-    STCK(fuckyourClock);
     unsigned int oldCause;
     cpu_t start, end, total;
     int deviceNum, interruptNum;
@@ -33,7 +32,7 @@ void ioTrapHandler()
     state_PTR old = (state_PTR) INTPOLDAREA;
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
 
-
+    STCK(fuckyourClock);
 
     if((old -> s_cause & LINEZERO) == LINEZERO)
     {
@@ -87,7 +86,6 @@ void ioTrapHandler()
     }
     deviceNum = getDeviceNumber(interruptNum);
 
-    /* worry about this break later */
     i = DEVPERINT * (interruptNum - DEVNOSEM) + deviceNum; 
     
     devRegNum = (device_t *) (INTDEVREG + ((interruptNum-DEVNOSEM)

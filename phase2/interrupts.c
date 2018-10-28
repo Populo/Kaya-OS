@@ -123,11 +123,13 @@ void ioTrapHandler()
     }
     debugL(9017);
     deviceNum = getDeviceNumber(interruptNum);
-    
-    devRegNum = (device_t *) (INTDEVREG + ((interruptNum - DEVNOSEM)
-                    * DEVREGSIZE * DEVPERINT) + (deviceNum * DEVREGSIZE));
 
-    i = DEVPERINT * (interruptNum - DEVNOSEM) + deviceNum;
+    /* worry about this break later */
+    i = DEVPERINT * (interruptNum - DEVNOSEM) + deviceNum; 
+    
+    devRegNum = &(devReg -> devreg[i]);
+
+    
 
     /* Not a terminal */
     if (interruptNum != TERMINT)

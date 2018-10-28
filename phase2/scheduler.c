@@ -62,8 +62,8 @@ void scheduler()
     {
         debugA(4);
         currentProcess = newProc;
-        STCK(TODStarted);
-        setTIMER(QUANTUM);
+       /* STCK(TODStarted);*/
+        /*setTIMER(QUANTUM); */
         debugA(5);
         if(newProc == NULL || &(newProc -> pcb_state) == NULL)
         {

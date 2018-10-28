@@ -52,7 +52,7 @@ void scheduler()
             if(softBlockCount > 0)
             {
                 debugA(3);
-                setSTATUS(getSTATUS() | IEON | IMON & KUOFF);
+                setSTATUS(getSTATUS() | ALLOFF | IEON | IECON);
                 WAIT();
             }
         }

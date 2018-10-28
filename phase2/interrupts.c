@@ -41,12 +41,6 @@ void ioTrapHandler()
     }
     else if((old -> s_cause & LINEONE) == LINEONE)
     {
-        if(currentProcess != NULL)
-        {
-            insertProcQ(&(readyQueue), currentProcess);
-            currentProcess = NULL;
-        }
-        setTIMER(QUANTUM);
         scheduler();
     }
     else if((old -> s_cause & LINETWO) == LINETWO)

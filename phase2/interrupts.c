@@ -133,9 +133,11 @@ void ioTrapHandler()
     /* worry about this break later */
     i = DEVPERINT * (interruptNum - DEVNOSEM) + deviceNum; 
     
+    debugk(1000);
     devRegNum = (device_t *) (INTDEVREG + ((interruptNum-DEVNOSEM)
 					* DEVREGSIZE * DEVPERINT) + (deviceNum * DEVREGSIZE));
 
+    debugk(1001);
     if (interruptNum != TERMINT)
     {
         status = devRegNum -> d_status;
@@ -145,7 +147,7 @@ void ioTrapHandler()
     else 
     {
         tranStatus = (devRegNum -> t_transm_status & 0xFF);
-        debugk(tranStatus);
+        /* debugk(tranStatus); */
         switch (tranStatus)
         {
             case 3:

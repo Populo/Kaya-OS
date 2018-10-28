@@ -72,8 +72,8 @@ void sysCallHandler()
 		{
 			pgmOld = (state_PTR) PGMTRAPOLDAREA;
 			copyState(state, pgmOld);
-			temp = (pgm -> s_cause) & ~(0xFF);
-			(pgm -> s_cause) = (temp | (10 << 2));
+			temp = (pgmOld -> s_cause) & ~(0xFF);
+			(pgmOld -> s_cause) = (temp | (10 << 2));
 			pbgTrapHandler();
 		}
 	}

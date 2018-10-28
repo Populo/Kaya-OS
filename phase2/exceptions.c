@@ -5,8 +5,17 @@
  * Exceptions are either killed or passed to the process's 
  * appropriate handler.
  * 
+ * When a syscall happens there are multiple cases with multiple
+ * sub cases:
+ *		syscall is between 1 and 8:
+ * 			process is in user mode:
+ * 				call Program Trap with Reserved Instruction
+ * 			process is in kernel mode:
+ * 				handle the syscall appropriately
+ * 		syscall is not in the valid range:
+ * 			pass up or die on syscall
  * 
- * 
+ * Written by Chris Staudigel and Grant Stapleton 
  *****************************************************************/
 
 #include "../h/const.h"
@@ -29,6 +38,7 @@ extern cpu_t TODStarted;
 
 
 cpu_t currentTOD;
+
 
 /* Handle Process Exception */
 void pullUpAndDie(int type);
@@ -58,18 +68,45 @@ void sysGoPowerRangers(state_PTR state);
 
 
 
-
+/******************************************************************
+ * pbgTrapHandler
+ * 
+ * Handles Program Trap Exceptions by calling pullUpAndDie
+ * on the program trap state
+ * 
+ *****************************************************************/
 void pbgTrapHandler()
 {
 	pullUpAndDie(PROGTRAP);
 }	
 
+/******************************************************************
+ * tlbTrapHandler
+ * 
+ * Handles Memory Management Exceptions by calling pullUpAndDie
+ * on the memory management state
+ * 
+ *****************************************************************/
 void tlbTrapHandler()
 {
 	pullUpAndDie(TLBTRAP);
-
 }
 
+/******************************************************************
+ * sysCallHandler
+ * 
+ * Handles syscalls with the multiple applicable cases.
+ * cases:
+ * 		syscall is between 1 and 8:
+ * 			process is in user mode:
+ * 				call Program Trap with Reserved Instruction
+ * 			process is in kernel mode:
+ * 				handle the syscall appropriately
+ * 		syscall is not in the valid range:
+ * 			pass up or die on syscall
+ * 
+ * 
+ *****************************************************************/
 void sysCallHandler()
 {
 	state_PTR pgmOld;
@@ -83,8 +120,9 @@ void sysCallHandler()
 		{
 			pgmOld = (state_PTR) PGMTRAPOLDAREA;
 			copyState(state, pgmOld);
-			temp = (pgmOld -> s_cause) & ~(0xFF);
-			(pgmOld -> s_cause) = (temp | (10 << 2));
+			/* temp = (pgmOld -> s_cause) & ~(0xFF);
+			(pgmOld -> s_cause) = (temp | (10 << 2)); */
+			pgmOld -> s_cause = RI;
 			pbgTrapHandler();
 		}
 	}

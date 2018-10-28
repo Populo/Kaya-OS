@@ -67,7 +67,7 @@ void tlbTrapHandler()
 
 void sysCallHandler()
 {
-
+	debugNickStone(1);
 	state_PTR state = (state_PTR) SYSCALLOLDAREA;
 	int call = state -> s_a0;
 	state -> s_pc = state -> s_pc + 4;

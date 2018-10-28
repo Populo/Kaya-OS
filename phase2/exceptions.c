@@ -271,7 +271,7 @@ void sysGoPowerRangers(state_PTR state)
 		scheduler();
 	}
 	else{
-		currentProcess -> s_v0 = SUCCESS;
+		currentProcess -> pcb_state.s_v0 = SUCCESS;
 		putALoadInMeDaddy(currentProcess);
 	}
 }

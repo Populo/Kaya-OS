@@ -193,7 +193,7 @@ HIDDEN void finish()
         TODStarted = TODStarted + (endTime - fuckyourClock);
         debugL(9031);
         copyState(oldArea, &(currentProcess -> pcb_state));
-        LDST(&(currentProcess -> pcb_state));
+        insertProcQ(&readyQueue, currentProcess);
     }
     debugL(9032);
     scheduler();

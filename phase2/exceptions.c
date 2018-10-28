@@ -120,19 +120,23 @@ void sysCallHandler()
 		{
 			pgmOld = (state_PTR) PGMTRAPOLDAREA;
 			copyState(state, pgmOld);
-			/* temp = (pgmOld -> s_cause) & ~(0xFF);
-			(pgmOld -> s_cause) = (temp | (10 << 2)); */
-			pgmOld -> s_cause = RI;
+			/* set cause to priviledged insruction */
+			temp = (pgmOld -> s_cause) & ~(0xFF);
+			(pgmOld -> s_cause) = (temp | (10 << 2));
+			/* call a program trap */
 			pbgTrapHandler();
 		}
 	}
 	else
 	{
+		/* pull up and die on systrap */
 		pullUpAndDie(SYSTRAP);
 	}
 
+	/* increment program counter by 4 once, not twice */
 	state -> s_pc = state -> s_pc + 4;
 
+	/* route syscall appropriately */
 	switch (call)
 	{
 		case CREATE_PROCESS:
@@ -161,9 +165,23 @@ void sysCallHandler()
 			break;
 	}
 
+	/* if syscall doesnt redirect, load the state */
 	putALoadInMeDaddy(state);
 }
 
+/******************************************************************
+ * sysCreate
+ * param: state_PTR state
+ * SYSCALL 1
+ * 
+ * This method will try to allocate a new job.  If it is successful
+ * it will insert the new job into the ready queue, make it a child
+ * of the process that made the syscall, make the state the same as 
+ * the caller, and go back to the job that made the syscall.
+ * 
+ * If there are no free jobs, we return a failure code and return
+ * to the calling process
+ *****************************************************************/
 void sysCreate(state_PTR state)
 {
 	pcb_PTR newProcess = allocPcb();
@@ -171,19 +189,21 @@ void sysCreate(state_PTR state)
 	if (!emptyProcQ(newProcess)) /* there was a free pcb */
 	{
 		++processCount;
+		/* insert to the ready queue */
 		insertChild(currentProcess, newProcess);
+		/* make it a child of the calling process */
 		insertProcQ(&readyQueue, newProcess);
+		/* duplicate the state */
 		copyState((state_PTR)state -> s_a1, &(newProcess -> pcb_state));
 
+		/* success code */
 		state -> s_v0 = SUCCESS;
 	}
 	else /* there was not a free pcb */
 	{
+		/* failure code */
 		state -> s_v0 = FAILURE;
 	}
-
-
-	putALoadInMeDaddy(state);
 }
 
 void sysSendToNorthKorea()

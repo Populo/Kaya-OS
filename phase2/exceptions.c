@@ -359,8 +359,8 @@ void copyState(state_PTR old, state_PTR new)
 {
 	new -> s_cause = old -> s_cause;
 	new -> s_asid = old -> s_asid;
-	new -> s_status = new -> s_status;
-	new -> s_pc = new -> s_pc;
+	new -> s_status = old -> s_status;
+	new -> s_pc = old -> s_pc;
 	int i;
 	for(i = 0; i < STATEREGNUM; ++i)
 	{

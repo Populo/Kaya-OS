@@ -61,16 +61,19 @@ void tlbTrapHandler()
 
 void sysCallHandler()
 {
+	state_PTR pgmOld;
 	state_PTR state = (state_PTR) SYSCALLOLDAREA;
 	int call = state -> s_a0;
-	state -> s_pc = state -> s_pc + 4;
+	unsigned int temp;
 
 	if((call >= CREATE_PROCESS && call <= WAIT_FOR_IO_DEVICE)) /* valid syscall */
 	{
 		if((state -> s_status & KUON) != ALLOFF) /* user mode */
 		{
-			state -> s_cause = RI;
-			copyState(state, (state_PTR) PGMTRAPOLDAREA);
+			pgmOld = (state_PTR) PGMTRAPOLDAREA;
+			copyState(state, pgmOld);
+			temp = (pgm -> s_cause) & ~(0xFF);
+			(pgm -> s_cause) = (temp | (10 << 2));
 			pbgTrapHandler();
 		}
 	}

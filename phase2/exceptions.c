@@ -271,8 +271,8 @@ void sysGoPowerRangers(state_PTR state)
 		scheduler();
 	}
 	else{
-		state -> s_v0 = SUCCESS;
-		putALoadInMeDaddy(state);
+		currentProcess -> s_v0 = SUCCESS;
+		putALoadInMeDaddy(currentProcess);
 	}
 }
 

@@ -146,7 +146,6 @@ HIDDEN void finish()
     {
         STCK(endTime);
         TODStarted = TODStarted + (endTime - fuckyourClock);
-        currentProcess -> pcb_time = currentProcess -> pcb_time + TODStarted;
         copyState(oldArea, &(currentProcess -> pcb_state));
         insertProcQ(&readyQueue, currentProcess);
     }

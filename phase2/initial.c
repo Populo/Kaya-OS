@@ -86,6 +86,6 @@ int main()
 
     scheduler();
 
-    return -1;
+    return FAILURE;
 }
 

@@ -138,14 +138,10 @@ void print(char *msg) {
 	devregtr status;
 	
 	SYSCALL(PASSERN, (int)&term_mut, 0, 0);				/* P(term_mut) */
-	debugD(11);
 	while (*s != EOS) {
 		*(base + 3) = PRINTCHR | (((devregtr) *s) << BYTELEN);
-		debugD(12);
 		status = SYSCALL(WAITIO, TERMINT, 0, 0);	
-		debugD(13);
 		if ((status & TERMSTATMASK) != RECVD){
-			debugD(15);
 			PANIC();
 		}
 		s++;	
@@ -159,9 +155,7 @@ void print(char *msg) {
 /*                 p1 -- the root process                            */
 /*                                                                   */
 void test() {
-	debugD(1);
 	SYSCALL(VERHOGEN, (int)&testsem, 0, 0);					/* V(testsem)   */
-	debugD(1);
 	print("p1 v(testsem)\n");
 
 	/* set up states of the other processes */

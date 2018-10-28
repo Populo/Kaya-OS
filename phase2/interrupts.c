@@ -184,7 +184,7 @@ HIDDEN int getDeviceNumber(int lineNumber)
 
     for (deviceNum = 0; deviceNum < DEVPERINT; ++deviceNum)
     {
-        if (bitMap == deviceArray[deviceNum])
+        if ((bitMap & deviceArray[deviceNum]) == deviceArray[deviceNum])
         {
             break;
         }

@@ -44,8 +44,8 @@ void scheduler()
     else
     {
         currentProcess = newProc;
-        STCK(TODStarted);
-        setTIMER(QUANTUM); 
+        /*STCK(TODStarted);
+        setTIMER(QUANTUM); */
         LDST(&(newProc -> pcb_state));
     } 
 }

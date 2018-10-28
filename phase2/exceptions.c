@@ -39,7 +39,7 @@ void sysWait(state_PTR state);
 /* SYS 5 - Specify Handler For Exception */
 void sysBYOL(state_PTR state);
 /* SYS 6 - Get CPU Time */
-void sysGetCPUTime();
+void sysGetCPUTime(state_PTR state);
 /* SYS 7 - Wait For Clock */
 void sysWaitForClock(state_PTR state);
 /* SYS 8 - Wait For IO */
@@ -99,7 +99,7 @@ void sysCallHandler()
 			sysBYOL(state);
 			break;
 		case GET_CPU_TIME:
-			sysGetCPUTime();
+			sysGetCPUTime(state);
 			break;
 		case WAIT_FOR_CLOCK:
 			sysWaitForClock(state);
@@ -210,6 +210,8 @@ void sysGetCPUTime()
 	int elapsedTime = currentTOD - TODStarted;
 
 	currentProcess -> pcb_time = currentProcess -> pcb_time + elapsedTime;
+	state -> s_v0 = currentProcess -> pcb_time;
+	STCK(TODStarted);
 }
 
 void sysWaitForClock(state_PTR state)

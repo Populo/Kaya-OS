@@ -51,19 +51,20 @@ void ioTrapHandler()
     }
     else if((old -> s_cause & LINETWO) == LINETWO)
     {
+        LDIT(INTTIME);
         semAdd = (int*) &(sem[TOTALSEM-1]);
         while(headBlocked(semAdd) != NULL)
         {
             temp = removeBlocked(semAdd);
+            STCK(end);
             if(temp != NULL)
             {
                 insertProcQ(&readyQueue, temp);
-                temp -> pcb_time = (temp -> pcb_time) + (end + start);
+                temp -> pcb_time = (temp -> pcb_time) + (end + fuckyourClock);
                 softBlockCount--;
             }
         }
         (*semAdd) = 0;
-        LDIT(INTTIME);
         finish();
     }  
     else if((old -> s_cause & LINETHREE) == LINETHREE)

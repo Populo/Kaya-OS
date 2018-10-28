@@ -207,10 +207,8 @@ void sysBYOL(state_PTR state)
 void sysGetCPUTime(state_PTR state)
 {
 	STCK(currentTOD);
-	int elapsedTime = currentTOD - TODStarted;
-
-	currentProcess -> pcb_time = currentProcess -> pcb_time + elapsedTime;
-	state -> s_v0 = currentProcess -> pcb_time;
+	(currentProcess -> pcb_time) = (currentProcess -> pcb_time) + (currentTOD - TODStarted);
+	(state -> s_v0)= (currentProcess -> pcb_time);
 	STCK(TODStarted);
 }
 
@@ -219,12 +217,9 @@ void sysWaitForClock(state_PTR state)
 	/* last item in semaphore array */
 	int *semAdd = (int *)&(sem[TOTALSEM - 1]);
 	--(*semAdd);
-
-	copyState(state, &(currentProcess -> pcb_state));
 	insertBlocked(semAdd, currentProcess);
-
+	copyState(state, &(currentProcess -> pcb_state));
 	++softBlockCount;
-
 	scheduler();
 }
 
@@ -329,9 +324,9 @@ void pullUpAndDie(int type)
 	}
 
 	copyState(location, currentProcess -> pcb_states[type][OLD]);
-	copyState(lookingAt, &(currentProcess -> pcb_state));
+	
 
-	putALoadInMeDaddy(&(currentProcess -> pcb_state));
+	putALoadInMeDaddy(lookingAt);
 }
 
 void putALoadInMeDaddy(state_PTR state)

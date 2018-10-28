@@ -150,9 +150,10 @@ void ioTrapHandler()
     {
         debugL(21);
         temp = removeBlocked(semAdd);
-        temp ->p_semAdd = NULL;
+        
         if(temp != NULL)
         {
+            temp -> pcb_semAdd = NULL;
             debugL(22);
             if (interruptNum != TERMINT)
             {

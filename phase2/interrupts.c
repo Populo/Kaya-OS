@@ -153,7 +153,7 @@ HIDDEN void finish()
         STCK(endTime);
         TODStarted = TODStarted + (endTime - fuckyourClock);
         copyState(oldArea, &(currentProcess -> pcb_state));
-        LDST(&(currentProcess -> pcb_state));
+        insertProcQ(&readyQueue, currentProcess);
     }
     scheduler();
 }

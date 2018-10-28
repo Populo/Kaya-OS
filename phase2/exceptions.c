@@ -204,7 +204,7 @@ void sysBYOL(state_PTR state)
 	putALoadInMeDaddy(&(currentProcess -> pcb_state));
 }
 
-void sysGetCPUTime()
+void sysGetCPUTime(state_PTR state)
 {
 	STCK(currentTOD);
 	int elapsedTime = currentTOD - TODStarted;

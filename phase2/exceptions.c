@@ -285,7 +285,7 @@ void pullAMacMiller(pcb_PTR proc)
 		outBlocked(proc);
 
 		/* blocked on device semaphore */
-		if (semAdd <= &(sem[0]) && semAdd >= &(sem[TOTALSEM]))
+		if (semAdd >= &(sem[0]) && semAdd <= &(sem[TOTALSEM]))
 		{
 			
 			--softBlockCount;

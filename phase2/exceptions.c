@@ -16,7 +16,6 @@ extern int processCount;
 extern int sem[TOTALSEM];
 extern cpu_t TODStarted;
 
-extern debugDevice(int line, int device, int index, int sem);
 
 cpu_t currentTOD;
 
@@ -46,11 +45,6 @@ void sysWaitForClock(state_PTR state);
 /* SYS 8 - Wait For IO */
 void sysGoPowerRangers(state_PTR state);
 
-void debugNickStone(int fuckhisass)
-{
-	int ree;
-	ree = fuckhisass;
-}
 
 
 
@@ -67,7 +61,6 @@ void tlbTrapHandler()
 
 void sysCallHandler()
 {
-	debugNickStone(1);
 	state_PTR state = (state_PTR) SYSCALLOLDAREA;
 	int call = state -> s_a0;
 	state -> s_pc = state -> s_pc + 4;
@@ -235,11 +228,9 @@ void sysWaitForClock(state_PTR state)
 
 void sysGoPowerRangers(state_PTR state)
 {
-	debugNickStone(1);
 	int interruptNumber = (int) state -> s_a1;
 	int deviceNumber = (int) state -> s_a2;
 	int isWrite = (int) state -> s_a3;
-	debugNickStone(2);
 	/* appropriate line number */
 	int deviceIndex = interruptNumber - DEVNOSEM + isWrite;
 	
@@ -248,25 +239,16 @@ void sysGoPowerRangers(state_PTR state)
 	
 	/* specific device */
 	deviceIndex = deviceIndex + deviceNumber;
-	debugNickStone(3);
     int *semADD;
 	semADD = &(sem[deviceIndex]);
-	debugNickStone(4);
-	debugNickStone(*semADD);
 	/* decrement sem value */
 	--*semADD;
 
-	debugDevice(interruptNumber, deviceNumber, deviceIndex, *semADD);
-
-	debugNickStone(*semADD);
 	if ((*semADD) < 0)
 	{
-		debugNickStone(5);
-		debugNickStone(6); 
 		insertBlocked(semADD, currentProcess);	
 		copyState(state, &(currentProcess -> pcb_state));
 		currentProcess = NULL;
-		debugNickStone(7);
 		++softBlockCount;
 
 		scheduler();

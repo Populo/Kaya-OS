@@ -15,27 +15,12 @@ cpu_t currentTOD;
 cpu_t TODStarted;
 
 
-void debugA(int i)
-{
-    int temp;
-    temp = i;
-}
-
-void debugSBC(int myAss)
-{
-    int fuck;
-    fuck = myAss;
-}
-
 void scheduler()
 {
-    debugA(1);
-    debugSBC(softBlockCount);
     pcb_PTR newProc = removeProcQ(&(readyQueue));
 
     if(newProc == NULL)
     {
-        debugA(2);
         currentProcess = NULL;
 
         if(processCount == 0)
@@ -46,12 +31,10 @@ void scheduler()
         {
             if(softBlockCount == 0)
             {
-                debugA(7);
                 PANIC();
             }
             if(softBlockCount > 0)
             {
-                debugA(3);
                 setSTATUS(getSTATUS() | ALLOFF | IEON | IECON);
                 WAIT();
             }
@@ -60,11 +43,9 @@ void scheduler()
     }
     else
     {
-        debugA(4);
         currentProcess = newProc;
        /* STCK(TODStarted);*/
         /*setTIMER(QUANTUM); */
-        debugA(99);
         LDST(&(newProc -> pcb_state));
     } 
 }

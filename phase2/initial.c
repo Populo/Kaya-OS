@@ -16,10 +16,6 @@ pcb_PTR currentProcess;
 pcb_PTR readyQueue;
 int sem[TOTALSEM];
 
-void debugF(int i){
-    int a;
-    a= 0;
-}
 
 int main()
 {

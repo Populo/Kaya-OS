@@ -65,6 +65,7 @@ void scheduler()
         STCK(TODStarted);
         setTIMER(QUANTUM);
         debugA(5);
+        newProc = NULL;
         LDST(&(newProc -> pcb_state));
     } 
 }

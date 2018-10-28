@@ -133,7 +133,7 @@ void ioTrapHandler()
     /* worry about this break later */
     i = DEVPERINT * (interruptNum - DEVNOSEM) + deviceNum; 
     
-    devRegNum = (device_t *) (INTDEVREG + ((interruptNum-DEVWOSEM)
+    devRegNum = (device_t *) (INTDEVREG + ((interruptNum-DEVNOSEM)
 					* DEVREGSIZE * DEVPERINT) + (deviceNum * DEVREGSIZE));
 
     if (interruptNum != TERMINT)

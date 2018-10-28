@@ -9,7 +9,7 @@
 
 
 extern cpu_t TODStarted;
-cpu_t fuckyourClock;
+cpu_t TODStopped;
 
 extern void copyState(state_PTR old, state_PTR new);
 extern void sysVerhogen(state_PTR old);
@@ -32,7 +32,7 @@ void ioTrapHandler()
     state_PTR old = (state_PTR) INTPOLDAREA;
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
 
-    STCK(fuckyourClock);
+    STCK(TODStopped);
 
     if((old -> s_cause & LINEZERO) == LINEZERO)
     {
@@ -53,7 +53,7 @@ void ioTrapHandler()
             if(temp != NULL)
             {
                 insertProcQ(&readyQueue, temp);
-                (temp -> pcb_time) = (temp -> pcb_time) + (end - fuckyourClock);
+                (temp -> pcb_time) = (temp -> pcb_time) + (end - TODStopped);
                 softBlockCount--;
             }
         }
@@ -143,7 +143,7 @@ HIDDEN void finish()
     if(currentProcess != NULL)
     {
         STCK(endTime);
-        TODStarted = TODStarted + (endTime - fuckyourClock);
+        TODStarted = TODStarted + (endTime - TODStopped);
         copyState(oldArea, &(currentProcess -> pcb_state));
         insertProcQ(&readyQueue, currentProcess);
     }

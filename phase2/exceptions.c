@@ -1,3 +1,14 @@
+/******************************************************************
+ * exceptions.c
+ * This file handles Program Traps, Memory Management Exceptions, 
+ * and Syscall exceptions. Program traps and Memory Management
+ * Exceptions are either killed or passed to the process's 
+ * appropriate handler.
+ * 
+ * 
+ * 
+ *****************************************************************/
+
 #include "../h/const.h"
 #include "../h/types.h"
 

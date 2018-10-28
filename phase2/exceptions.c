@@ -205,12 +205,14 @@ void sysBYOL(state_PTR state)
 
 void sysGetCPUTime(state_PTR state)
 {
-	cpu_t theTime;
-	STCK(theTime);
-	(currentProcess -> pcb_time) = (currentProcess -> pcb_time) + (theTime - TODStarted);
-	(state -> s_v0)= (currentProcess -> pcb_time);
+	copyState(state, &(currentProcess -> pcb_state));
+	STCK(currentTOD);
+	cpu_t total;
+	total = currentTOD - TODStarted;
+	(currentProcess -> pcb_time) = (currentProcess -> pcb_time) + total;
+	(currentProcess -> pcb_state.s_v0) = (currentProcess -> pcb_time);
 	STCK(TODStarted);
-	putALoadInMeDaddy(state);
+	putALoadInMeDaddy(&(currentProcess -> pcb_state));
 }
 
 void sysWaitForClock(state_PTR state)

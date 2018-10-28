@@ -60,7 +60,7 @@ void ioTrapHandler()
             if(temp != NULL)
             {
                 insertProcQ(&readyQueue, temp);
-                temp -> pcb_time = (temp -> pcb_time) + (end + fuckyourClock);
+                temp -> pcb_time = (temp -> pcb_time) + (end - fuckyourClock);
                 softBlockCount--;
             }
         }

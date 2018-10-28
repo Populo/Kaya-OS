@@ -64,11 +64,6 @@ void scheduler()
         currentProcess = newProc;
        /* STCK(TODStarted);*/
         /*setTIMER(QUANTUM); */
-        debugA(5);
-        if(newProc -> pcb_state.s_status == ALLOFF)
-        {
-            debugA(6);
-        }
         debugA(99);
         LDST(&(newProc -> pcb_state));
     } 

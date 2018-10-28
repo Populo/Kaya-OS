@@ -172,7 +172,7 @@ void sysCallHandler()
 /******************************************************************
  * sysCreate
  * param: state_PTR state
- * SYSCALL 1
+ * SYSCALL 1: Create Process
  * 
  * This method will try to allocate a new job.  If it is successful
  * it will insert the new job into the ready queue, make it a child
@@ -206,49 +206,79 @@ void sysCreate(state_PTR state)
 	}
 }
 
+/******************************************************************
+ * sysSendToNorthKorea
+ * SYSCALL 2: Terminate
+ * 
+ * This process calls our recursive helper method to finish the 
+ * job. Once the job is done, call scheduler and get a new job.
+ *****************************************************************/
 void sysSendToNorthKorea()
 {
+	/* call recursive helper method */
 	pullAMacMiller(currentProcess);
 
+	/* get a new job */
 	scheduler();
 }
 
+/******************************************************************
+ * sysSignal
+ * param: state_PTR state
+ * SYSCALL 3
+ * 
+ * Performs a V operation on the given semaphore. If the semaphore
+ * is less than or equal to zero, it unblocks the process and adds
+ * it to the readyQueue to be run when the scheduler reaches it.
+ * After this method we will return to the calling process.
+ *****************************************************************/
 void sysSignal(state_PTR state)
 {
+	/* grab semaphore address from state parameter */
 	int *mutex = (int *)state -> s_a1;
+	/* increment semaphore value */
 	++(*mutex);
 
 	if (*mutex <= 0)
 	{
 		/* remove process from semaphore */
 		pcb_PTR process = removeBlocked(mutex);
+		/* verify process exists */
 		if(process != NULL)
 		{
+			/* reset semaphore on job */
 			process -> pcb_semAdd = NULL;
-			/* insert to readyQ) */
+			/* insert to ready queue */
 			insertProcQ(&readyQueue, process);
 		}
 	}
-
-	putALoadInMeDaddy(state);
 }
 
+/******************************************************************
+ * sysWait
+ * param: state_PTR state
+ * SYSCALL 4
+ * 
+ * Performs a P operation on the given semaphore.  If the semaphore
+ * is less than zero it blocks the current process on that address.
+ *****************************************************************/
 void sysWait(state_PTR state)
 {
+	/* grab semaphore from parameters */
 	int *mutex = (int *)state -> s_a1;
 
+	/* decrement value */
 	--(*mutex);
 
 	if (*mutex < 0)
 	{
-		/* block the process */
+		/* copy calling state to process's state */
 		copyState(state, &(currentProcess -> pcb_state));
+		/* block process */
 		insertBlocked(mutex, currentProcess);
 		/* we need a new process */
 		scheduler();
 	}
-
-	putALoadInMeDaddy(state);
 }
 
 

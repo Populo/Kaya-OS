@@ -171,7 +171,7 @@ void ioTrapHandler()
         if(temp != NULL)
         {
             debugL(22);
-            temp -> pcb_state.s_v0 = status;
+            temp -> pcb_state.s_v0 = devRegNum -> d_status;
 
             softBlockCount--;
             debugL(23);

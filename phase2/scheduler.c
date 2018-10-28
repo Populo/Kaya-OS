@@ -38,7 +38,7 @@ void scheduler()
 {
     if(currentProcess != NULL)
     {
-        STCK(currentTOD)
+        STCK(currentTOD);
         currentProcess -> pcb_time = (currentProcess -> pcb_time) + (currentTOD - TODStarted);
     }
     /* grab the new job */

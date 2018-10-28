@@ -176,10 +176,11 @@ void sysWait(state_PTR state)
 
 	if (*mutex < 0)
 	{
-		copyState(state, &(currentProcess -> pcb_state));
+		
 
 		/* block the process */
 		insertBlocked(mutex, currentProcess);
+		copyState(state, &(currentProcess -> pcb_state));
 		currentProcess = NULL;
 		
 		/* we need a new process */
@@ -261,9 +262,9 @@ void sysGoPowerRangers(state_PTR state)
 	if ((*semADD) < 0)
 	{
 		debugNickStone(5);
-		copyState(state, &(currentProcess -> pcb_state));
 		debugNickStone(6); 
 		insertBlocked(semADD, currentProcess);	
+		copyState(state, &(currentProcess -> pcb_state));
 		currentProcess = NULL;
 		debugNickStone(7);
 		++softBlockCount;

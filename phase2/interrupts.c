@@ -41,12 +41,7 @@ void ioTrapHandler()
     }
     else if((old -> s_cause & LINEONE) == LINEONE)
     {
-        if(currentProcess != NULL)
-        {
-            insertProcQ(&(readyQueue), currentProcess);
-            currentProcess = NULL;
-        }
-        scheduler();
+        finish();
     }
     else if((old -> s_cause & LINETWO) == LINETWO)
     {
@@ -59,7 +54,7 @@ void ioTrapHandler()
             if(temp != NULL)
             {
                 insertProcQ(&readyQueue, temp);
-                temp -> pcb_time = (temp -> pcb_time) + (end - fuckyourClock);
+                (temp -> pcb_time) = (temp -> pcb_time) + (end - fuckyourClock);
                 softBlockCount--;
             }
         }

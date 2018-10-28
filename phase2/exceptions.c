@@ -273,7 +273,6 @@ void sysGoPowerRangers(state_PTR state)
 	}
 	else{/* 
 		currentProcess -> pcb_state.s_v0 = SUCCESS; */
-		debugDevice(interruptNumber, deviceNumber, deviceIndex, *semADD);
 		putALoadInMeDaddy(currentProcess);
 	}
 }

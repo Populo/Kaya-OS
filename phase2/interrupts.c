@@ -150,6 +150,7 @@ void ioTrapHandler()
     {
         debugL(21);
         temp = removeBlocked(semAdd);
+        temp ->p_semAdd = NULL;
         if(temp != NULL)
         {
             debugL(22);

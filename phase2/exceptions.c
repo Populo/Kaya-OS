@@ -172,13 +172,9 @@ void sysWait(state_PTR state)
 
 	if (*mutex < 0)
 	{
-		
-
 		/* block the process */
-		insertBlocked(mutex, currentProcess);
 		copyState(state, &(currentProcess -> pcb_state));
-		currentProcess = NULL;
-		
+		insertBlocked(mutex, currentProcess);
 		/* we need a new process */
 		scheduler();
 	}
@@ -250,14 +246,13 @@ void sysGoPowerRangers(state_PTR state)
 	{
 		insertBlocked(semADD, currentProcess);	
 		copyState(state, &(currentProcess -> pcb_state));
-		currentProcess = NULL;
 		++softBlockCount;
 
 		scheduler();
 	}
 	else{/* 
 		currentProcess -> pcb_state.s_v0 = SUCCESS; */
-		putALoadInMeDaddy(currentProcess);
+		putALoadInMeDaddy(state);
 	}
 }
 

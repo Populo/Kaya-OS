@@ -65,7 +65,7 @@ void scheduler()
        /* STCK(TODStarted);*/
         /*setTIMER(QUANTUM); */
         debugA(5);
-        if(newProc -> pcb_state == ALLOFF)
+        if(newProc -> pcb_state.s_status == ALLOFF)
         {
             debugA(6);
         }

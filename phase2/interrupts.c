@@ -41,6 +41,11 @@ void ioTrapHandler()
     }
     else if((old -> s_cause & LINEONE) == LINEONE)
     {
+        if(currentProcess != NULL)
+        {
+            insertProcQ(&(readyQueue), currentProcess);
+            currentProcess = NULL;
+        }
         scheduler();
     }
     else if((old -> s_cause & LINETWO) == LINETWO)

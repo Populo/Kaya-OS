@@ -25,18 +25,6 @@
 
 typedef unsigned int devregtr;
 
-void debugB(int a) 
-{
-	int i;
-	i = 10;
-}
-
-void debugD(int i)
-{
-	int temp;
-	temp = i;
-}
-
 /* hardware constants */
 #define PRINTCHR	2
 #define BYTELEN	8

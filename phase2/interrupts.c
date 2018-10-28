@@ -133,9 +133,36 @@ void ioTrapHandler()
     /* worry about this break later */
     i = DEVPERINT * (interruptNum - DEVNOSEM) + deviceNum; 
     
-    devRegNum = &(devReg -> devreg[i]);
+    devRegNum = (device_t *) (INTDEVREG + ((interruptNum-DEVWOSEM)
+					* DEVREGSIZE * DEVPERINT) + (deviceNum * DEVREGSIZE));
 
-    
+    if (interruptNum != TERMINT)
+    {
+        status = devRegNum -> d_status;
+
+        devRegNum -> d_command = ACK;
+    }
+    else 
+    {
+        tranStatus = (devRegNum -> t_transm_status & 0xFF);
+        debugk(tranStatus);
+        switch (tranStatus)
+        {
+            case 3:
+            case 4:
+            case 5:
+                debugNickStone(55);
+                status = devRegNum -> t_transm_status;
+                devRegNum -> t_transm_command = ACK;
+                break;
+            default:
+                debugNickStone(66);
+                i = i + DEVPERINT;
+                status = devRegNum -> t_recv_status;
+                devRegNum -> t_recv_command = ACK;
+                break;
+        }
+    }
 
     /* Not a terminal */
     
@@ -155,34 +182,7 @@ void ioTrapHandler()
         {
             temp -> pcb_semAdd = NULL;
             debugL(22);
-            if (interruptNum != TERMINT)
-            {
-                temp -> pcb_state.s_v0 = devRegNum -> d_status;
-
-                devRegNum -> d_command = ACK;
-            }
-            else 
-            {
-                tranStatus = (devRegNum -> t_transm_status & 0xFF);
-                debugk(tranStatus);
-                switch (tranStatus)
-                {
-                    case 3:
-                    case 4:
-                    case 5:
-                        debugNickStone(55);
-                        temp -> pcb_state.s_v0 = devRegNum -> t_transm_status;
-                        devRegNum -> t_transm_command = ACK;
-                        break;
-                    default:
-                        debugNickStone(66);
-                        i = i + DEVPERINT;
-                        temp -> pcb_state.s_v0 = devRegNum -> t_recv_status;
-                        devRegNum -> t_recv_command = ACK;
-                        break;
-                }
-            }
-
+            temp -> pcb_state.s_v0 = status;
             softBlockCount--;
             debugL(23);
             insertProcQ(&(readyQueue), temp);

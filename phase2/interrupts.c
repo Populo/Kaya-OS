@@ -25,6 +25,12 @@ void debugL(int i)
     temp = i;
 }
 
+void debugk(int i)
+{
+    int temp;
+    temp = i;
+}
+
 void debugREEE(int u)
 {
     int fuck;
@@ -141,7 +147,7 @@ void ioTrapHandler()
     else 
     {
         tranStatus = (devRegNum -> t_transm_status & 0xFF);
-
+        debugk(tranStatus);
         switch (tranStatus)
         {
             case 3:

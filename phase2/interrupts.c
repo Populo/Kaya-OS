@@ -9,7 +9,7 @@
 
 
 extern cpu_t TODStarted;
-cpu_t fuckyourClock;
+cpu_t TODStopped;
 
 extern void copyState(state_PTR old, state_PTR new);
 extern void sysVerhogen(state_PTR old);
@@ -22,7 +22,6 @@ extern int sem[TOTALSEM];
 
 void ioTrapHandler()
 {
-    STCK(fuckyourClock);
     unsigned int oldCause;
     cpu_t start, end, total;
     int deviceNum, interruptNum;
@@ -33,7 +32,7 @@ void ioTrapHandler()
     state_PTR old = (state_PTR) INTPOLDAREA;
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
 
-
+    STCK(TODStopped);
 
     if((old -> s_cause & LINEZERO) == LINEZERO)
     {
@@ -54,7 +53,7 @@ void ioTrapHandler()
             if(temp != NULL)
             {
                 insertProcQ(&readyQueue, temp);
-                (temp -> pcb_time) = (temp -> pcb_time) + (end - fuckyourClock);
+                (temp -> pcb_time) = (temp -> pcb_time) + (end - TODStopped);
                 softBlockCount--;
             }
         }
@@ -87,7 +86,6 @@ void ioTrapHandler()
     }
     deviceNum = getDeviceNumber(interruptNum);
 
-    /* worry about this break later */
     i = DEVPERINT * (interruptNum - DEVNOSEM) + deviceNum; 
     
     devRegNum = (device_t *) (INTDEVREG + ((interruptNum-DEVNOSEM)
@@ -145,7 +143,7 @@ HIDDEN void finish()
     if(currentProcess != NULL)
     {
         STCK(endTime);
-        TODStarted = TODStarted + (endTime - fuckyourClock);
+        TODStarted = TODStarted + (endTime - TODStopped);
         copyState(oldArea, &(currentProcess -> pcb_state));
         insertProcQ(&readyQueue, currentProcess);
     }

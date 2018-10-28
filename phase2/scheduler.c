@@ -67,9 +67,9 @@ void scheduler()
         debugA(5);
         if(newProc == NULL || &(newProc -> pcb_state) == NULL)
         {
-            debug(6);
+            debugA(6);
         }
-        debug(99);
+        debugA(99);
         LDST(&(newProc -> pcb_state));
     } 
 }

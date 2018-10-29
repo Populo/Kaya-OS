@@ -41,30 +41,30 @@ cpu_t currentTOD;
 
 
 /* Handle Process Exception */
-void pullUpAndDie(int type);
+HIDDEN void pullUpAndDie(int type);
 /* Load State */
 void putALoadInMeDaddy(state_PTR state);
 /* Copy State to New Location */
 void copyState(state_PTR old, state_PTR new);
 /* kill the process */
-void pullAMacMiller(pcb_PTR proc);
+HIDDEN void pullAMacMiller(pcb_PTR proc);
 
 /* SYS 1 - Create Process */
-void sysCreate(state_PTR state);
+HIDDEN void sysCreate(state_PTR state);
 /* SYS 2 - Terminate Process */
-void sysSendToNorthKorea();
+HIDDEN void sysSendToNorthKorea();
 /* SYS 3 - Unblock Process */
-void sysSignal(state_PTR state);
+HIDDEN void sysSignal(state_PTR state);
 /* SYS 4 - Block Process */
-void sysWait(state_PTR state);
+HIDDEN void sysWait(state_PTR state);
 /* SYS 5 - Specify Handler For Exception */
-void sysBYOL(state_PTR state);
+HIDDEN void sysBYOL(state_PTR state);
 /* SYS 6 - Get CPU Time */
-void sysGetCPUTime(state_PTR state);
+HIDDEN void sysGetCPUTime(state_PTR state);
 /* SYS 7 - Wait For Clock */
-void sysWaitForClock(state_PTR state);
+HIDDEN void sysWaitForClock(state_PTR state);
 /* SYS 8 - Wait For IO */
-void sysGoPowerRangers(state_PTR state);
+HIDDEN void sysGoPowerRangers(state_PTR state);
 
 
 
@@ -525,7 +525,13 @@ void putALoadInMeDaddy(state_PTR state)
 	LDST(state);
 }
 
-
+/******************************************************************
+ * copyState
+ * param: state_PTR old, state_PTR new
+ * 
+ * this method takes the values of the old state and yeets them
+ * over into the new state, effectively copying the state.
+ *****************************************************************/
 void copyState(state_PTR old, state_PTR new)
 {
 	new -> s_cause = old -> s_cause;
@@ -533,6 +539,7 @@ void copyState(state_PTR old, state_PTR new)
 	new -> s_status = old -> s_status;
 	new -> s_pc = old -> s_pc;
 	int i;
+	/* loop through all registers and copy them individually */
 	for(i = 0; i < STATEREGNUM; ++i)
 	{
 		new -> s_reg[i] = old -> s_reg[i];

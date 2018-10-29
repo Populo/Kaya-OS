@@ -313,6 +313,8 @@ void sysBYOL(state_PTR state)
 	currentProcess -> pcb_states[type][OLD] = old;
 	/* set appropriate new state */
 	currentProcess -> pcb_states[type][NEW] = new;
+
+	LDST(state);
 }
 
 /******************************************************************

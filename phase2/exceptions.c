@@ -281,55 +281,114 @@ void sysWait(state_PTR state)
 	}
 }
 
-
+/******************************************************************
+ * sysBYOL (Bring Your own Lawyer)
+ * param: state_PTR state
+ * SYSCALL 5
+ * 
+ * This syscall sets up custom handlers for the process when
+ * an exception happens.  This method can only be called once
+ * per exception per process.  If the process has already made the 
+ * call for that exception we kill the process.
+ *****************************************************************/
 void sysBYOL(state_PTR state)
 {
+	/* gather parameters */
 	int type = (int)state -> s_a1;
 	state_PTR old = (state_PTR) state -> s_a2;
 	state_PTR new = (state_PTR) state -> s_a3;
 
-
+	/* location we are looking at */
+	/* custom states are stored in a 2d array */
 	state_PTR lookingAt = currentProcess -> pcb_states[type][NEW];
 
+	/* if the call has already been made for this process */
 	if (lookingAt != NULL)
 	{
+		/* kill it */
 		sysSendToNorthKorea();
 	}
 
+	/* set appropriate old state */
 	currentProcess -> pcb_states[type][OLD] = old;
+	/* set appropriate new state */
 	currentProcess -> pcb_states[type][NEW] = new;
-
-	putALoadInMeDaddy(state);
 }
 
+/******************************************************************
+ * sysGetCPUTime
+ * param: state_PTR state
+ * SYSCALL 6
+ * 
+ * This syscall returns the current cpu time of the process and
+ * stores it in v0
+ *****************************************************************/
 void sysGetCPUTime(state_PTR state)
 {
+	/* update process's state to be more current */
 	copyState(state, &(currentProcess -> pcb_state));
+	/* grab clock */
 	STCK(currentTOD);
 	cpu_t total;
+	/* total time since process started */
 	total = currentTOD - TODStarted;
+	/* update time in pcb */
 	(currentProcess -> pcb_time) = (currentProcess -> pcb_time) + total;
+	/* place time in v0 */
 	(currentProcess -> pcb_state.s_v0) = (currentProcess -> pcb_time);
+	/* store starting clock */
 	STCK(TODStarted);
+	/* load current process */
 	putALoadInMeDaddy(&(currentProcess -> pcb_state));
 }
 
+/******************************************************************
+ * sysWaitForClock
+ * param: state_PTR state
+ * SYSCALL 7
+ * 
+ * This syscall performs a P operation on the clock semaphore.
+ * If the semaphore is less than zero, it stores the elapsed time,
+ * blocks the process, and gets a new job. Otherwise it returns
+ * to the running process.
+ *****************************************************************/
 void sysWaitForClock(state_PTR state)
 {
-	/* last item in semaphore array */
+	/* last item in semaphore array is the clock */
 	int *semAdd = (int *)&(sem[TOTALSEM - 1]);
+	/* decrement semaphore */
 	--(*semAdd);
-	insertBlocked(semAdd, currentProcess);
-	copyState(state, &(currentProcess -> pcb_state));
-	++softBlockCount;
+
+	if (*semAdd < 0)
+	{
+		/* block process */
+		insertBlocked(semAdd, currentProcess);
+		/* update the state */
+		copyState(state, &(currentProcess -> pcb_state));
+		/* increment soft block count */
+		++softBlockCount;
+	}
+
+	/* get a new job */
 	scheduler();
 }
 
+/******************************************************************
+ * sysGoPowerRangers
+ * param: state_PTR state
+ * SYSCALL 8
+ * 
+ * This syscall performs a P operation on the specified device 
+ * semaphore. if the semaphore is less than 0 it blocks the process
+ * and gets a new job. Otherwise it returns to the current process
+ *****************************************************************/
 void sysGoPowerRangers(state_PTR state)
 {
+	/* grab parameters from state */
 	int interruptNumber = (int) state -> s_a1;
 	int deviceNumber = (int) state -> s_a2;
 	int isWrite = (int) state -> s_a3;
+
 	/* appropriate line number */
 	int deviceIndex = interruptNumber - DEVNOSEM + isWrite;
 	
@@ -338,25 +397,37 @@ void sysGoPowerRangers(state_PTR state)
 	
 	/* specific device */
 	deviceIndex = deviceIndex + deviceNumber;
-    int *semADD;
+    
+	/* get appropriate semaphore */
+	int *semADD;
 	semADD = &(sem[deviceIndex]);
+	
 	/* decrement sem value */
 	--*semADD;
 
 	if ((*semADD) < 0)
 	{
+		/* block the process */
 		insertBlocked(semADD, currentProcess);	
+		/* update the state */
 		copyState(state, &(currentProcess -> pcb_state));
 		++softBlockCount;
 
+		/* get a new job */
 		scheduler();
-	}
-	else{/* 
-		currentProcess -> pcb_state.s_v0 = SUCCESS; */
-		putALoadInMeDaddy(state);
 	}
 }
 
+/******************************************************************
+ * pullAMacMiller
+ * param: pcb_PTR proc
+ * 
+ * Helper method to kill the process and all of it's children
+ * 
+ * Will recursively kill all of the process's children up to n
+ * generations, then will kill the current process and handle 
+ * semaphores if the process is blocked.
+ *****************************************************************/
 void pullAMacMiller(pcb_PTR proc)
 {
 	/* while the process has children */
@@ -394,21 +465,32 @@ void pullAMacMiller(pcb_PTR proc)
 		}
 	}
 
+	/* add job to free list and decrement count */
 	freePcb(proc);
 	processCount--;
 }
 
+/******************************************************************
+ * pullUpAndDie
+ * param: int type
+ * 
+ * this method will determine which process custom handler to load.
+ * If the custom handler has been set it will load that, otherwise
+ * it will kill the process and all of the children
+ *****************************************************************/
 void pullUpAndDie(int type)
 {
 	state_PTR lookingAt, location;
+	/* grab correct state */
 	lookingAt = currentProcess -> pcb_states[type][NEW];
 
-
+	/* handler has not been set */
 	if (lookingAt == NULL)
 	{
 		sysSendToNorthKorea();
 	}
 
+	/* grab appropriate state area in low order memory */
 	switch(type)
 	{
 		case TLBTRAP:
@@ -424,16 +506,25 @@ void pullUpAndDie(int type)
 			sysSendToNorthKorea();
 	}
 
+	/* copy state to load */
 	copyState(location, currentProcess -> pcb_states[type][OLD]);
 	
-
+	/* load custom handler */
 	putALoadInMeDaddy(lookingAt);
 }
 
+/******************************************************************
+ * putALoadInMeDaddy
+ * param: state_PTR state
+ * 
+ * Helper method to load a state.  That is literally all this does,
+ * load the passed state
+ *****************************************************************/
 void putALoadInMeDaddy(state_PTR state)
 {
 	LDST(state);
 }
+
 
 void copyState(state_PTR old, state_PTR new)
 {

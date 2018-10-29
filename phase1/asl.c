@@ -265,7 +265,7 @@ void initASL()
   
     /* set values */
     semdZero -> s_semAdd = 0;
-    semdMax -> s_semAdd = MAXINT;
+    semdMax -> s_semAdd = (int *)MAXINT;
     semdZero -> s_procQ = mkEmptyProcQ();
     semdMax -> s_procQ = mkEmptyProcQ();
 

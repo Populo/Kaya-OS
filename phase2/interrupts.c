@@ -48,15 +48,13 @@ HIDDEN int getDeviceNumber(int lineNumber);
  *****************************************************************/
 void ioTrapHandler()
 {
-    unsigned int oldCause;
-    cpu_t start, end, total;
+    cpu_t end;
     int deviceNum, interruptNum;
     device_t* devRegNum;
     int i, status, tranStatus;
     int* semAdd;
     pcb_PTR temp;
     state_PTR old = (state_PTR) INTPOLDAREA;
-    devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
 
     /* store time interrupt happens */
     STCK(TODStopped);
@@ -227,9 +225,7 @@ HIDDEN int getDeviceNumber(int lineNumber)
 {
     unsigned int bitMap;
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
-    unsigned int currentDevice = DEVICEONE;
     int deviceNum = 0;
-    int found = FALSE;
 
     /* adjust linenumber to account for devices with no semaphores */
     lineNumber = lineNumber - DEVNOSEM;

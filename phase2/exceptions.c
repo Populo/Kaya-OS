@@ -121,8 +121,7 @@ void sysCallHandler()
 			pgmOld = (state_PTR) PGMTRAPOLDAREA;
 			copyState(state, pgmOld);
 			/* set cause to priviledged insruction */
-			temp = (pgmOld -> s_cause) & ~(0xFF);
-			(pgmOld -> s_cause) = (temp | (10 << 2));
+			pgmOld -> s_cause = RI >> 2;
 			/* call a program trap */
 			pbgTrapHandler();
 		}

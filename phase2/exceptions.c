@@ -48,6 +48,8 @@ void loadAllOfTheStates(state_PTR state);
 void copyState(state_PTR old, state_PTR new);
 /* kill the process */
 HIDDEN void executeOrderSixtySix(pcb_PTR proc);
+/* block provided process on provided semaphore address */
+HIDDEN void blockProc(pcb_PTR proc, int *semAdd);
 
 /* SYS 1 - Create Process */
 HIDDEN void sysCreate(state_PTR state);
@@ -120,7 +122,7 @@ void sysCallHandler()
 		{
 			pgmOld = (state_PTR) PGMTRAPOLDAREA;
 			copyState(state, pgmOld);
-			/* set cause to priviledged insruction */
+			/* set cause to priviledged insruction, shift by 2 bits */
 			pgmOld -> s_cause = RI << 2;
 			/* call a program trap */
 			pbgTrapHandler();
@@ -265,19 +267,8 @@ void sysWait(state_PTR state)
 {
 	/* grab semaphore from parameters */
 	int *mutex = (int *)state -> s_a1;
-
-	/* decrement value */
-	--(*mutex);
-
-	if (*mutex < 0)
-	{
-		/* copy calling state to process's state */
-		copyState(state, &(currentProcess -> pcb_state));
-		/* block process */
-		insertBlocked(mutex, currentProcess);
-		/* we need a new process */
-		scheduler();
-	}
+	/* block the process */
+	blockProc(mutex);
 }
 
 /******************************************************************
@@ -401,20 +392,10 @@ void sysGoPowerRangers(state_PTR state)
 	int *semADD;
 	semADD = &(sem[deviceIndex]);
 	
-	/* decrement sem value */
-	--*semADD;
-
-	if ((*semADD) < 0)
-	{
-		/* block the process */
-		insertBlocked(semADD, currentProcess);	
-		/* update the state */
-		copyState(state, &(currentProcess -> pcb_state));
-		++softBlockCount;
-
-		/* get a new job */
-		scheduler();
-	}
+	/* block the process */
+	blockProc(semADD);
+	/* increment soft block count */
+	++softBlockCount;
 }
 
 /******************************************************************
@@ -545,4 +526,18 @@ void copyState(state_PTR old, state_PTR new)
 	}
 }
 
+void blockProc(int *mutex)
+{
+	/* decrement value */
+	--(*mutex);
 
+	if (*mutex < 0)
+	{
+		/* copy calling state to process's state */
+		copyState(state, &(currentProcess -> pcb_state));
+		/* block process */
+		insertBlocked(mutex, currentProcess);
+		/* we need a new process */
+		scheduler();
+	}
+}

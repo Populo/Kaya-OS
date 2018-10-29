@@ -43,11 +43,11 @@ cpu_t currentTOD;
 /* Handle Process Exception */
 HIDDEN void pullUpAndDie(int type);
 /* Load State */
-void putALoadInMeDaddy(state_PTR state);
+void loadAllOfTheStates(state_PTR state);
 /* Copy State to New Location */
 void copyState(state_PTR old, state_PTR new);
 /* kill the process */
-HIDDEN void pullAMacMiller(pcb_PTR proc);
+HIDDEN void executeOrderSixtySix(pcb_PTR proc);
 
 /* SYS 1 - Create Process */
 HIDDEN void sysCreate(state_PTR state);
@@ -166,7 +166,7 @@ void sysCallHandler()
 	}
 
 	/* if syscall doesnt redirect, load the state */
-	putALoadInMeDaddy(state);
+	loadAllOfTheStates(state);
 }
 
 /******************************************************************
@@ -216,7 +216,7 @@ void sysCreate(state_PTR state)
 void sysSendToNorthKorea()
 {
 	/* call recursive helper method */
-	pullAMacMiller(currentProcess);
+	executeOrderSixtySix(currentProcess);
 
 	/* get a new job */
 	scheduler();
@@ -339,7 +339,7 @@ void sysGetCPUTime(state_PTR state)
 	/* store starting clock */
 	STCK(TODStarted);
 	/* load current process */
-	putALoadInMeDaddy(&(currentProcess -> pcb_state));
+	loadAllOfTheStates(&(currentProcess -> pcb_state));
 }
 
 /******************************************************************
@@ -419,7 +419,7 @@ void sysGoPowerRangers(state_PTR state)
 }
 
 /******************************************************************
- * pullAMacMiller
+ * executeOrderSixtySix
  * param: pcb_PTR proc
  * 
  * Helper method to kill the process and all of it's children
@@ -428,13 +428,13 @@ void sysGoPowerRangers(state_PTR state)
  * generations, then will kill the current process and handle 
  * semaphores if the process is blocked.
  *****************************************************************/
-void pullAMacMiller(pcb_PTR proc)
+void executeOrderSixtySix(pcb_PTR proc)
 {
 	/* while the process has children */
 	while(!emptyChild(proc))
 	{
 		/* recursively kill children */
-		pullAMacMiller(removeChild(proc));
+		executeOrderSixtySix(removeChild(proc));
 	}
 
 	/* we have arrived at the root cause of the genocide */
@@ -510,17 +510,17 @@ void pullUpAndDie(int type)
 	copyState(location, currentProcess -> pcb_states[type][OLD]);
 	
 	/* load custom handler */
-	putALoadInMeDaddy(lookingAt);
+	loadAllOfTheStates(lookingAt);
 }
 
 /******************************************************************
- * putALoadInMeDaddy
+ * loadAllOfTheStates
  * param: state_PTR state
  * 
  * Helper method to load a state.  That is literally all this does,
  * load the passed state
  *****************************************************************/
-void putALoadInMeDaddy(state_PTR state)
+void loadAllOfTheStates(state_PTR state)
 {
 	LDST(state);
 }

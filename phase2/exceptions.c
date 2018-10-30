@@ -48,8 +48,8 @@ void loadAllOfTheStates(state_PTR state);
 void copyState(state_PTR old, state_PTR new);
 /* kill the process */
 HIDDEN void executeOrderSixtySix(pcb_PTR proc);
-/* block provided process on provided semaphore address */
-HIDDEN void blockProc(pcb_PTR proc, int *semAdd);
+/* block current process on provided semaphore address */
+HIDDEN void blockProc(int *semAdd);
 
 /* SYS 1 - Create Process */
 HIDDEN void sysCreate(state_PTR state);

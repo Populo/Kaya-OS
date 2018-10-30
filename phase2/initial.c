@@ -78,6 +78,7 @@ int main()
 
     /* init globals */
     readyQueue = mkEmptyProcQ();
+    longReadyQueue = mkEmptyProcQ();
     currentProcess = NULL;
     processCount = 0;
     softBlockCount = 0;

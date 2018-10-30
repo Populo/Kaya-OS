@@ -29,6 +29,7 @@ int processCount;
 int softBlockCount;
 pcb_PTR currentProcess;
 pcb_PTR readyQueue;
+pcb_PTR longReadyQueue;
 int sem[TOTALSEM];
 
 /***************************Main Function************************/

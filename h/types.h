@@ -118,9 +118,9 @@ typedef struct semd_t
 
 typedef struct adl_t
 {
-	adl_t			*a_next;		/* next ADL in list */
+	struct adl_t	*a_next;		/* next ADL in list */
 	int 			d_wakeTime;		/* time to wake up device */
 	int				d_asid;			/* id of process */
-} adl_t, adl_t;
+} adl_t, *adl_PTR;
 
 #endif

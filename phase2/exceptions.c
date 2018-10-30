@@ -267,10 +267,19 @@ void sysWait(state_PTR state)
 {
 	/* grab semaphore from parameters */
 	int *mutex = (int *)state -> s_a1;
-	/* update the state on the current process */
-	copyState(state, &(currentProcess -> pcb_state));
-	/* block the process */
-	blockProc(mutex);
+
+	/* decrement value */
+	--(*mutex);
+
+	if (*mutex < 0)
+	{
+		/* update the state on the current process */
+		copyState(state, &(currentProcess -> pcb_state));
+		/* block process */
+		insertBlocked(mutex, currentProcess);
+		/* we need a new process */
+		scheduler();
+	}
 }
 
 /******************************************************************
@@ -391,15 +400,25 @@ void sysGoPowerRangers(state_PTR state)
 	deviceIndex = deviceIndex + deviceNumber;
     
 	/* get appropriate semaphore */
-	int *semADD;
-	semADD = &(sem[deviceIndex]);
+	int *mutex;
+	mutex = &(sem[deviceIndex]);
 	
-	/* update the state on the current process */
-	copyState(state, &(currentProcess -> pcb_state));
-	/* block the process */
-	blockProc(semADD);
-	/* increment soft block count */
-	++softBlockCount;
+
+	/* decrement value */
+	--(*mutex);
+
+	if (*mutex < 0)
+	{
+		/* update the state on the current process */
+		copyState(state, &(currentProcess -> pcb_state));
+		/* block process */
+		insertBlocked(mutex, currentProcess);
+		/* increment soft block count */
+		++softBlockCount;
+		/* we need a new process */
+		scheduler();
+	}
+
 }
 
 /******************************************************************
@@ -532,14 +551,5 @@ void copyState(state_PTR old, state_PTR new)
 
 void blockProc(int *mutex)
 {
-	/* decrement value */
-	--(*mutex);
 
-	if (*mutex < 0)
-	{
-		/* block process */
-		insertBlocked(mutex, currentProcess);
-		/* we need a new process */
-		scheduler();
-	}
 }

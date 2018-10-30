@@ -91,12 +91,7 @@ void scheduler()
 
 HIDDEN pcb_PTR getANewJob()
 {
-    pcb_PTR proc;
-
-    if ((proc = removeProcQ(&longReadyQueue)) == NULL)
-    {
-        proc = removeProcQ(&readyQueue);
-    }
-
-    return proc;
+    return emptyProcQ(&longReadyQueue) 
+        ? removeProcQ(&readyQueue) 
+            : removeProcQ(&longReadyQueue);
 }

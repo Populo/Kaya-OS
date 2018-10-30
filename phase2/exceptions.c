@@ -114,7 +114,7 @@ void sysCallHandler()
 	int call = state -> s_a0;
 	unsigned int temp;
 
-	if((call >= CREATE_PROCESS && call <= WAIT_FOR_IO_DEVICE)) /* valid syscall */
+	if((call >= CREATE_PROCESS && call <= WAITIO)) /* valid syscall */
 	{
 		if((state -> s_status & KUON) != ALLOFF) /* user mode */
 		{
@@ -150,16 +150,16 @@ void sysCallHandler()
 		case PASSEREN:
 			sysWait(state);
 			break;
-		case SPECIFY_EXCEPTION_STATE_VECTOR:
+		case SESV:
 			sysBYOL(state);
 			break;
-		case GET_CPU_TIME:
+		case GETTIME:
 			sysGetCPUTime(state);
 			break;
-		case WAIT_FOR_CLOCK:
+		case WAITCLOCK:
 			sysWaitForClock(state);
 			break;
-		case WAIT_FOR_IO_DEVICE:
+		case WAITIO:
 			sysGoPowerRangers(state);
 			break;
 	}

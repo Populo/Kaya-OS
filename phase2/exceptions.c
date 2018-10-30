@@ -267,6 +267,8 @@ void sysWait(state_PTR state)
 {
 	/* grab semaphore from parameters */
 	int *mutex = (int *)state -> s_a1;
+	/* update the state on the current process */
+	copyState(state, &(currentProcess -> pcb_state));
 	/* block the process */
 	blockProc(mutex);
 }
@@ -392,6 +394,8 @@ void sysGoPowerRangers(state_PTR state)
 	int *semADD;
 	semADD = &(sem[deviceIndex]);
 	
+	/* update the state on the current process */
+	copyState(state, &(currentProcess -> pcb_state));
 	/* block the process */
 	blockProc(semADD);
 	/* increment soft block count */
@@ -533,8 +537,6 @@ void blockProc(int *mutex)
 
 	if (*mutex < 0)
 	{
-		/* copy calling state to process's state */
-		copyState(state, &(currentProcess -> pcb_state));
 		/* block process */
 		insertBlocked(mutex, currentProcess);
 		/* we need a new process */

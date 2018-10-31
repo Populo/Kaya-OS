@@ -21,11 +21,8 @@ extern int processCount;
 extern int softBlockCount;
 extern pcb_PTR currentProcess;
 extern pcb_PTR readyQueue;
-extern pcb_PTR longReadyQueue;
 
 extern void loadAllOfTheStates(state_PTR state);
-
-HIDDEN pcb_PTR getANewJob();
 
 cpu_t currentTOD;
 cpu_t TODStarted;
@@ -45,7 +42,7 @@ void scheduler()
         currentProcess -> pcb_time = (currentProcess -> pcb_time) + (currentTOD - TODStarted);
     }
     /* grab the new job */
-    pcb_PTR newProc = getANewJob();
+    pcb_PTR newProc = removeProcQ(&(readyQueue));
 
     /* we did not receive a job to run */
     if(newProc == NULL)
@@ -88,10 +85,3 @@ void scheduler()
     } 
 }
 
-
-HIDDEN pcb_PTR getANewJob()
-{
-    return emptyProcQ(&longReadyQueue) 
-        ? removeProcQ(&readyQueue) 
-            : removeProcQ(&longReadyQueue);
-}

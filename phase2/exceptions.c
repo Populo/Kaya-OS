@@ -112,6 +112,7 @@ void sysCallHandler()
 	state_PTR pgmOld;
 	state_PTR state = (state_PTR) SYSCALLOLDAREA;
 	int call = state -> s_a0;
+	unsigned int temp;
 
 	if((call >= CREATE_PROCESS && call <= WAITIO)) /* valid syscall */
 	{

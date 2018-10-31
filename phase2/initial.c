@@ -29,6 +29,7 @@ int processCount;
 int softBlockCount;
 pcb_PTR currentProcess;
 pcb_PTR readyQueue;
+pcb_PTR longReadyQueue;
 int sem[TOTALSEM];
 
 /***************************Main Function************************/
@@ -77,6 +78,7 @@ int main()
 
     /* init globals */
     readyQueue = mkEmptyProcQ();
+    longReadyQueue = mkEmptyProcQ();
     currentProcess = NULL;
     processCount = 0;
     softBlockCount = 0;

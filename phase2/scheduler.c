@@ -21,6 +21,7 @@ extern int processCount;
 extern int softBlockCount;
 extern pcb_PTR currentProcess;
 extern pcb_PTR readyQueue;
+extern pcb_PTR longReadyQueue;
 
 extern void loadAllOfTheStates(state_PTR state);
 
@@ -47,30 +48,31 @@ void scheduler()
     /* we did not receive a job to run */
     if(newProc == NULL)
     {
-        currentProcess = NULL;
-
-        /* we are out of jobs to run */
-        if(processCount == 0)
+        pcb_PTR newProc = removeProcQ(&(longReadyQueue));
+        if(longReadyQueue == NULL)
         {
-            HALT();
-        }
-        /* we are not out of jobs to run */
-        else if(processCount > 0)
-        {
-            /* jobs are not soft blocked (Error) */
-            if(softBlockCount == 0)
+            /* we are out of jobs to run */
+            if(processCount == 0)
             {
-                PANIC();
+                HALT();
             }
-            /* all jobs are blocked */
-            if(softBlockCount > 0)
+            /* we are not out of jobs to run */
+            else if(processCount > 0)
             {
-                /* turn on interrupts and wait for one to happen */
-                setSTATUS(getSTATUS() | ALLOFF | IEON | IECON);
-                WAIT();
+                /* jobs are not soft blocked (Error) */
+                if(softBlockCount == 0)
+                {
+                    PANIC();
+                }
+                /* all jobs are blocked */
+                if(softBlockCount > 0)
+                {
+                    /* turn on interrupts and wait for one to happen */
+                    setSTATUS(getSTATUS() | ALLOFF | IEON | IECON);
+                    WAIT();
+                }
             }
         }
-
     }
     else /* We received a job to run */
     {

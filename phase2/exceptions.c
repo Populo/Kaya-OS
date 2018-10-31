@@ -114,15 +114,14 @@ void sysCallHandler()
 	int call = state -> s_a0;
 	unsigned int temp;
 
-	if((call >= CREATE_PROCESS && call <= WAIT_FOR_IO_DEVICE)) /* valid syscall */
+	if((call >= CREATE_PROCESS && call <= WAITIO)) /* valid syscall */
 	{
 		if((state -> s_status & KUON) != ALLOFF) /* user mode */
 		{
 			pgmOld = (state_PTR) PGMTRAPOLDAREA;
 			copyState(state, pgmOld);
-			/* set cause to priviledged insruction */
-			temp = (pgmOld -> s_cause) & ~(0xFF);
-			(pgmOld -> s_cause) = (temp | (10 << 2));
+			/* set cause to priviledged insruction, shift by 2 bits */
+			pgmOld -> s_cause = RI << 2;
 			/* call a program trap */
 			pbgTrapHandler();
 		}
@@ -151,16 +150,16 @@ void sysCallHandler()
 		case PASSEREN:
 			sysWait(state);
 			break;
-		case SPECIFY_EXCEPTION_STATE_VECTOR:
+		case SESV:
 			sysBYOL(state);
 			break;
-		case GET_CPU_TIME:
+		case GETTIME:
 			sysGetCPUTime(state);
 			break;
-		case WAIT_FOR_CLOCK:
+		case WAITCLOCK:
 			sysWaitForClock(state);
 			break;
-		case WAIT_FOR_IO_DEVICE:
+		case WAITIO:
 			sysGoPowerRangers(state);
 			break;
 	}
@@ -272,7 +271,7 @@ void sysWait(state_PTR state)
 
 	if (*mutex < 0)
 	{
-		/* copy calling state to process's state */
+		/* update the state on the current process */
 		copyState(state, &(currentProcess -> pcb_state));
 		/* block process */
 		insertBlocked(mutex, currentProcess);
@@ -399,23 +398,25 @@ void sysGoPowerRangers(state_PTR state)
 	deviceIndex = deviceIndex + deviceNumber;
     
 	/* get appropriate semaphore */
-	int *semADD;
-	semADD = &(sem[deviceIndex]);
+	int *mutex;
+	mutex = &(sem[deviceIndex]);
 	
-	/* decrement sem value */
-	--*semADD;
 
-	if ((*semADD) < 0)
+	/* decrement value */
+	--(*mutex);
+
+	if (*mutex < 0)
 	{
-		/* block the process */
-		insertBlocked(semADD, currentProcess);	
-		/* update the state */
+		/* update the state on the current process */
 		copyState(state, &(currentProcess -> pcb_state));
+		/* block process */
+		insertBlocked(mutex, currentProcess);
+		/* increment soft block count */
 		++softBlockCount;
-
-		/* get a new job */
+		/* we need a new process */
 		scheduler();
 	}
+
 }
 
 /******************************************************************
@@ -545,5 +546,3 @@ void copyState(state_PTR old, state_PTR new)
 		new -> s_reg[i] = old -> s_reg[i];
 	}
 }
-
-

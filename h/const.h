@@ -13,8 +13,9 @@
 #define PTEMAGICNO		0x2A
 
 
-#define ROMPAGESTART	0x20000000	 /* ROM Reserved Page */
+#define ROMPAGESTART	0x20000000	/* ROM Reserved Page */
 #define INTTIME			100000 		/* interval timer period */
+#define SECOND          1000000     /* 1 second in ms? */
 
 
 /* timer, timescale, TOD-LO and other bus regs */
@@ -69,18 +70,8 @@
 
 #define DEVREGLEN	4	/* device register field length in bytes & regs per dev */
 #define DEVREGSIZE	16 	/* device register size in bytes */
-#define DEVNOSEM    	3   	/* we dont know what the first three devices are */
+#define DEVNOSEM    3 	/* we dont know what the first three devices are */
 #define DEVPERINT	8	/* devices per interrupt */
-
-/* device & line number bits on */
-#define FIRST			0x1
-#define SECOND			0x2
-#define THIRD			0x4
-#define FOURTH			0x8
-#define FIFTH			0x10
-#define SIXTH			0x20
-#define SEVENTH			0x40
-#define EIGHTH			0x80
 
 /* start of interrupt device bitmap and registers */
 #define INTBITMAP		0x1000003C
@@ -183,16 +174,30 @@
 #define DEVICESIX	0x00000040
 #define DEVICESEVEN	0x00000080
 
-
-
 /* Syscalls */
 #define CREATE_PROCESS                      1
 #define TERMINATE_PROCESS                   2
 #define VERHOGEN                            3
 #define PASSEREN                            4
-#define SPECIFY_EXCEPTION_STATE_VECTOR      5
-#define GET_CPU_TIME                        6
-#define WAIT_FOR_CLOCK                      7    
-#define WAIT_FOR_IO_DEVICE                  8
+#define SESV                                5
+#define GETTIME                             6
+#define WAITCLOCK                           7    
+#define WAITIO                              8
+#define READTERMINAL	                    9
+#define WRITETERMINAL 	                    10
+#define VSEMVIRT		                    11
+#define PSEMVIRT		                    12
+#define DELAY		                    	13
+#define DISK_PUT		                    14
+#define DISK_GET		                    15
+#define WRITEPRINTER	                    16
+#define GET_TOD			                    17
+#define TERMINATE		                    18
+
+#define SEG0		                        0x00000000
+#define SEG1		                        0x40000000
+#define SEG2		                        0x80000000
+#define SEG3		                        0xC0000000
+
   
 #endif

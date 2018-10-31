@@ -23,7 +23,6 @@ extern cpu_t TODStarted;
 extern int softBlockCount;
 extern pcb_PTR currentProcess;
 extern pcb_PTR readyQueue;
-extern pcb_PTR longReadyQueue;
 extern int sem[TOTALSEM];
 
 cpu_t TODStopped;
@@ -83,7 +82,7 @@ void ioTrapHandler()
             if(temp != NULL)
             {
                 /* insert job onto ready Queue */
-                insertProcQ(&longReadyQueue, temp);
+                insertProcQ(&readyQueue, temp);
                 /* bill process the time */
                 (temp -> pcb_time) = (temp -> pcb_time) + (end - TODStopped);
                 softBlockCount--;
@@ -175,7 +174,7 @@ void ioTrapHandler()
             temp -> pcb_state.s_v0 = status;
             softBlockCount--;
             /* insert to ready queue */
-            insertProcQ(&(longReadyQueue), temp);
+            insertProcQ(&(readyQueue), temp);
         }
     }
     /* finish the interrupt */
@@ -204,7 +203,7 @@ HIDDEN void finish()
         /* update the state */
         copyState(oldArea, &(currentProcess -> pcb_state));
         /* insert to ready queue */
-        insertProcQ(&longReadyQueue, currentProcess);
+        insertProcQ(&readyQueue, currentProcess);
     }
     /* call scheduler for new job */
     scheduler();

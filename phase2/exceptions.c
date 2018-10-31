@@ -31,7 +31,6 @@
 
 extern pcb_PTR currentProcess;
 extern pcb_PTR readyQueue;
-extern pcb_PTR longReadyQueue;
 extern int softBlockCount;
 extern int processCount;
 extern int sem[TOTALSEM];
@@ -249,7 +248,7 @@ void sysSignal(state_PTR state)
 			/* reset semaphore on job */
 			process -> pcb_semAdd = NULL;
 			/* insert to ready queue */
-			insertProcQ(&longReadyQueue, process);
+			insertProcQ(&readyQueue, process);
 		}
 	}
 }

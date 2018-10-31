@@ -149,14 +149,13 @@ void ioTrapHandler()
         {
                 status = devRegNum -> t_transm_status;
                 devRegNum -> t_transm_command = ACK;
-                break;
+        }
         else
         {
                 /* go to next terminal device to handle write */
                 i = i + DEVPERINT;
                 status = devRegNum -> t_recv_status;
                 devRegNum -> t_recv_command = ACK;
-                break;
         }
     }
 

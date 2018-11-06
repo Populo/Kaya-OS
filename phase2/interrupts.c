@@ -223,27 +223,14 @@ HIDDEN int getDeviceNumber(int lineNumber)
     unsigned int bitMap;
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
     int deviceNum = 0;
+    /* start with checking the first device */
+    unsigned int checkingDevice = DEVICEZERO;
 
     /* adjust linenumber to account for devices with no semaphores */
     lineNumber = lineNumber - DEVNOSEM;
      
      /* grab the line's bitmap */
     bitMap = devReg -> interrupt_dev[lineNumber];
-
-    unsigned int checkingDevice = DEVICEZERO;
-
-    /* array of device addresses to iterate through to find device */
-    unsigned int deviceArray[] =
-        {
-            DEVICEZERO,
-            DEVICEONE,
-            DEVICETWO,
-            DEVICETHREE,
-            DEVICEFOUR,
-            DEVICEFIVE,
-            DEVICESIX,
-            DEVICESEVEN
-        };
 
     /* for each device in array, compare bitmap to that address */
     for (deviceNum = 0; deviceNum < DEVPERINT; ++deviceNum)
@@ -254,6 +241,7 @@ HIDDEN int getDeviceNumber(int lineNumber)
             /* break to preserve device number */
             break;
         } else {
+            /* check the next device */
             checkingDevice << 1;
         }
     }

@@ -230,6 +230,8 @@ HIDDEN int getDeviceNumber(int lineNumber)
      /* grab the line's bitmap */
     bitMap = devReg -> interrupt_dev[lineNumber];
 
+    unsigned int checkingDevice = DEVICEZERO;
+
     /* array of device addresses to iterate through to find device */
     unsigned int deviceArray[] =
         {
@@ -247,10 +249,12 @@ HIDDEN int getDeviceNumber(int lineNumber)
     for (deviceNum = 0; deviceNum < DEVPERINT; ++deviceNum)
     {
         /* if searched device is interrupting */
-        if ((bitMap & deviceArray[deviceNum]) == deviceArray[deviceNum])
+        if ((bitMap & checkingDevice) == checkingDevice)
         {
             /* break to preserve device number */
             break;
+        } else {
+            checkingDevice << 1;
         }
     }
 

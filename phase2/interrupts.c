@@ -33,6 +33,7 @@ extern void copyState(state_PTR old, state_PTR new);
 /* hidden helper methods */
 HIDDEN void finish();
 HIDDEN int getDeviceNumber(int lineNumber);
+HIDDEN int getInterruptNum(unsigned int cause);
 
 /******************************************************************
  * ioTrapHandler
@@ -60,69 +61,8 @@ void ioTrapHandler()
     STCK(TODStopped);
 
     /* determine which line threw the interrupt */
-    /* this interrupt should never happen */
-    if((old -> s_cause & LINEZERO) == LINEZERO)
-    {
-        PANIC();
-    }
-    /* this interrupt is called when the process runs out of time */
-    else if((old -> s_cause & LINEONE) == LINEONE)
-    {
-        finish();
-    }
-    /* interval timer, unblock all processes blocked on clock */
-    else if((old -> s_cause & LINETWO) == LINETWO)
-    {
-        LDIT(INTTIME); /* load 100 ms into timer */
-        semAdd = (int*) &(sem[TOTALSEM-1]);
-        while(headBlocked(semAdd) != NULL)
-        {
-            temp = removeBlocked(semAdd);
-            STCK(end);
-            if(temp != NULL)
-            {
-                /* insert job onto ready Queue */
-                insertProcQ(&readyQueue, temp);
-                /* bill process the time */
-                (temp -> pcb_time) = (temp -> pcb_time) + (end - TODStopped);
-                softBlockCount--;
-            }
-        }
-        /* set semaphore to zero to reset it fully */
-        (*semAdd) = 0;
-        /* finish the interrupt */
-        finish();
-    }  
-    /* disk device */
-    else if((old -> s_cause & LINETHREE) == LINETHREE)
-    {
-        interruptNum = DISKINT;
-    }
-    /* tape device */
-    else if((old -> s_cause & LINEFOUR) == LINEFOUR)
-    {
-        interruptNum = TAPEINT;
-    }
-    /* network device */
-    else if((old -> s_cause & LINEFIVE) == LINEFIVE)
-    {
-        interruptNum = NETWINT;
-    }
-    /* printer device */
-    else if((old -> s_cause & LINESIX) == LINESIX)
-    {
-        interruptNum = PRNTINT;
-    }
-    /* terminal device */
-    else if((old -> s_cause & LINESEVEN) == LINESEVEN)
-    {
-        interruptNum = TERMINT;
-    }
-    /* invalid interrupt line */
-    else 
-    {
-        PANIC();
-    }
+    interruptNum = getInterruptNum(old -> s_cause);
+
     /* get specific device number */
     deviceNum = getDeviceNumber(interruptNum);
 
@@ -133,30 +73,58 @@ void ioTrapHandler()
     devRegNum = (device_t *) (INTDEVREG + ((interruptNum-DEVNOSEM)
 					* DEVREGSIZE * DEVPERINT) + (deviceNum * DEVREGSIZE));
 
-    /* interrupt was not a terminal */
-    if (interruptNum != TERMINT)
+    /* handle the interrupts */
+    switch (interruptNum)
     {
-        /* store status */
-        status = devRegNum -> d_status;
-        /* acknowledgee interrupt */
-        devRegNum -> d_command = ACK;
-    }
-    else /* it is a terminal */ 
-    {
-        /* determine read/write */
-        tranStatus = (devRegNum -> t_transm_status & 0xF);
-        if(tranStatus != READY)
-        {
-                status = devRegNum -> t_transm_status;
-                devRegNum -> t_transm_command = ACK;
-        }
-        else
-        {
-                /* go to next terminal device to handle write */
-                i = i + DEVPERINT;
-                status = devRegNum -> t_recv_status;
-                devRegNum -> t_recv_command = ACK;
-        }
+        case 0:
+            PANIC();
+        case 1:
+            finish();
+        case 2:
+            LDIT(INTTIME); /* load 100 ms into timer */
+            semAdd = (int*) &(sem[TOTALSEM-1]);
+            while(headBlocked(semAdd) != NULL)
+            {
+                temp = removeBlocked(semAdd);
+                STCK(end);
+                if(temp != NULL)
+                {
+                    /* insert job onto ready Queue */
+                    insertProcQ(&readyQueue, temp);
+                    /* bill process the time */
+                    (temp -> pcb_time) = (temp -> pcb_time) + (end - TODStopped);
+                    softBlockCount--;
+                }
+            }
+            /* set semaphore to zero to reset it fully */
+            (*semAdd) = 0;
+            /* finish the interrupt */
+            finish();
+        case DISKINT:
+        case TAPEINT:
+        case NETWINT:
+        case PRNTINT:
+            /* store status */
+            status = devRegNum -> d_status;
+            /* acknowledgee interrupt */
+            devRegNum -> d_command = ACK;
+            break;
+        case TERMINT:
+            /* determine read/write */
+            tranStatus = (devRegNum -> t_transm_status & 0xF);
+            if(tranStatus != READY)
+            {
+                    status = devRegNum -> t_transm_status;
+                    devRegNum -> t_transm_command = ACK;
+            }
+            else
+            {
+                    /* go to next terminal device to handle write */
+                    i = i + DEVPERINT;
+                    status = devRegNum -> t_recv_status;
+                    devRegNum -> t_recv_command = ACK;
+            }  
+            break;
     }
 
     semAdd = &(sem[i]);
@@ -250,4 +218,24 @@ HIDDEN int getDeviceNumber(int lineNumber)
     return deviceNum;
 }
 
+int getInterruptNum(unsigned int cause)
+{
+    unsigned int searching = LINEZERO;
+    int lineNumber = 0;
 
+    /* 8 devices per interrupt but also 8 interrupts */
+    while (lineNumber < DEVPERINT)
+    {
+        if (cause & searching == searching)
+        {
+            break;
+        }
+        else
+        {
+            lineNumber++;
+            searching << 1;
+        }
+    }
+
+    return lineNumber;
+}

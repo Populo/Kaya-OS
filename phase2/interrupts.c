@@ -144,21 +144,18 @@ void ioTrapHandler()
     else /* it is a terminal */ 
     {
         /* determine read/write */
-        tranStatus = (devRegNum -> t_transm_status & 0xFF);
-        switch (tranStatus)
+        tranStatus = (devRegNum -> t_transm_status & 0xF);
+        if(tranStatus != READY)
         {
-            case 3:
-            case 4:
-            case 5:
                 status = devRegNum -> t_transm_status;
                 devRegNum -> t_transm_command = ACK;
-                break;
-            default:
+        }
+        else
+        {
                 /* go to next terminal device to handle write */
                 i = i + DEVPERINT;
                 status = devRegNum -> t_recv_status;
                 devRegNum -> t_recv_command = ACK;
-                break;
         }
     }
 

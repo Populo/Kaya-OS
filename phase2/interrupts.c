@@ -228,10 +228,10 @@ HIDDEN int getDeviceNumber(int lineNumber)
 int getInterruptNum(unsigned int cause)
 {
     debugF(cause, 0);
-    memaddr searching = LINEZERO;
+    unsigned int searching = LINEZERO;
     int lineNumber;
 
-    for (lineNumber = 0; lineNumber < DEVPERINT; ++lineNumber)
+    for (lineNumber = 0; lineNumber < DEVPERINT; lineNumber++)
     {
         if ((cause & searching) == searching)
         {

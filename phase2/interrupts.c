@@ -27,6 +27,11 @@ extern int sem[TOTALSEM];
 
 cpu_t TODStopped;
 
+void debugF(int interr, int dev) {
+    int i;
+    i = interr;
+}
+
 /* copy state method from exceptions */
 extern void copyState(state_PTR old, state_PTR new);
 
@@ -72,6 +77,8 @@ void ioTrapHandler()
     /* get register for device */
     devRegNum = (device_t *) (INTDEVREG + ((interruptNum-DEVNOSEM)
 					* DEVREGSIZE * DEVPERINT) + (deviceNum * DEVREGSIZE));
+
+    debugF(interruptNum, deviceNum);
 
     /* handle the interrupts */
     switch (interruptNum)

@@ -36,11 +36,6 @@ extern int processCount;
 extern int sem[TOTALSEM];
 extern cpu_t TODStarted;
 
-extern void debugA(int i)
-{
-	int temp;
-	temp = i;
-}
 
 
 cpu_t currentTOD;
@@ -407,7 +402,6 @@ void sysGoPowerRangers(state_PTR state)
 	int *mutex;
 	mutex = &(sem[deviceIndex]);
 	
-	debugA(deviceIndex);
 	/* decrement value */
 	--(*mutex);
 

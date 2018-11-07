@@ -147,14 +147,12 @@ void ioTrapHandler()
         tranStatus = (devRegNum -> t_transm_status & 0xF);
         if(tranStatus != READY)
         {
-                debugA(1);
                 status = devRegNum -> t_transm_status;
                 devRegNum -> t_transm_command = ACK;
         }
         else
         {
                 /* go to next terminal device to handle write */
-                debugA(2);
                 i = i + DEVPERINT;
                 status = devRegNum -> t_recv_status;
                 devRegNum -> t_recv_command = ACK;

@@ -227,6 +227,7 @@ HIDDEN int getDeviceNumber(int lineNumber)
 
 int getInterruptNum(unsigned int cause)
 {
+    debugF(cause, 0);
     unsigned int searching = LINEZERO;
     int lineNumber = 0;
 

@@ -36,7 +36,7 @@ extern int processCount;
 extern int sem[TOTALSEM];
 extern cpu_t TODStarted;
 
-void debugA(int i)
+extern void debugA(int i)
 {
 	int temp;
 	temp = i;

@@ -227,7 +227,7 @@ HIDDEN int getDeviceNumber(int lineNumber)
 
 int getInterruptNum(unsigned int cause)
 {
-    unsigned int searching = LINEZERO;
+    unsigned int searching = LINEZERO >> 2;
     int lineNumber = 0;
 
     /* 8 devices per interrupt but also 8 interrupts */

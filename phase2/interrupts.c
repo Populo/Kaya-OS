@@ -230,9 +230,8 @@ int getInterruptNum(unsigned int cause)
     debugF(cause, 0);
     unsigned int searching = LINEZERO;
     int lineNumber = 0;
-
-    /* 8 devices per interrupt but also 8 interrupts */
-    while (lineNumber < DEVPERINT)
+    
+    for (lineNumber = 0; lineNumber < DEVPERINT; ++lineNumber)
     {
         if ((cause & searching) == searching)
         {
@@ -240,7 +239,6 @@ int getInterruptNum(unsigned int cause)
         }
         else
         {
-            lineNumber++;
             searching << 1;
         }
     }

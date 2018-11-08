@@ -66,7 +66,7 @@ void scheduler()
             if(softBlockCount > 0)
             {
                 /* turn on interrupts and wait for one to happen */
-                setSTATUS(getSTATUS() | ALLOFF | IEON | IECON);
+                setSTATUS(getSTATUS() | ALLOFF | IEON | IECON | IMON);
                 WAIT();
             }
         }

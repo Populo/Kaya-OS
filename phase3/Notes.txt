@@ -1,0 +1,37 @@
+Syscalls 9-18
+    I/O requests
+        check legality of parameters
+        load up appropriate device registers (just like interrupts, command/status)
+        SYS8
+    Graceful Process Termination
+        cleanup before sys2
+    "other system services"
+        Delay facility
+        user level semaphore facility
+        sys11-13
+    
+Virtual Memory: a paged, segmented system
+    one time tasks: (initProc.c?)
+        test() -> master system process
+            set up all segment and page tables for the 8 user processes
+        TLB Handler
+            Check the specific cause
+                Only worried about missing page exception
+            get mutual exclusion of TLB Handler -> pager 
+                Select a frame to use
+                    Frame pool limited to small number to force paging
+                If frame is in use --> assume dirty
+                    update appropriate page table to indicate page is not present
+                    write page back to correct location on backing store device
+                Read in missing page from backing store device into frame
+                update appropriate page table
+                release mutex on pager
+                return control to process
+
+
+User Process Launch
+    Pre process boot code is executed before user process
+
+    Set up 3 new areas for "passing up" -> SYS5
+    Read in the process' code from a tape device onto the backing store device (disk0)
+    LDST to start user's code

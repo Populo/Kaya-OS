@@ -35,3 +35,146 @@ User Process Launch
     Set up 3 new areas for "passing up" -> SYS5
     Read in the process' code from a tape device onto the backing store device (disk0)
     LDST to start user's code
+
+
+Global Data Structures
+
+1 page table for kUseg3
+	kSegOS - reserved for Operating System
+	kUseg2 - segment where each user program executes
+	kUseg3 - globally shared segment
+
+There will be:
+	1 kSegOS page table
+	8 kUseg2 page tables
+	1 kUseg3 page table
+
+	10 page tables
+
+1 semaphore called the "master" semaphore - initialized to 0
+	for graceful termination of processes
+
+1 semaphore for each device (with 2 for each terminal)
+	phase 2 = synchronization --> 0
+	phase 3 = mutual exclusion <---- --> 1
+		each will be initialized to 1
+		do not need one for clock
+
+framepool data structure
+	10 frames in pool <-- per mikey
+	swap pool data structure
+	array of structs
+		structure will have one entry for each frame in our frame pool
+			each entry will have:
+				process ID
+				segment number (2 or 3)
+				page number
+				pointer to a page table entry
+User process data structure
+	array of structs
+		structure will have one entry for each user process
+			each entry will have:
+				semaphore: delay and virtual P/V facilities
+					synchronization semaphore -> set to 0
+				kUseg2 page table
+				backing store address
+				6 state_t areas
+					3 will be "new" areas for SYS, PGM, and TLB areas
+					3 will be "old" areas for SYS, PGM, and TLB areas
+
+
+
+initializing Global Variables
+
+kSegOS page Table
+	64 entries
+		entryHI = 0x20000+i
+		entryLO = 0x20000+i w/Dirty,Global,Valid flags
+
+kUseg3
+	32 entries
+		entryHI = 0xC0000+i
+		entryLO = Dirty, Global
+
+Swap Pool Data Structure
+	10 segments to force paging
+	
+	set all entries to "unoccupied"
+		ASID (-1 to indicate free)
+		Seg Number
+		Page Number
+		(optional) pointer to pte_t (page table entry)	
+
+Swap Pool Semaphore
+	init to 1
+
+An array of semaphores
+	one for each interrupting device
+		init to 1
+
+Master semaphore
+	used for test to kill itself
+	init to 0
+
+Process initialization loop (for i=1; i < MAXUPROC+1; i++)
+	initialize stuff
+	SYS 1
+	
+	for i=0; i<MAXUPROC; i++
+		P(MasterSemaphore) // Sys4
+
+Once Test is woken up from V operation -> SYS2
+
+
+
+for (i = 1; i < MAXUPROC+1 ; i++)
+{
+		i becomes the ASID (processID)
+
+	KUseg2 page table
+		32 entries:
+			entryHI = 0x80000+i w/asid
+			entryLO = Writable
+
+		fix the last entry's entryHI to be 0xBFFFF w/asid
+
+
+	Set up the appropriate three entries in the global segment table
+		set the KSEGOS pointer
+		set the KUseg2 pointer
+		set the KUseg3 pointer
+
+	Set up an initial state for a user process
+		asid = i
+		stack page = to be filled in later
+		PC = uPROCInit
+		status = all interrupts enables, local timer enabled, VM off, Kernal mode on
+
+	SYS1(address of it?)
+}(end of for loop)
+
+
+uPROCInit()
+{
+	figure out who you are from ASID
+
+	set up the three new areas for Pull Up and Die
+		stack page: to be filled in later
+		PC = address of your phase 3 handler
+		asid = your asid value
+		status: all interrupts enabled, local timer enabled, VM on, Kernal mode on
+
+	call sys 5 three times: one for each area
+
+	Read the contents of the tape device (asid - 1) onto the backing store device (disk0)
+		keep reading until the tape block marker (data1) is no longer ENDOFBLOCK (keep going until you hit endofblock or end of file)
+			read block from tape and then immediately write it out to disk0
+
+	set up a new state to do a load state on for the user process
+		asid = your asid
+		stack page = last page of KUseg2 (OC000.0000)
+		status = all interrupts enabled, local timer enabled, VM on, user mode on
+		PC = well known address from the start of KUseg2
+
+	LDST to this new state
+}

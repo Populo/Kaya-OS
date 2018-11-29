@@ -54,6 +54,27 @@ typedef struct state_t {
 
 } state_t, *state_PTR;
 
+typedef struct pteEntry_t {
+	unsigned int	entryHI;
+	unsigned int	entryLO;
+} pteEntry_t;
+
+typedef struct pte_t{
+	int				header;
+	pteEntry_t		pteTable[KSEGSIZE];
+} pte_t;
+
+typedef struct pteOS_t{
+	int 			header;
+	pteEntry_t		pteTable[KSEGSIZE];
+} pteOS_t;
+
+typedef struct segTbl_t{
+	pteOS_t			*ksegOS;
+	pte_t			*kuseg2;
+	pte_t			*kuseg3;
+} segTbl_t;
+
 #define	s_at	s_reg[0]
 #define	s_v0	s_reg[1]
 #define s_v1	s_reg[2]

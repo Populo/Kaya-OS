@@ -199,5 +199,8 @@
 #define SEG2		                        0x80000000
 #define SEG3		                        0xC0000000
 
+
+#define KSEGSIZE                            64
+
   
 #endif

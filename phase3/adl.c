@@ -23,3 +23,40 @@ adl_PTR searchDelayd(int *wake)
     return searching;
 }
 
+HIDDEN void freeDelayd(adl_PTR delay)
+{
+    if(delaydFree_h == NULL)
+    {
+        delaydFree_h = delay;
+        delaydFree_h = NULL;
+    }
+    else{
+        delay -> d_next = delaydFree_h;
+        delaydFree_h = delay;
+    }
+}
+
+HIDDEN adl_PTR allocDelayd()
+{
+    adl_PTR returnMe;
+
+    if(delaydFree_h = NULL)
+    {
+        return NULL;
+    }
+    else
+    {
+        returnMe = delaydFree_h;
+        if(returnMe -> d_next == NULL)
+        {
+            delaydFree_h = NULL;
+        }
+        else
+        {
+            delaydFree_h = delaydFree_h -> d_next;
+        }
+        returnMe -> d_next = NULL;
+    }
+    return returnMe;
+}
+

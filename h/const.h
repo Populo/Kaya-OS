@@ -14,6 +14,10 @@
 
 
 #define ROMPAGESTART	0x20000000	/* ROM Reserved Page */
+#define OSCODEEND       (ROMPAGESTART + (30 * PAGESIZE))
+#define TAPEBUFFTOP		(OSCODETOP + (DEVPERINT * PAGESIZE))
+#define DISKBUFFTOP		(TAPEBUFFTOP + (DEVPERINT * PAGESIZE))
+
 #define INTTIME			100000 		/* interval timer period */
 #define SECOND          1000000     /* 1 second in ms? */
 
@@ -40,9 +44,10 @@
 /* utility constants */
 #define	TRUE		1
 #define	FALSE		!TRUE
-#define ON              1
-#define OFF             0
-#define EOS		'\0'
+#define ON          1
+#define OFF         0
+#define EOS		    '\0'
+#define DISK0       0
 
 #define NULL ((void *)0xFFFFFFFF)
 
@@ -67,6 +72,23 @@
 #define NETWINT 	5
 #define PRNTINT 	6
 #define TERMINT		7
+
+/* IO Device Commands */
+#define DISK_SEEKCYL    2
+#define READBLK         3
+#define DISK_WRITEBLK   4
+#define TAPE_SKIPBLK    2
+#define TAPE_BACKBLK    4
+
+/* IO Device Errors */
+#define DEVNOTINSTALLED 0
+#define TAPE_EOT        0   /* end of tape */
+#define TAPE_EOF        1   /* end of file */
+#define TAPE_EOB        2   /* end of block */
+
+/* Misc shifts */
+#define SHIFT_SEEK      8
+#define SHIFT_SECTOR    8
 
 #define DEVREGLEN	4	/* device register field length in bytes & regs per dev */
 #define DEVREGSIZE	16 	/* device register size in bytes */
@@ -154,6 +176,7 @@
 #define IEON    0x00000004 /* Turns on global interrupts */
 #define IEOFF   0xFFFFFFFB /* Turns off global interrupts */
 #define IECON   0x00000001 /* Turns on current interrupts */
+#define IECOFF  0xFFFFFFFE /* Turn off current interrupts */
 
 /* interrupt line and device bit patterns */
 #define LINEZERO	0x00000100
@@ -199,8 +222,39 @@
 #define SEG2		                        0x80000000
 #define SEG3		                        0xC0000000
 
+#define uProcStart                          0x800000B0
 
 #define KSEGSIZE                            64
 
-  
+/* entryHi constants */
+#define GET_SEG                             0xD0000000
+#define GET_VPN                             0x1FFFF000
+#define GET_ASID                            0x00000FC0
+
+#define SHIFT_SEG                           29
+#define SHIFT_VPN                           12
+#define SHIFT_ASID                          6
+
+#define SET_ASID                            0xFFFFFFFFF ^ GET_ASID
+
+/* entryLo constants */
+#define GET_GLOBAL                          0x00000100
+#define GET_VALID                           0x00000200
+#define GET_DIRTY                           0x00000400
+#define GET_NOCACHE                         0x00000800
+#define GET_PFN                             0xFFFFF000
+
+#define SHIFT_GLOBAL                        8
+#define SHIFT_VALID                         9
+#define SHIFT_DIRTY                         10
+#define SHIFT_NOCACHE                       11
+#define SHIFT_PFN                           12
+
+/* entry bit definitions */
+#define GLOBAL		                        (1 << SHIFT_GLOBAL)
+#define VALID		                        (1 << SHIFT_VALID)
+#define DIRTY		                        (1 << SHIFT_DIRTY)
+#define NOCACHE                             (1 << SHIFT_NOCACHE)
+
+
 #endif

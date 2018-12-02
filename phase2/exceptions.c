@@ -44,7 +44,7 @@ cpu_t currentTOD;
 /* Handle Process Exception */
 HIDDEN void pullUpAndDie(int type);
 /* Load State */
-void loadAllOfTheStates(state_PTR state);
+void putALoadInMeDaddy(state_PTR state);
 /* Copy State to New Location */
 void copyState(state_PTR old, state_PTR new);
 /* kill the process */
@@ -166,7 +166,7 @@ void sysCallHandler()
 	}
 
 	/* if syscall doesnt redirect, load the state */
-	loadAllOfTheStates(state);
+	putALoadInMeDaddy(state);
 }
 
 /******************************************************************
@@ -339,7 +339,7 @@ void sysGetCPUTime(state_PTR state)
 	/* store starting clock */
 	STCK(TODStarted);
 	/* load current process */
-	loadAllOfTheStates(&(currentProcess -> pcb_state));
+	putALoadInMeDaddy(&(currentProcess -> pcb_state));
 }
 
 /******************************************************************
@@ -511,17 +511,17 @@ void pullUpAndDie(int type)
 	copyState(location, currentProcess -> pcb_states[type][OLD]);
 	
 	/* load custom handler */
-	loadAllOfTheStates(lookingAt);
+	putALoadInMeDaddy(lookingAt);
 }
 
 /******************************************************************
- * loadAllOfTheStates
+ * putALoadInMeDaddy
  * param: state_PTR state
  * 
  * Helper method to load a state.  That is literally all this does,
  * load the passed state
  *****************************************************************/
-void loadAllOfTheStates(state_PTR state)
+void putALoadInMeDaddy(state_PTR state)
 {
 	LDST(state);
 }

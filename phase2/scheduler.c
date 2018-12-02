@@ -22,7 +22,7 @@ extern int softBlockCount;
 extern pcb_PTR currentProcess;
 extern pcb_PTR readyQueue;
 
-extern void loadAllOfTheStates(state_PTR state);
+extern void putALoadInMeDaddy(state_PTR state);
 
 cpu_t currentTOD;
 cpu_t TODStarted;
@@ -81,7 +81,7 @@ void scheduler()
         /* start a timer for the job */
         setTIMER(QUANTUM);
         /* Context Switch - load the process */
-        loadAllOfTheStates(&(newProc -> pcb_state));
+        putALoadInMeDaddy(&(newProc -> pcb_state));
     } 
 }
 

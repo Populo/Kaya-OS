@@ -46,7 +46,7 @@ typedef struct {
 
 #define STATEREGNUM	31
 typedef struct state_t {
-	unsigned int	s_asid;
+	unsigned int	s_entryHI;
 	unsigned int	s_cause;
 	unsigned int	s_status;
 	unsigned int 	s_pc;
@@ -143,5 +143,13 @@ typedef struct adl_t
 	int 			d_wakeTime;		/* time to wake up device */
 	int				d_asid;			/* id of process */
 } adl_t, *adl_PTR;
+
+typedef struct uProc_t
+{
+	state_PTR		uProc_states[SECTIONS][OLDNEW]; /* 2D array of states for SYS5 */
+	int				uProc_semAdd;		/* private semaphore */
+	pte_t			uProc_pte;		/* page table (kUseg2) */
+	int				uProc_backStoreAdd;	/* sector # for seg2 drum area */
+} uProc_t, *uProc_PTR;
 
 #endif

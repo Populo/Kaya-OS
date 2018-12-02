@@ -25,7 +25,7 @@ extern void writePrinter(char* virtAddr, int len, int procID);
 extern void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int procID);
 
 void vmPrgmHandler() {
-    int asid = ((getENTRYHI() & ENTRYMASK) >> ASIDSHIFT);
+    int asid = getCurrentASID();
 
     /* end it all */
     meIRL(asid);

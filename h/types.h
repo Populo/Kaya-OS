@@ -144,6 +144,14 @@ typedef struct adl_t
 	int				d_asid;			/* id of process */
 } adl_t, *adl_PTR;
 
+typedef struct avsl_t
+{
+	struct avsl_t 	*v_next;
+	struct avsl_t	*v_prev;
+	int				*v_sem;
+	int				v_asid;
+} avsl_t, *avsl_PTR;
+
 typedef struct uProc_t
 {
 	state_PTR		uProc_states[SECTIONS][OLDNEW]; /* 2D array of states for SYS5 */

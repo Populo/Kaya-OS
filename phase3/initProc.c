@@ -129,7 +129,6 @@ void test()
     }
 
     SYSCALL(TERMINATEPROCESS);
-    
 }
 
 void uProcInit()

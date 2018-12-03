@@ -23,6 +23,29 @@ adl_PTR searchDelayd(int *wake)
     return searching;
 }
 
+void initADL()
+{
+    int i;
+    static adl_t delayTable[(MAXPROC + 1)];
+
+    delaydFree_h = NULL;
+    activeDelayd_h = NULL;
+
+    for(i =0; i < MAXPROC+1; i++)
+    {
+        freeDelayd(&(delayTable[i]));
+    }
+}
+
+int headDelayTime()
+{
+    if(activeDelayd_h == NULL)
+    {
+        return FAILURE;
+    }
+    return activeDelayd_h -> d_wakeTime;
+}
+
 HIDDEN void freeDelayd(adl_PTR delay)
 {
     if(delaydFree_h == NULL)
@@ -60,3 +83,52 @@ HIDDEN adl_PTR allocDelayd()
     return returnMe;
 }
 
+int insertDelay(int wakeTime, int ID)
+{
+    adl_PTR delay = NULL;
+
+    adl_PTR new = allocDelayd();
+
+    if(new == NULL)
+    {
+        return FALSE;
+    }
+
+    new -> d_wakeTime = wakeTime;
+    new -> d_asid = ID;
+
+    if(activeDelayd_h == NULL)
+    {
+        activeDelayd_h = new;
+        new -> d_next = NULL;
+
+        return TRUE;
+    }
+
+    delay = searchDelayd(wakeTime);
+
+    new -> d_next = delay -> d_next;
+    delay -> d_next = new;
+
+    return TRUE;
+}
+
+int removeDelay()
+{
+    int returnMe;
+
+    adl_PTR temp = activeDelayd_h;
+
+    if(temp != NULL)
+    {
+        activeDelayd_h = temp -> d_next;
+
+        returnMe = temp -> d_asid;
+        temp -> d_next = NULL;
+        freeDelayd(temp);
+
+        return returnMe;
+    }
+
+    return FAILURE;
+}

@@ -155,6 +155,10 @@
 #define IEOFF   0xFFFFFFFB /* Turns off global interrupts */
 #define IECON   0x00000001 /* Turns on current interrupts */
 
+#define DIRTY		(1 << 10)
+#define VALID		(1 << 9)
+#define GLOBAL		(1 << 8)
+
 /* interrupt line and device bit patterns */
 #define LINEZERO	0x00000100
 #define LINEONE		0x00000200
@@ -201,6 +205,7 @@
 
 
 #define KSEGSIZE                            64
+#define KUSEGSIZE                           32
 
   
 #endif

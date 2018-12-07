@@ -536,7 +536,7 @@ void putALoadInMeDaddy(state_PTR state)
 void copyState(state_PTR old, state_PTR new)
 {
 	new -> s_cause = old -> s_cause;
-	new -> s_asid = old -> s_asid;
+	new -> s_entryHI = old -> s_entryHI;
 	new -> s_status = old -> s_status;
 	new -> s_pc = old -> s_pc;
 	int i;

@@ -21,7 +21,7 @@ pte_t kuSeg3;
 swap_t swapPool[SWAPSIZE];
 
 int swap;
-int mutexArray[MAXSEM];
+int mutexArray[MAXPROC];
 int masterSem;
 uProc_PTR uProcs[8];
 
@@ -81,11 +81,11 @@ void test()
 
         for(j = 0; j < 24; j++)
         {
-            uProcs[i-1] -> uProc_pte.pteTable[j].entryHI = ((0x80000 + j) << ENTRYHISHIFT) | (i << SHIFT_ASID);
+            uProcs[i-1] -> uProc_pte.pteTable[j].entryHI = ((0x80000 + j) << SHIFT_VPN) | (i << SHIFT_ASID);
             uProcs[i-1] -> uProc_pte.pteTable[j].entryLO = ALLOFF | DIRTY;
         }
 
-        uProcs[i-1] -> uProc_pte.pteTable[KSEGSIZE].entryHI = (0xBFFFF << ENTRYHISHIFT) | (i * SHIFT_ASID);
+        uProcs[i-1] -> uProc_pte.pteTable[KSEGSIZE].entryHI = (0xBFFFF << SHIFT_VPN) | (i * SHIFT_ASID);
 
         segTable = (segTbl_t *) (SEGTBLSTART + (i * SEGTBLWIDTH));
 
@@ -175,7 +175,7 @@ void uProcInit()
 
     int currentBlock = 0;
 
-    device_t *disk
+    device_t *disk;
     device_t *tape;
     unsigned int diskStatus, tapeStatus;
 
@@ -194,15 +194,15 @@ void uProcInit()
         tape -> d_command = READBLK;
 
         /* execute */
-        tapeStatus = SYSCALL(WAITFORIO, /* syscall number (8) */
+        tapeStatus = SYSCALL(WAITIO, /* syscall number (8) */
                             TAPEINT,    /* interrupt line */
-                            asid - 1);  /* device number */
+                            asid - 1, 0);  /* device number */
         /* turn interrupts back on */
         Interrupts(TRUE);
 
         /* gain mutual exclusion on disk */
         SYSCALL(PASSEREN,               /* syscall number (4) */
-                &mutexArray[DISK0]);    /* device to P */
+                &mutexArray[DISK0], 0, 0);    /* device to P */
         
         /* turn off interrupts */
         Interrupts(FALSE);
@@ -212,7 +212,7 @@ void uProcInit()
         /* execute */
         diskStatus = SYSCALL(WAITFORIO, /* syscall number (8) */
                             DISKINT,    /* interrupt line */
-                            DISK0);     /* device number */
+                            DISK0, 0);     /* device number */
 
         /* turn interrupts back on */
         Interrupts(TRUE);
@@ -229,7 +229,7 @@ void uProcInit()
             /* execute */
             diskStatus = SYSCALL(WAITFORIO, /* syscall number (8) */
                                 DISKINT,    /* interrupt line */
-                                DISK0);     /* device number */
+                                DISK0, 0);     /* device number */
 
             /* turn interrupts back on */
             Interrupts(TRUE);
@@ -237,7 +237,7 @@ void uProcInit()
 
         /* release mutual exclusion on disk */
         SYSCALL(VERHOGEN,               /* syscall number (3) */
-                &mutexArray[DISK0]);    /* semaphore */
+                &mutexArray[DISK0], 0, 0);    /* semaphore */
 
         /* if !EOT & !EOF */
         if (tape -> d_data1 != TAPE_EOB) {
@@ -249,7 +249,7 @@ void uProcInit()
 
     /* release mutual exclusion on tape device */
     SYSCALL(VERHOGEN,                   /* syscall number (3) */
-            &mutexArray[deviceNumber]); /* semaphore */
+            &mutexArray[deviceNumber], 0, 0); /* semaphore */
 
     /* new state to load */
 
@@ -257,16 +257,11 @@ void uProcInit()
 
     new -> s_entryHI = (new -> s_entryHI & setASID(asid));
     new -> s_sp = (memaddr) SEG3; /* last page of KUseg2 */
-    new -> s_status = ALLOFF | IMON | IEON | VMON /* interrupts on, vm on, user mode */
+    new -> s_status = ALLOFF | IMON | IEON | VMON; /* interrupts on, vm on, user mode */
     new -> s_pc = (memaddr) 0; /* TODO - well known address from start of KUseg2? */
 
     /* load this new state */
     putALoadInMeDaddy(new);
-}
-
-void delayDaemon()
-{
-
 }
 
 

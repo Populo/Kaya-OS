@@ -142,7 +142,7 @@ void meIRL(int ID)
     {
         TLBCLR();
     }
-
+    Interrupts(TRUE);
     SYSCALL(VERHOGEN, (int)&swap, 0, 0);
     SYSCALL(VERHOGEN, (int)&sem, 0, 0);
 

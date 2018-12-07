@@ -273,3 +273,18 @@ void uProcInit()
     putALoadInMeDaddy(new);
 }
 
+
+void Interrupts(int amIFucked)
+{
+    int status = getSTATUS();
+
+    if(amIFucked)
+    {
+        status = (status | 0x1);
+    }
+    else
+    {
+        status = (status & 0xFFFFFFFE);
+    }
+    setSTATUS(status);
+}

@@ -269,6 +269,7 @@
 
 #define READTERMINAL                        1
 #define PRINTDEV                            24
+#define PRINTCHAR                           2
 
 #define WRITETERM                           0
 #define READTERM                            1

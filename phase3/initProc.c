@@ -108,7 +108,7 @@ void test()
 
     delayState -> s_entryHI = MAXUSERPROC + 2;
     delayState -> s_sp = EXECTOP - (MAXUSERPROC * UPROCSTCKSIZE);
-    delayState -> s_pc = delayState -> s_t9 = (memaddr) delayDaemon;
+    delayState -> s_pc = delayState -> s_t9 = (memaddr) delayDaemon();
     delayState -> s_status = ALLOFF | IEON | IMON | LTON;
 
     SYSCALL(CREATE_PROCESS, delayState, 0, 0);
@@ -210,7 +210,7 @@ void uProcInit()
         /* set sector to look for */
         disk -> d_command = (currentBlock << SHIFT_SEEK) | DISK_SEEKCYL;
         /* execute */
-        diskStatus = SYSCALL(WAITFORIO, /* syscall number (8) */
+        diskStatus = SYSCALL(WAITIO, /* syscall number (8) */
                             DISKINT,    /* interrupt line */
                             DISK0, 0);     /* device number */
 
@@ -227,7 +227,7 @@ void uProcInit()
             disk -> d_command = ((asid - 1) << SHIFT_SECTOR) | DISK_WRITEBLK;
 
             /* execute */
-            diskStatus = SYSCALL(WAITFORIO, /* syscall number (8) */
+            diskStatus = SYSCALL(WAITIO, /* syscall number (8) */
                                 DISKINT,    /* interrupt line */
                                 DISK0, 0);     /* device number */
 

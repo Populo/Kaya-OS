@@ -275,7 +275,7 @@ void readTerminal(char* addr, int ID)
     {
         Interrupts(FALSE);
         terminal -> t_recv_command = RECVCHAR;
-        status = SYSCALL(WAITIO, TERMINT, (ID -1), READTERM);
+        status = SYSCALL(WAITIO, TERMINT, (ID -1), READTERM, 0);
         Interrupts(TRUE);
 
         if(((status & 0XFF00) >> 8) == (0x0A))
@@ -293,7 +293,7 @@ void readTerminal(char* addr, int ID)
             PANIC();
         }
 
-        addr++
+        addr++;
     }
 
     old -> s_v0 = count;
@@ -312,10 +312,10 @@ void writeTerminal(char* virtAddr, int len, int ID)
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
     device_t* terminal;
 
-    old = (state_PTR) &uProcs[ID-1].uProc_states[SYSTRAP][OLD];
+    old = (state_PTR) &uProcs[ID-1] -> uProc_states[SYSTRAP][OLD];
     terminal = &(devReg -> devreg[devNum]);
 
-    SYSCALL(PASSEREN, (int)&mutexArray[TERMREADSEM + (ID -1)], WRITETERM);
+    SYSCALL(PASSEREN, (int)&mutexArray[TERMREADSEM + (ID -1)], WRITETERM, 0);
 
     while(!bootyCall)
     {
@@ -339,7 +339,7 @@ void writeTerminal(char* virtAddr, int len, int ID)
             PANIC();
         }
 
-        addr++
+        addr++;
     }
 
     old -> s_v0 = count;
@@ -353,6 +353,6 @@ HIDDEN int spinTheBottle()
 
     STCK(seed);
 
-    return seed % SWAPSIZE;
+    return (int) seed % SWAPSIZE;
 }
 

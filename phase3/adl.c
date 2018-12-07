@@ -155,7 +155,7 @@ void delayDaemon()
                 PANIC();
             }
 
-            SYSCALL(VERHOGEN, (int) &(uProcs[ID-1].Tp_sem), 0, 0);
+            SYSCALL(VERHOGEN, (int) &(uProcs[ID-1] -> uProc_semAdd), 0, 0);
         }
     }
 }

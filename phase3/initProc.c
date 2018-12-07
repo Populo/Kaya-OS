@@ -28,7 +28,7 @@ uProc_PTR uProcs[8];
 
 /* INIT's KUSEGOS / 2 / 3 page tables. */
 
-HIDDEN int getCurrentASID() {
+int getCurrentASID() {
     return ((getENTRYHI() & GET_ASID) >> SHIFT_ASID);
 }
 

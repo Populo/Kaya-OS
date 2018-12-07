@@ -340,7 +340,7 @@ void writeTerminal(char* virtAddr, int len, int ID)
     SYSCALL(VERHOGEN, (int)&mutexArray[TERMREADSEM + (ID -1)], 0, 0);
 }
 
-int spinTheBottle() 
+HIDDEN int spinTheBottle() 
 {
     cpu_t seed;
 

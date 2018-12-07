@@ -90,7 +90,7 @@
 #define TAPE_EOB        2   /* end of block */
 
 #define TRANSCHAR       2   /* transmit character */
-#define RECVCHAR        2   /* 
+#define RECVCHAR        2   
 
 /* Misc shifts */
 #define SHIFT_SEEK      8

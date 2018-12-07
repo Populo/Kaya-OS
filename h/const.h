@@ -271,6 +271,9 @@
 #define PRINTDEV                            24
 
 #define WRITETERM                           0
+#define READTERM                            1
+
+#define TERMREADSEM                         32
 
 
 #endif

@@ -12,9 +12,9 @@ HIDDEN int spinTheBottle();
 
 extern uProc_PTR uProcs[8];
 extern int swap;
-extern mutexArray[MAXPROC];
+extern int mutexArray[MAXPROC];
 extern int sem;
-extern swapPool[SWAPSIZE];
+extern swap_t swapPool[SWAPSIZE];
 
 /* syscalls */
 /* ?? */
@@ -269,7 +269,7 @@ void readTerminal(char* addr, int ID)
     old = (state_PTR) &uProcs[ID-1] -> uProc_states[SYSTRAP][OLD];
     terminal = &(devReg -> devreg[devNum]);
 
-    SYSCALL(PASSEREN, (int)&mutexArray[KUSEGSIZE + (ID -1)], READTERM, 0);
+    SYSCALL(PASSEREN, (int)&mutexArray[TERMREADSEM + (ID -1)], READTERM, 0);
 
     while(!bootyCall)
     {

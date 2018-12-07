@@ -174,7 +174,7 @@ void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int ID)
     disk = &(devReg -> devreg[diskNo]);
 
 
-    if(diskNo <= 0 || (memaddr)blockAddr < KUSEG2ADDR)
+    if(diskNo <= 0 || (memaddr)blockAddr < SEG2)
     {
         meIRL(ID);
     }
@@ -229,7 +229,7 @@ void writePrinter(char* virtAddr, int len, int ID)
     devregarea_t* devReg;
     device_t* printer;
 
-    devNum = PRINT0DEV + (ID - 1);
+    devNum = PRINTDEV + (ID - 1);
     devReg = (devregarea_t *) RAMBASEADDR;
     printer = &(devReg -> devreg[devNum]);
 
@@ -315,7 +315,7 @@ void writeTerminal(char* virtAddr, int len, int ID)
     old = (state_PTR) &uProcs[ID-1] -> uProc_states[SYSTRAP][OLD];
     terminal = &(devReg -> devreg[devNum]);
 
-    SYSCALL(PASSEREN, (int)&mutexArray[TERMREADSEM + (ID -1)], WRITETERM, 0);
+    SYSCALL(PASSEREN, (int)&mutexArray[KUSEGSIZE + (ID -1)], WRITETERM, 0);
 
     while(!bootyCall)
     {
@@ -334,7 +334,7 @@ void writeTerminal(char* virtAddr, int len, int ID)
             i++;
         }
 
-        if((status & 0xFF) != RECIEVECHAR)
+        if((status & 0xFF) != RECVCHAR)
         {
             PANIC();
         }

@@ -229,6 +229,7 @@
 
 #define uProcStart                          0x800000B0
 
+
 #define KSEGSIZE                            64
 #define KUSEGSIZE                           32
 
@@ -267,6 +268,9 @@
 
 
 #define READTERMINAL                        1
+#define PRINTDEV                            24
+
+#define WRITETERM                           0
 
 
 #endif

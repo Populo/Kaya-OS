@@ -45,7 +45,7 @@ void vmSysHandler()
     old = (state_t *) &uProcs[ID-1].Told_trap[SYSTRAP];
 
     callNumber = old -> s_a0;
-    /* P, V, delay, getTOD, and death are all done*/
+
     switch(callNumber)
     {
         case READTERMINAL:
@@ -147,4 +147,155 @@ void meIRL(int ID)
     SYSCALL(VERHOGEN, (int)&sem, 0, 0);
 
     SYSCALL(TERMINATE_PROCESS, 0, 0, 0);
+}
+
+
+void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int ID)
+{
+    int head;
+    int sec;
+    int cyl;
+    unsigned int status;
+    int* diskbuff;
+    state_PTR old;
+    devregarea_t* devReg;
+    device_t* disk;
+
+    diskbff = (int *)(OSTOP + (diskNo * PAGESIZE));
+    old = (state_PTR) &uProcs[ID-1].Told_trap[SYSTRAP];
+    devReg = (devregarea_t *) RAMBASEADDR;
+    disk = &(devReg -> devreg[diskNo]);
+
+
+    if(diskNo <= 0 || (memaddr)blockAddr < KUSEG2ADDR)
+    {
+        meIRL(ID);
+    }
+
+    head = sectNo % 2;
+    sectNo = (sectNo / 2);
+    sec = sectNo % 2;
+    sectNo = (sectNo / 8);
+    cyl = sectNo;
+
+    if(readWrite != DISK_WRITEBLK || readWrite != READBLK)
+    {
+        PANIC();
+    }
+
+    SYSCALL(PASSEREN , (int)&mutexArray[diskNo], 0 , 0);
+
+    if(readWrite == DISK_WRITEBLK)
+    {
+        copy(blockAddr, diskbuff);
+    }
+
+    Interrupts(FALSE);
+    disk -> d_command = (cyl << SEEKSHIFT) | DISKSEEK;
+    status = SYSCALL(WAITFORIO, DISKINT, diskNo, 0);
+    Interrupts(TRUE);    
+
+    if(status == READY)
+    {
+        Interrupts(FALSE);
+        disk -> d_data0 = (memaddr) diskbuff;
+        disk -> d_command = (head << HEADSHIFT) | ((sector) << SECTORSHIFT) | readWrite;
+        status = SYSCALL(WAITFORIO, DISKINT, diskNo, 0);
+        Interrupts(TRUE);
+    }
+    if(readWrite == READBLK)
+    {
+        copy(diskbuff, blockaddr);
+    }
+    
+    old -> s_v0 = status;
+
+    SYSCALL(VERHOGEN, (int)&mutexArray[diskNo], 0, 0);
+}
+
+
+void writePrinter(char* virtAddr, int len, int ID)
+{
+    int i = 0;
+    int devNum;
+    unsigned int status;
+    devregarea_t* devReg;
+    device_PTR printer;
+
+    devNum = PRINT0DEV + (ID - 1);
+    devReg = (devregarea_t *) RAMBASEADDR;
+    printer = &(devReg -> devreg[devNum]);
+
+    SYSCALL(PASSEREN, (int)&mutexArray[devNum], 0, 0);
+
+    while(i < len)
+    {
+        Interrupts(FALSE);
+        printer -> d_data0 = (unsinged int) *virtAddr;
+        printer -> d_command = PRINTCHAR;
+        status = SYSCALL(WAITFORIO, PRNTINT, (ID - 1), 0);
+        Interrupts(TRUE);
+
+        if((status & 0xFF) != READY)
+        {
+            PANIC();
+        }
+
+        virtAddr++;
+        i++;
+    }
+
+    SYSCALL(VERHOGEN, (int)&mutexArray[devNum], 0, 0);
+}
+
+
+void readTerminal(char* addr, int ID)
+{
+    unsigned int status;
+    int i = 0;
+    int devNum;
+    int bootyCall = FALSE;
+    state_PTR old;
+    devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
+    device_t* terminal;
+
+    old = (state_PTR) &uProcs[ID-1].Told_trap[SYSTRAP];
+    terminal = &(devReg -> devreg[devNum]);
+
+    SYSCALL(PASSEREN, (int)&mutexArray[TERMREADSEM + (ID -1)], READTERM);
+
+    while(!bootyCall)
+    {
+        Interrupts(FALSE);
+        terminal -> t_recv_command = RECVCHAR;
+        status = SYSCALL(WAITFORIO, TERMINT, (ID -1), READTERM);
+        Interrupts(TRUE);
+
+        if(((status & 0XFF00) >> 8)) == (0x0A))
+        {
+            bootyCall = TRUE;
+        }
+        else
+        {
+            *addr = ((status & 0xFF00) >> 8);
+            i++;
+        }
+
+        if((status & 0xFF) != RECIEVECHAR)
+        {
+            PANIC();
+        }
+
+        addr++
+    }
+
+    old -> s_v0 = count;
+
+    SYSCALL(VERHOGEN, (int)&mutexArray[TERMREADSEM + (ID -1)], 0, 0);
+
+}
+
+void writeTerminal(char* virtAddr, int len, int ID)
+{
+    
 }

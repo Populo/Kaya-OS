@@ -22,7 +22,7 @@ swap_t swapPool[SWAPSIZE];
 
 int swap;
 int mutexArray[MAXSEM];
-int sem;
+int masterSem;
 uProc_PTR uProcs[8];
 
 
@@ -44,7 +44,7 @@ void test()
     state_PTR delayState;
     segTbl_t* segTable;
 
-    kuSegOS.header = (PTEMAGICNUM << 24) | KSEGSIZE;
+    kuSegOS.header = (PTEMAGICNO << 24) | KSEGSIZE;
 
     for(i = 0; i < KSEGSIZE; i++)
     {
@@ -56,8 +56,8 @@ void test()
     kuSeg3.header = (PTEMAGICNO << 24) | 32;
     for(i = 0; i < 32; i++)
     {
-        kuSeg3.pteTable[i].entryHI = ((0xC0000 + i) << ENTRYHISHIFT);
-        kuseg3.pteTable[i].entryLO = ALLOFF | DIRTY | GLOBAL;
+        kuSeg3.pteTable[i].entryHI = ((0xC0000 + i) << SHIFT_VPN);
+        kuSeg3.pteTable[i].entryLO = ALLOFF | DIRTY | GLOBAL;
     }
 
     for(i = 0; i < SWAPSIZE; i++)
@@ -73,7 +73,7 @@ void test()
         mutexArray[i] = 1;
     }
 
-    sem = 0;
+    masterSem = 0;
 
     for(i = 0; i < MAXUSERPROC + 1; i++)
     {
@@ -85,40 +85,40 @@ void test()
             uProcs[i-1] -> uProc_pte.pteTable[j].entryLO = ALLOFF | DIRTY;
         }
 
-        uProcs[i-1] -> uProc_pte.pteTable[KUSEGPTESIZE].entryHI = (0xBFFFF << ENTRYHISHIFT) | (i * SHIFT_ASID);
+        uProcs[i-1] -> uProc_pte.pteTable[KSEGSIZE].entryHI = (0xBFFFF << ENTRYHISHIFT) | (i * SHIFT_ASID);
 
-        segTable = (segTable_t *) (SEGTBLSTART + (i * SEGTBLWIDTH));
+        segTable = (segTbl_t *) (SEGTBLSTART + (i * SEGTBLWIDTH));
 
         segTable -> ksegOS = &kuSegOS;
         segTable -> kuseg2 = &(uProcs[i-1] -> uProc_pte);
         segTable -> kuseg3 = &kuSeg3;
 
-        procState -> s_entryHI = (i << ASIDSHIFT);
+        procState -> s_entryHI = (i << SHIFT_ASID);
         procState -> s_sp = EXECTOP - ((i - 1) * UPROCSTCKSIZE);
         procState -> s_pc = procState -> s_t9 = (memaddr) uProcInit();
         procState -> s_status = ALLOFF | IEON | IMON | LTON;
 
         uProcs[i-1] -> uProc_semAdd = 0;
 
-        SYSCALL(CREATEPROCESS, procState, 0, 0);
+        SYSCALL(CREATE_PROCESS, procState, 0, 0);
     }
 
     initADL();
     intAVSL();
 
-    delayState -> s_asid = MAXUSERPROC + 2;
+    delayState -> s_entryHI = MAXUSERPROC + 2;
     delayState -> s_sp = EXECTOP - (MAXUSERPROC * UPROCSTCKSIZE);
-    delayState -> s_pc = delayState -> s_t9 = (memaddr) delayDaemon();
+    delayState -> s_pc = delayState -> s_t9 = (memaddr) delayDaemon;
     delayState -> s_status = ALLOFF | IEON | IMON | LTON;
 
-    SYSCALL(CREATEPROCESS, delayState);
+    SYSCALL(CREATE_PROCESS, delayState, 0, 0);
 
     for(i = 0; i < MAXUSERPROC; i++)
     {
-        SYSCALL(PASSEREN, (int)&masterSem);
+        SYSCALL(PASSEREN, (int)&masterSem, 0, 0);
     }
 
-    SYSCALL(TERMINATEPROCESS);
+    SYSCALL(TERMINATE_PROCESS, 0, 0, 0);
 }
 
 void uProcInit()
@@ -150,32 +150,33 @@ void uProcInit()
         switch (i)
         {
             case SYSTRAP:
-                newLocation = (memaddr) sysCallHandler();
+                newLocation = (memaddr) sysCallHandler; /* add stack pointer */
                 break;
             case TLBTRAP:
-                newLocation = (memaddr) tlbTrapHandler();
+                newLocation = (memaddr) tlbTrapHandler;
                 break;
             case PROGTRAP:
-                newLocation = (memaddr) pbgTrapHandler();
+                newLocation = (memaddr) pbgTrapHandler;
         }
         
         new -> s_pc = new -> s_t9 = newLocation;
 
-        SYSCALL(SPECTRAPVEC,                    /* syscall number (5) */
+        SYSCALL(SESV,                    /* syscall number (5) */
                 i,                              /* trap type */
                 uProc -> uProc_states[i][OLD],  /* old state */
-                new)                            /* new state */
+                new);                         /* new state */
     }
 
     /* read contents of tape device onto disk0 */
 
     /* gain mutual exclusion on tape */
     SYSCALL(PASSEREN,                   /* syscall number (4) */
-            &mutexArray[deviceNumber])  /* device to P */
+            &mutexArray[deviceNumber], 0, 0);  /* device to P */
 
     int currentBlock = 0;
 
-    device_t *disk, tape;
+    device_t *disk
+    device_t *tape;
     unsigned int diskStatus, tapeStatus;
 
     disk = &(device -> devreg[DISK0]);

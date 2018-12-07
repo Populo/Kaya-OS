@@ -168,7 +168,7 @@ void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int ID)
     devregarea_t* devReg;
     device_t* disk;
 
-    diskbuff = (int *)(OSTOP + (diskNo * PAGESIZE));
+    diskbuff = (int *)(OSCODEEND + (diskNo * PAGESIZE));
     old = (state_PTR) &(uProcs[ID-1] -> uProc_states[SYSTRAP][OLD]);
     devReg = (devregarea_t *) RAMBASEADDR;
     disk = &(devReg -> devreg[diskNo]);
@@ -198,7 +198,7 @@ void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int ID)
     }
 
     Interrupts(FALSE);
-    disk -> d_command = (cyl << SEEKSHIFT) | DISKSEEK;
+    disk -> d_command = (cyl << SHIFT_SEEK) | DISK_SEEKCYL;
     status = SYSCALL(WAITIO, DISKINT, diskNo, 0);
     Interrupts(TRUE);    
 
@@ -206,13 +206,13 @@ void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int ID)
     {
         Interrupts(FALSE);
         disk -> d_data0 = (memaddr) diskbuff;
-        disk -> d_command = (head << HEADSHIFT) | ((sec) << SECTORSHIFT) | readWrite;
+        disk -> d_command = (head << SHIFT_HEAD) | ((sec) << SHIFT_SECTOR) | readWrite;
         status = SYSCALL(WAITIO, DISKINT, diskNo, 0);
         Interrupts(TRUE);
     }
     if(readWrite == READBLK)
     {
-        copy(diskbuff, blockaddr);
+        copy(diskbuff, blockAddr);
     }
     
     old -> s_v0 = status;
@@ -269,13 +269,13 @@ void readTerminal(char* addr, int ID)
     old = (state_PTR) &uProcs[ID-1] -> uProc_states[SYSTRAP][OLD];
     terminal = &(devReg -> devreg[devNum]);
 
-    SYSCALL(PASSEREN, (int)&mutexArray[TERMREADSEM + (ID -1)], READTERM);
+    SYSCALL(PASSEREN, (int)&mutexArray[KUSEGSIZE + (ID -1)], READTERM, 0);
 
     while(!bootyCall)
     {
         Interrupts(FALSE);
         terminal -> t_recv_command = RECVCHAR;
-        status = SYSCALL(WAITIO, TERMINT, (ID -1), READTERM, 0);
+        status = SYSCALL(WAITIO, TERMINT, (ID -1), READTERM);
         Interrupts(TRUE);
 
         if(((status & 0XFF00) >> 8) == (0x0A))
@@ -288,7 +288,7 @@ void readTerminal(char* addr, int ID)
             i++;
         }
 
-        if((status & 0xFF) != RECIEVECHAR)
+        if((status & 0xFF) != RECVCHAR)
         {
             PANIC();
         }
@@ -296,7 +296,7 @@ void readTerminal(char* addr, int ID)
         addr++;
     }
 
-    old -> s_v0 = count;
+    old -> s_v0 = i;
 
     SYSCALL(VERHOGEN, (int)&mutexArray[TERMREADSEM + (ID -1)], 0, 0);
 

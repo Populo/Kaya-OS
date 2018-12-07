@@ -87,12 +87,13 @@
 #define TAPE_EOF        1   /* end of file */
 #define TAPE_EOB        2   /* end of block */
 
-#define TRANSCHAR       2
-#define RECVCHAR        2
+#define TRANSCHAR       2   /* transmit character */
+#define RECVCHAR        2   /* 
 
 /* Misc shifts */
 #define SHIFT_SEEK      8
 #define SHIFT_SECTOR    8
+#define SHIFT_HEAD      16
 
 #define DEVREGLEN	4	/* device register field length in bytes & regs per dev */
 #define DEVREGSIZE	16 	/* device register size in bytes */
@@ -256,11 +257,16 @@
 #define SHIFT_NOCACHE                       11
 #define SHIFT_PFN                           12
 
+
+
 /* entry bit definitions */
 #define GLOBAL		                        (1 << SHIFT_GLOBAL)
 #define VALID		                        (1 << SHIFT_VALID)
 #define DIRTY		                        (1 << SHIFT_DIRTY)
 #define NOCACHE                             (1 << SHIFT_NOCACHE)
+
+
+#define READTERMINAL                        1
 
 
 #endif

@@ -11,6 +11,10 @@
 HIDDEN int spinTheBottle();
 
 extern uProc_PTR uProcs[8];
+extern int swap;
+extern mutexArray[MAXSEM];
+extern int sem;
+extern swapPool[SWAPSIZE];
 
 /* syscalls */
 /* ?? */
@@ -44,17 +48,17 @@ void vmSysHandler()
     int ID = getCurrentASID();
     int *semAdd;
 
-    old = (state_PTR) &uProcs[ID-1].uProc_states[SYSTRAP][OLD];
+    old = (state_PTR) &(uProcs[ID-1].uProc_states[SYSTRAP][OLD]);
 
     callNumber = old -> s_a0;
 
     switch(callNumber)
     {
         case READTERMINAL:
-            readTerminal(old -> s_a1, ID);
+            readTerminal((char *) old -> s_a1, ID);
             break;
         case WRITETERMINAL:
-            writeTerminal(old -> s_a1, old -> s_a2, ID);
+            writeTerminal((char *) old -> s_a1, old -> s_a2, ID);
             break;
         case VSEMVIRT:
             semAdd = (int *) old -> s_a1;
@@ -69,7 +73,7 @@ void vmSysHandler()
                     meIRL(ID);
                 }
 
-                SYSCALL(VERHOGEN, &(uProcs[ID-1].Tp_sem), 0, 0);
+                SYSCALL(VERHOGEN, &(uProcs[ID-1].uProc_semAdd), 0, 0);
             }
             break;
         case PSEMVIRT:
@@ -80,7 +84,7 @@ void vmSysHandler()
             if(*semAdd < 0)
             {
                 vInsertBlocked(semAdd, ID);
-                SYSCALL(PASSEREN, (int) &(uProcs[ID-1].Tp_sem), 0, 0);
+                SYSCALL(PASSEREN, (int) &(uProcs[ID-1].uProc_semAdd), 0, 0);
             }
             break;
         case DELAY:
@@ -95,12 +99,12 @@ void vmSysHandler()
                 break;    /*Need to ask, but this seems like it would be a waste of fucking time */
             }
 
-            vInsertBlocked(&(uProcs[ID-1].Tp_sem), ID);
+            vInsertBlocked(&(uProcs[ID-1].uProc_semAdd), ID);
 
             delay = STCK(current) + delay;
             insertDelay(delay, ID);
 
-            SYSCALL(PASSEREN, &(uProcs[ID-1].Tp_sem), 0, 0);
+            SYSCALL(PASSEREN, &(uProcs[ID-1].uProc_semAdd), 0, 0);
             break;
         case DISK_PUT:
             diskIO(old -> s_a1, old -> s_a2, old -> s_a3, DISK_WRITEBLK, ID);

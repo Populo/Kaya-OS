@@ -140,7 +140,7 @@ void meIRL(int ID)
     {
         if(swapPool[index].sw_asid == ID)
         {
-            swapPool[index].sw_pte.pte_entryLO = (swapPool[index].sw_pte.pte_entryLO | ~VALID);
+            swapPool[index].sw_pte.entryLO = (swapPool[index].sw_pte.entryLO | ~VALID);
             swapPool[index].sw_asid = -1;
             kill = TRUE;
         }

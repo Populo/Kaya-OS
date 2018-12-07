@@ -162,4 +162,11 @@ typedef struct uProc_t
 	int				uProc_backStoreAdd;	/* sector # for seg2 drum area */
 } uProc_t, *uProc_PTR;
 
+typedef struct swap_t
+{
+	int				sw_asid;
+	unsigned int 	pte_entryLO;
+	pte_t			*sw_pte;
+}swap_t;
+
 #endif

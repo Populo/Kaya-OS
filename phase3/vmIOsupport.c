@@ -48,7 +48,7 @@ void vmSysHandler()
     int ID = getCurrentASID();
     int *semAdd;
 
-    old = (state_PTR) &(uProcs[ID-1].uProc_states[SYSTRAP][OLD]);
+    old = (state_PTR) &(uProcs[ID-1] -> uProc_states[SYSTRAP][OLD]);
 
     callNumber = old -> s_a0;
 
@@ -73,7 +73,7 @@ void vmSysHandler()
                     meIRL(ID);
                 }
 
-                SYSCALL(VERHOGEN, &(uProcs[ID-1].uProc_semAdd), 0, 0);
+                SYSCALL(VERHOGEN, &(uProcs[ID-1] -> uProc_semAdd), 0, 0);
             }
             break;
         case PSEMVIRT:
@@ -84,7 +84,7 @@ void vmSysHandler()
             if(*semAdd < 0)
             {
                 vInsertBlocked(semAdd, ID);
-                SYSCALL(PASSEREN, (int) &(uProcs[ID-1].uProc_semAdd), 0, 0);
+                SYSCALL(PASSEREN, (int) &(uProcs[ID-1] -> uProc_semAdd), 0, 0);
             }
             break;
         case DELAY:
@@ -99,21 +99,21 @@ void vmSysHandler()
                 break;    /*Need to ask, but this seems like it would be a waste of fucking time */
             }
 
-            vInsertBlocked(&(uProcs[ID-1].uProc_semAdd), ID);
+            vInsertBlocked(&(uProcs[ID-1] -> uProc_semAdd), ID);
 
             delay = STCK(current) + delay;
             insertDelay(delay, ID);
 
-            SYSCALL(PASSEREN, &(uProcs[ID-1].uProc_semAdd), 0, 0);
+            SYSCALL(PASSEREN, &(uProcs[ID-1] -> uProc_semAdd), 0, 0);
             break;
         case DISK_PUT:
-            diskIO(old -> s_a1, old -> s_a2, old -> s_a3, DISK_WRITEBLK, ID);
+            diskIO((int *) old -> s_a1, old -> s_a2, old -> s_a3, DISK_WRITEBLK, ID);
             break;
         case DISK_GET:
-            diskIO(old -> s_a1, old -> s_a2, old -> s_a3, READBLK, ID);
+            diskIO((int *) old -> s_a1, old -> s_a2, old -> s_a3, READBLK, ID);
             break;
         case WRITEPRINTER:
-            writePrinter(old -> s_a1, old -> s_a2, ID);
+            writePrinter((char *) old -> s_a1, old -> s_a2, ID);
             break;
         case GET_TOD:
             STCK(current);
@@ -133,10 +133,10 @@ void meIRL(int ID)
     int index;
     int kill = FALSE;
 
-    SYSCALL(PASSEREN, (int)&swapSem, 0, 0);
+    SYSCALL(PASSEREN, (int)&swap, 0, 0);
 
     Interrupts(FALSE);
-    for(index = 0; i < SWAPSIZE; index++)
+    for(index = 0; index < SWAPSIZE; index++)
     {
         if(swapPool[index].sw_asid == ID)
         {
@@ -168,8 +168,8 @@ void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int ID)
     devregarea_t* devReg;
     device_t* disk;
 
-    diskbff = (int *)(OSTOP + (diskNo * PAGESIZE));
-    old = (state_PTR) &uProcs[ID-1].uProc_states[SYSTRAP][OLD];
+    diskbuff = (int *)(OSTOP + (diskNo * PAGESIZE));
+    old = (state_PTR) &(uProcs[ID-1] -> uProc_states[SYSTRAP][OLD]);
     devReg = (devregarea_t *) RAMBASEADDR;
     disk = &(devReg -> devreg[diskNo]);
 
@@ -278,7 +278,7 @@ void readTerminal(char* addr, int ID)
         status = SYSCALL(WAITIO, TERMINT, (ID -1), READTERM);
         Interrupts(TRUE);
 
-        if(((status & 0XFF00) >> 8)) == (0x0A))
+        if(((status & 0XFF00) >> 8) == (0x0A))
         {
             bootyCall = TRUE;
         }

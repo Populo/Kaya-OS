@@ -30,3 +30,53 @@ void vmPrgmHandler() {
     /* end it all */
     meIRL(asid);
 }
+
+
+void vmSysHandler()
+{
+    int callNumber;
+    state_PTR old;
+    cpu_t current;
+    cpu_t delay;
+    int ID = ((getENTRYhi() & ENTRYMASK) >> ASIDSHIFT);
+
+    old = (state_t *) &uProcs[ID-1].Told_trap[SYSTRAP];
+
+    callNumber = old -> s_a0;
+
+    switch(callNumber)
+    {
+        case READTERMINAL:
+            readTerminal(old -> s_a1, ID);
+            break;
+        case WRITETERMINAL:
+            writeTerminal(old -> s_a1, old -> s_a2; ID);
+            break;
+        case VSEMVIRT:
+            break;
+        case PSEMVIRT:
+            break;
+        case DELAY:
+            break;
+        case DISK_PUT:
+            break;
+        case DISK_GET:
+            break;
+        case WRITEPRINTER:
+            break;
+        case GET_TOD:
+            STCK(current);
+            old -> s_v0 = current;
+            break;
+        case TERMINATE:
+            meIRL(ID);
+            break;
+    }
+    LDSTS(old);
+}
+
+
+void meIRL(int ID)
+{
+    /* kill shit */
+}

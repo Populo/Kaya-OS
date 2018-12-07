@@ -10,6 +10,8 @@
 
 HIDDEN int spinTheBottle();
 
+extern uProc_PTR uProcs[8];
+
 /* syscalls */
 /* ?? */
 extern void readWriteBacking(int cylinder, int sector, int head, int readWriteComm, memaddr address);
@@ -35,14 +37,14 @@ void vmPrgmHandler() {
 void vmSysHandler()
 {
     int callNumber;
-    int theGivingID
+    int theGivingID;
     state_PTR old;
     cpu_t current;
     cpu_t delay;
     int ID = getCurrentASID();
     int *semAdd;
 
-    old = (state_t *) &uProcs[ID-1].uProc_states[SYSTRAP][OLD];
+    old = (state_PTR) &uProcs[ID-1].uProc_states[SYSTRAP][OLD];
 
     callNumber = old -> s_a0;
 
@@ -52,7 +54,7 @@ void vmSysHandler()
             readTerminal(old -> s_a1, ID);
             break;
         case WRITETERMINAL:
-            writeTerminal(old -> s_a1, old -> s_a2; ID);
+            writeTerminal(old -> s_a1, old -> s_a2, ID);
             break;
         case VSEMVIRT:
             semAdd = (int *) old -> s_a1;
@@ -119,6 +121,7 @@ void vmSysHandler()
     }
     LDST(old);
 }
+
 
 
 void meIRL(int ID)
@@ -348,3 +351,4 @@ HIDDEN int spinTheBottle()
 
     return seed % SWAPSIZE;
 }
+

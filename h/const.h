@@ -11,6 +11,7 @@
 #define PAGESIZE		4096	/* page size in bytes */
 #define WORDLEN			4		/* word size in bytes */
 #define PTEMAGICNO		0x2A
+#define SWAPSIZE        10      /* frames in swap */
 
 
 #define ROMPAGESTART	0x20000000	/* ROM Reserved Page */
@@ -85,6 +86,9 @@
 #define TAPE_EOT        0   /* end of tape */
 #define TAPE_EOF        1   /* end of file */
 #define TAPE_EOB        2   /* end of block */
+
+#define TRANSCHAR       2
+#define RECVCHAR        2
 
 /* Misc shifts */
 #define SHIFT_SEEK      8
@@ -178,10 +182,6 @@
 #define IECON   0x00000001 /* Turns on current interrupts */
 #define IECOFF  0xFFFFFFFE /* Turn off current interrupts */
 
-#define DIRTY		(1 << 10)
-#define VALID		(1 << 9)
-#define GLOBAL		(1 << 8)
-
 /* interrupt line and device bit patterns */
 #define LINEZERO	0x00000100
 #define LINEONE		0x00000200
@@ -261,8 +261,6 @@
 #define VALID		                        (1 << SHIFT_VALID)
 #define DIRTY		                        (1 << SHIFT_DIRTY)
 #define NOCACHE                             (1 << SHIFT_NOCACHE)
-
-#define TRANSCHAR                           2
 
 
 #endif

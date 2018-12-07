@@ -192,7 +192,7 @@ void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int ID)
 
     Interrupts(FALSE);
     disk -> d_command = (cyl << SEEKSHIFT) | DISKSEEK;
-    status = SYSCALL(WAITFORIO, DISKINT, diskNo, 0);
+    status = SYSCALL(WAITIO, DISKINT, diskNo, 0);
     Interrupts(TRUE);    
 
     if(status == READY)
@@ -200,7 +200,7 @@ void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int ID)
         Interrupts(FALSE);
         disk -> d_data0 = (memaddr) diskbuff;
         disk -> d_command = (head << HEADSHIFT) | ((sector) << SECTORSHIFT) | readWrite;
-        status = SYSCALL(WAITFORIO, DISKINT, diskNo, 0);
+        status = SYSCALL(WAITIO, DISKINT, diskNo, 0);
         Interrupts(TRUE);
     }
     if(readWrite == READBLK)
@@ -233,7 +233,7 @@ void writePrinter(char* virtAddr, int len, int ID)
         Interrupts(FALSE);
         printer -> d_data0 = (unsinged int) *virtAddr;
         printer -> d_command = PRINTCHAR;
-        status = SYSCALL(WAITFORIO, PRNTINT, (ID - 1), 0);
+        status = SYSCALL(WAITIO, PRNTINT, (ID - 1), 0);
         Interrupts(TRUE);
 
         if((status & 0xFF) != READY)
@@ -268,7 +268,7 @@ void readTerminal(char* addr, int ID)
     {
         Interrupts(FALSE);
         terminal -> t_recv_command = RECVCHAR;
-        status = SYSCALL(WAITFORIO, TERMINT, (ID -1), READTERM);
+        status = SYSCALL(WAITIO, TERMINT, (ID -1), READTERM);
         Interrupts(TRUE);
 
         if(((status & 0XFF00) >> 8)) == (0x0A))
@@ -314,10 +314,10 @@ void writeTerminal(char* virtAddr, int len, int ID)
     {
         Interrupts(FALSE);
         terminal -> t_transm_command = TRANSCHAR;
-        status = SYSCALL(WAITFORIO, TERMINT, (ID -1), WRITETERM);
+        status = SYSCALL(WAITIO, TERMINT, (ID -1), WRITETERM);
         Interrupts(TRUE);
 
-        if(((status & 0XFF00) >> 8)) == (0x0A))
+        if(((status & 0XFF00) >> 8) == (0x0A))
         {
             bootyCall = TRUE;
         }
@@ -338,4 +338,13 @@ void writeTerminal(char* virtAddr, int len, int ID)
     old -> s_v0 = count;
 
     SYSCALL(VERHOGEN, (int)&mutexArray[TERMREADSEM + (ID -1)], 0, 0);
+}
+
+int spinTheBottle() 
+{
+    cpu_t seed;
+
+    STCK(seed);
+
+    return seed % SWAPSIZE;
 }

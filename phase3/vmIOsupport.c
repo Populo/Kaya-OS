@@ -12,7 +12,7 @@ HIDDEN int spinTheBottle();
 
 extern uProc_PTR uProcs[8];
 extern int swap;
-extern mutexArray[MAXSEM];
+extern mutexArray[MAXPROC];
 extern int sem;
 extern swapPool[SWAPSIZE];
 
@@ -140,9 +140,9 @@ void meIRL(int ID)
     {
         if(swapPool[index].sw_asid == ID)
         {
-            swapPool[index].sw_pte -> pte_entryLO = (swapPool[index].sw_pte->pte_entryLO | ~VALID);
+            swapPool[index].sw_pte.pte_entryLO = (swapPool[index].sw_pte.pte_entryLO | ~VALID);
             swapPool[index].sw_asid = -1;
-            kill = true;
+            kill = TRUE;
         }
     }
     if(kill)
@@ -206,7 +206,7 @@ void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int ID)
     {
         Interrupts(FALSE);
         disk -> d_data0 = (memaddr) diskbuff;
-        disk -> d_command = (head << HEADSHIFT) | ((sector) << SECTORSHIFT) | readWrite;
+        disk -> d_command = (head << HEADSHIFT) | ((sec) << SECTORSHIFT) | readWrite;
         status = SYSCALL(WAITIO, DISKINT, diskNo, 0);
         Interrupts(TRUE);
     }
@@ -227,7 +227,7 @@ void writePrinter(char* virtAddr, int len, int ID)
     int devNum;
     unsigned int status;
     devregarea_t* devReg;
-    device_PTR printer;
+    device_t* printer;
 
     devNum = PRINT0DEV + (ID - 1);
     devReg = (devregarea_t *) RAMBASEADDR;
@@ -238,7 +238,7 @@ void writePrinter(char* virtAddr, int len, int ID)
     while(i < len)
     {
         Interrupts(FALSE);
-        printer -> d_data0 = (unsinged int) *virtAddr;
+        printer -> d_data0 = (unsigned int) *virtAddr;
         printer -> d_command = PRINTCHAR;
         status = SYSCALL(WAITIO, PRNTINT, (ID - 1), 0);
         Interrupts(TRUE);
@@ -266,7 +266,7 @@ void readTerminal(char* addr, int ID)
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
     device_t* terminal;
 
-    old = (state_PTR) &uProcs[ID-1].uProc_states[SYSTRAP][OLD];
+    old = (state_PTR) &uProcs[ID-1] -> uProc_states[SYSTRAP][OLD];
     terminal = &(devReg -> devreg[devNum]);
 
     SYSCALL(PASSEREN, (int)&mutexArray[TERMREADSEM + (ID -1)], READTERM);
@@ -330,7 +330,7 @@ void writeTerminal(char* virtAddr, int len, int ID)
         }
         else
         {
-            *addr = ((status & 0xFF00) >> 8);
+            *virtAddr = ((status & 0xFF00) >> 8);
             i++;
         }
 
@@ -339,10 +339,10 @@ void writeTerminal(char* virtAddr, int len, int ID)
             PANIC();
         }
 
-        addr++;
+        *virtAddr++;
     }
 
-    old -> s_v0 = count;
+    old -> s_v0 = i;
 
     SYSCALL(VERHOGEN, (int)&mutexArray[TERMREADSEM + (ID -1)], 0, 0);
 }

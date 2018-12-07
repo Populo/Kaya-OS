@@ -12,12 +12,14 @@
 #define WORDLEN			4		/* word size in bytes */
 #define PTEMAGICNO		0x2A
 #define SWAPSIZE        10      /* frames in swap */
+#define UPROCSTCKSIZE   2 * PAGESIZE
 
 
 #define ROMPAGESTART	0x20000000	/* ROM Reserved Page */
 #define OSCODEEND       (ROMPAGESTART + (30 * PAGESIZE))
 #define TAPEBUFFTOP		(OSCODETOP + (DEVPERINT * PAGESIZE))
 #define DISKBUFFTOP		(TAPEBUFFTOP + (DEVPERINT * PAGESIZE))
+#define EXECTOP         (DISKBUFFTOP + ((MAXUSERPROC * 2) * PAGESIZE))
 
 #define INTTIME			100000 		/* interval timer period */
 #define SECOND          1000000     /* 1 second in ms? */
@@ -275,6 +277,11 @@
 #define READTERM                            1
 
 #define TERMREADSEM                         32
+
+#define MAXUSERPROC                         8
+
+#define SEGTBLWIDTH                         0x0000000C
+#define SEGTBLSTART                         0x20000500
 
 
 #endif

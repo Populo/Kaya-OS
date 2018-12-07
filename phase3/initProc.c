@@ -44,16 +44,16 @@ void test()
     state_PTR delayState;
     segTbl_t* segTable;
 
-    kSegOS.header = (PGTBLMAGICNUM << 24) | KSEGSIZE;
+    kuSegOS.header = (PTEMAGICNUM << 24) | KSEGSIZE;
 
     for(i = 0; i < KSEGSIZE; i++)
     {
-        kuSegOS.pteTable[i].entryHI = ((0x20000 + i) << ENTRYHISHIFT);
-        kuSegOS.pteTable[i].entryLO = ((0x20000 + i) << ENTRYHISHIFT) | DIRTY | GLOBAL | VALID;
+        kuSegOS.pteTable[i].entryHI = ((0x20000 + i) << SHIFT_VPN);
+        kuSegOS.pteTable[i].entryLO = ((0x20000 + i) << SHIFT_VPN) | DIRTY | GLOBAL | VALID;
 
     }
 
-    kuseg3.header = (PTEMAGICNO << 24) | 32;
+    kuSeg3.header = (PTEMAGICNO << 24) | 32;
     for(i = 0; i < 32; i++)
     {
         kuSeg3.pteTable[i].entryHI = ((0xC0000 + i) << ENTRYHISHIFT);
@@ -66,9 +66,9 @@ void test()
         swapPool[i].sw_pte = NULL;
     }
 
-    swapSem = 1;
+    swap = 1;
 
-    for(i = 0; i < MAXSEM; i++)
+    for(i = 0; i < MAXPROC; i++)
     {
         mutexArray[i] = 1;
     }
@@ -81,26 +81,26 @@ void test()
 
         for(j = 0; j < 24; j++)
         {
-            uProcs[i-1] -> uProc_pte.pteTable[j].entryHI = ((0x80000 + j) << ENTRYHISHIFT) | (i << ASIDSHIFT);
+            uProcs[i-1] -> uProc_pte.pteTable[j].entryHI = ((0x80000 + j) << ENTRYHISHIFT) | (i << SHIFT_ASID);
             uProcs[i-1] -> uProc_pte.pteTable[j].entryLO = ALLOFF | DIRTY;
         }
 
-        uProcs[i-1] -> uProc_pte.pteTable[KUSEGPTESIZE].entryHI = (0xBFFFF << ENTRYHISHIFT) | (i * ASIDSHIFT);
+        uProcs[i-1] -> uProc_pte.pteTable[KUSEGPTESIZE].entryHI = (0xBFFFF << ENTRYHISHIFT) | (i * SHIFT_ASID);
 
         segTable = (segTable_t *) (SEGTBLSTART + (i * SEGTBLWIDTH));
 
         segTable -> ksegOS = &kuSegOS;
-        segTable -> kuseg2 = &(uProcs[i-1]. -> uProc_pte);
+        segTable -> kuseg2 = &(uProcs[i-1] -> uProc_pte);
         segTable -> kuseg3 = &kuSeg3;
 
-        procState -> s_asid = (i << ASIDSHIFT);
+        procState -> s_entryHI = (i << ASIDSHIFT);
         procState -> s_sp = EXECTOP - ((i - 1) * UPROCSTCKSIZE);
         procState -> s_pc = procState -> s_t9 = (memaddr) uProcInit();
         procState -> s_status = ALLOFF | IEON | IMON | LTON;
 
         uProcs[i-1] -> uProc_semAdd = 0;
 
-        SYSCALL(CREATEPROCESS, procState);
+        SYSCALL(CREATEPROCESS, procState, 0, 0);
     }
 
     initADL();

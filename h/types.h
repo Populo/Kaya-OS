@@ -166,7 +166,8 @@ typedef struct swap_t
 {
 	int				sw_asid;
 	unsigned int 	pte_entryLO;
-	pte_t			*sw_pte;
+	int				sw_pgNum;
+	pteEntry_t		*sw_pte;
 }swap_t;
 
 #endif

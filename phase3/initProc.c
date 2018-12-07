@@ -23,7 +23,7 @@ swap_t swapPool[SWAPSIZE];
 int swap;
 int mutexArray[MAXSEM];
 int sem;
-uProc_PTR uProcs[MAXUSERPROC];
+uProc_PTR uProcs[8];
 
 
 /* INIT's KUSEGOS / 2 / 3 page tables. */
@@ -34,16 +34,6 @@ HIDDEN int getCurrentASID() {
 
 HIDDEN int setASID(int asid) {
     return SET_ASID | (asid << SHIFT_ASID);
-}
-
-HIDDEN void toggleInterrupts(int on) {
-    unsigned int status = getSTATUS();
-
-    status = on ? 
-        (status | IECON) : /* turning on */
-        (status & IECOFF); /* turning off */
-
-    setSTATUS(status);
 }
 
 void test()
@@ -196,7 +186,7 @@ void uProcInit()
     /* while tape is ready and we arent out of tape */
     while ((tapeStatus == READY) && !finished) {
         /* turn off interrupts */
-        toggleInterrupts(FALSE);
+        Interrupts(FALSE);
 
         /* set sector on tape to read */
         tape -> d_data0 = OSCODEEND + ((asid - 1) * PAGESIZE);
@@ -207,14 +197,14 @@ void uProcInit()
                             TAPEINT,    /* interrupt line */
                             asid - 1);  /* device number */
         /* turn interrupts back on */
-        toggleInterrupts(TRUE);
+        Interrupts(TRUE);
 
         /* gain mutual exclusion on disk */
         SYSCALL(PASSEREN,               /* syscall number (4) */
                 &mutexArray[DISK0]);    /* device to P */
         
         /* turn off interrupts */
-        toggleInterrupts(FALSE);
+        Interrupts(FALSE);
 
         /* set sector to look for */
         disk -> d_command = (currentBlock << SHIFT_SEEK) | DISK_SEEKCYL;
@@ -224,12 +214,12 @@ void uProcInit()
                             DISK0);     /* device number */
 
         /* turn interrupts back on */
-        toggleInterrupts(TRUE);
+        Interrupts(TRUE);
 
         /* done reading disk */
         if (diskStatus == READY) {
             /* turn off interrupts */
-            toggleInterrupts(FALSE);
+            Interrupts(FALSE);
 
             /* set sector to read */
             disk -> d_data0 = OSCODEEND + ((asid - 1) * PAGESIZE);
@@ -241,7 +231,7 @@ void uProcInit()
                                 DISK0);     /* device number */
 
             /* turn interrupts back on */
-            toggleInterrupts(TRUE);
+            Interrupts(TRUE);
         }
 
         /* release mutual exclusion on disk */
@@ -271,6 +261,11 @@ void uProcInit()
 
     /* load this new state */
     putALoadInMeDaddy(new);
+}
+
+void delayDaemon()
+{
+
 }
 
 

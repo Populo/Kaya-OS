@@ -39,10 +39,10 @@ void vmSysHandler()
     state_PTR old;
     cpu_t current;
     cpu_t delay;
-    int ID = ((getENTRYhi() & ENTRYMASK) >> ASIDSHIFT);
+    int ID = getCurrentASID();
     int *semAdd;
 
-    old = (state_t *) &uProcs[ID-1].Told_trap[SYSTRAP];
+    old = (state_t *) &uProcs[ID-1].uProc_states[SYSTRAP][OLD];
 
     callNumber = old -> s_a0;
 
@@ -117,7 +117,7 @@ void vmSysHandler()
             meIRL(ID);
             break;
     }
-    LDSTS(old);
+    LDST(old);
 }
 
 
@@ -162,7 +162,7 @@ void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int ID)
     device_t* disk;
 
     diskbff = (int *)(OSTOP + (diskNo * PAGESIZE));
-    old = (state_PTR) &uProcs[ID-1].Told_trap[SYSTRAP];
+    old = (state_PTR) &uProcs[ID-1].uProc_states[SYSTRAP][OLD];
     devReg = (devregarea_t *) RAMBASEADDR;
     disk = &(devReg -> devreg[diskNo]);
 
@@ -259,7 +259,7 @@ void readTerminal(char* addr, int ID)
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
     device_t* terminal;
 
-    old = (state_PTR) &uProcs[ID-1].Told_trap[SYSTRAP];
+    old = (state_PTR) &uProcs[ID-1].uProc_states[SYSTRAP][OLD];
     terminal = &(devReg -> devreg[devNum]);
 
     SYSCALL(PASSEREN, (int)&mutexArray[TERMREADSEM + (ID -1)], READTERM);
@@ -297,5 +297,45 @@ void readTerminal(char* addr, int ID)
 
 void writeTerminal(char* virtAddr, int len, int ID)
 {
-    
+    unsigned int status;
+    int i = 0;
+    int devNum;
+    int bootyCall = FALSE;
+    state_PTR old;
+    devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
+    device_t* terminal;
+
+    old = (state_PTR) &uProcs[ID-1].uProc_states[SYSTRAP][OLD];
+    terminal = &(devReg -> devreg[devNum]);
+
+    SYSCALL(PASSEREN, (int)&mutexArray[TERMREADSEM + (ID -1)], WRITETERM);
+
+    while(!bootyCall)
+    {
+        Interrupts(FALSE);
+        terminal -> t_transm_command = TRANSCHAR;
+        status = SYSCALL(WAITFORIO, TERMINT, (ID -1), WRITETERM);
+        Interrupts(TRUE);
+
+        if(((status & 0XFF00) >> 8)) == (0x0A))
+        {
+            bootyCall = TRUE;
+        }
+        else
+        {
+            *addr = ((status & 0xFF00) >> 8);
+            i++;
+        }
+
+        if((status & 0xFF) != RECIEVECHAR)
+        {
+            PANIC();
+        }
+
+        addr++
+    }
+
+    old -> s_v0 = count;
+
+    SYSCALL(VERHOGEN, (int)&mutexArray[TERMREADSEM + (ID -1)], 0, 0);
 }

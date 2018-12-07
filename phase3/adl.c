@@ -6,6 +6,7 @@
 
 HIDDEN adl_PTR delaydFree_h;
 HIDDEN adl_PTR activeDelayd_h;
+extern uProc_PTR uProcs[8];
 
 /* search delaydFree for node before address we are looking for */
 HIDDEN adl_PTR searchDelayd(int *wake);
@@ -131,4 +132,30 @@ int removeDelay()
     }
 
     return FAILURE;
+}
+
+
+void delayDaemon()
+{
+    cpu_t theClock;
+    int ID;
+
+    while(TRUE)
+    {
+        SYSCALL(WAITCLOCK, 0, 0, 0);
+
+        STCK(theClock);
+
+        while((headDelayTime() <= theClock) && (headDelayTime != FAILURE))
+        {
+            ID = removeDelay();
+
+            if(ID = FAILURE)
+            {
+                PANIC();
+            }
+
+            SYSCALL(VERHOGEN, (int) &(uProcs[ID-1].Tp_sem), 0, 0);
+        }
+    }
 }

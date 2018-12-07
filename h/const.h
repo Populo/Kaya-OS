@@ -249,6 +249,7 @@
 #define GET_NOCACHE                         0x00000800
 #define GET_PFN                             0xFFFFF000
 
+
 #define SHIFT_GLOBAL                        8
 #define SHIFT_VALID                         9
 #define SHIFT_DIRTY                         10
@@ -260,6 +261,8 @@
 #define VALID		                        (1 << SHIFT_VALID)
 #define DIRTY		                        (1 << SHIFT_DIRTY)
 #define NOCACHE                             (1 << SHIFT_NOCACHE)
+
+#define TRANSCHAR                           2
 
 
 #endif

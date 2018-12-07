@@ -104,7 +104,7 @@ void test()
     }
 
     initADL();
-    intAVSL();
+    initAVSL();
 
     delayState -> s_entryHI = MAXUSERPROC + 2;
     delayState -> s_sp = EXECTOP - (MAXUSERPROC * UPROCSTCKSIZE);

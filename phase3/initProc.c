@@ -133,7 +133,8 @@ void uProcInit()
 
     devregarea_t *device = (devregarea_t *) RAMBASEADDR;
 
-    memaddr newLocation;
+    memaddr newLocation, stackPointer;
+    memaddr TLBTOP, PROGTOP, SYSTOP;
 
     uProc_PTR uProc = uProcs[asid-1];
     
@@ -143,6 +144,10 @@ void uProcInit()
     new -> s_status = ALLOFF | IMON | IEON | LTON | VMON | KUON;
     new -> s_entryHI = (new -> s_entryHI & setASID(asid));
 
+    /* stack locations */
+    PROGTOP = SYSTOP = EXECTOP - ((asid - 1) * UPROCSTCKSIZE);
+    TLBTOP = PROGTOP - PAGESIZE;
+
     /* sys 5 the process */
 
     for (i = 0; i < TRAPTYPES; ++i) 
@@ -150,13 +155,17 @@ void uProcInit()
         switch (i)
         {
             case SYSTRAP:
-                newLocation = (memaddr) sysCallHandler; /* add stack pointer */
+                newLocation = (memaddr) sysCallHandler;
+                stackPointer = SYSTOP;
                 break;
             case TLBTRAP:
                 newLocation = (memaddr) tlbTrapHandler;
+                stackPointer = TLBTOP;
                 break;
             case PROGTRAP:
                 newLocation = (memaddr) pbgTrapHandler;
+                stackPointer = PROGTRAP;
+                break;
         }
         
         new -> s_pc = new -> s_t9 = newLocation;
@@ -191,7 +200,7 @@ void uProcInit()
 
         /* set sector on tape to read */
         tape -> d_data0 = OSCODEEND + ((asid - 1) * PAGESIZE);
-        tape -> d_command = READBLK;
+        tape -> d_command = DISK_READBLK;
 
         /* execute */
         tapeStatus = SYSCALL(WAITIO, /* syscall number (8) */

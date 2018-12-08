@@ -99,7 +99,7 @@ void vmMemHandler() {
         swapFrame -> sw_pte = &(kuSeg3.pteTable[missingPage]);
         swapFrame -> sw_pte -> entryLO = swapAddress | VALID | DIRTY | GLOBAL;
     } else {
-        swapFrame -> sw_pte = &(uProcs[missingASID - 1].uProc_pte.pteTable[missingPage]);
+        swapFrame -> sw_pte = &(uProcs[missingASID - 1] -> uProc_pte.pteTable[missingPage]);
         swapFrame -> sw_pte -> entryLO = swapAddress | VALID | DIRTY;
     }
 

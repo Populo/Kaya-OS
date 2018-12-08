@@ -10,11 +10,11 @@
 
 HIDDEN int spinTheBottle();
 
-extern uProc_PTR uProcs[8];
+/* extern uProc_PTR uProcs[8];
 extern int swapSem;
 extern int mutexArray[MAXPROC];
 extern int masterSem;
-extern swap_t swapPool[SWAPSIZE];
+extern swap_t swapPool[SWAPSIZE]; */
 
 /* syscalls */
 /* ?? */

@@ -165,8 +165,8 @@ typedef struct uProc_t
 typedef struct swap_t
 {
 	int				sw_asid;
-	unsigned int 	pte_entryLO;
 	int				sw_pgNum;
+	int				sw_segNum;
 	pteEntry_t		*sw_pte;
 }swap_t;
 

@@ -11,24 +11,24 @@
 HIDDEN int spinTheBottle();
 
 extern uProc_PTR uProcs[8];
-extern int swap;
+extern int swapSem;
 extern int mutexArray[MAXPROC];
-extern int sem;
+extern int masterSem;
 extern swap_t swapPool[SWAPSIZE];
 
 /* syscalls */
 /* ?? */
-extern void readWriteBacking(int cylinder, int sector, int head, int readWriteComm, memaddr address);
+HIDDEN void readWriteBacking(int cylinder, int sector, int head, int readWriteComm, memaddr address);
 /* sys 2 but virtual */
-extern void meIRL(int procID);
+HIDDEN void meIRL(int procID);
 /* write to terminal */
-extern void writeTerminal(char* virtAddr, int len, int procID);
+HIDDEN void writeTerminal(char* virtAddr, int len, int procID);
 /* read from terminal */
-extern void readTerminal(char* addr, int procID);
+HIDDEN void readTerminal(char* addr, int procID);
 /* print stuff */
-extern void writePrinter(char* virtAddr, int len, int procID);
+HIDDEN void writePrinter(char* virtAddr, int len, int procID);
 /* read/write to disk */
-extern void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int procID);
+HIDDEN void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int procID);
 
 void vmPrgmHandler() {
     int asid = getCurrentASID();
@@ -37,6 +37,84 @@ void vmPrgmHandler() {
     meIRL(asid);
 }
 
+void vmMemHandler() {
+    int missingSegment,
+        missingPage,
+        newFrame,
+        currentPage,
+        currentASID,
+        missingASID;
+    
+    devregarea_t *device = (devregarea_t *)RAMBASEADDR;
+    memaddr RAMTOP = device -> rambase + device -> ramsize;
+    memaddr SWAPPOOL = RAMTOP - (2 * PAGESIZE) - (SWAPSIZE * PAGESIZE);
+
+    missingASID = getCurrentASID();
+
+    state_PTR oldState = (state_PTR) &(uProcs[missingASID-1] -> uProc_states[TLBTRAP][OLD]);
+
+    int cause = (oldState -> s_cause & INTCAUSEMASK) >> 2;
+
+    if ((cause != TLBL) && (cause != TLBS)) {
+        meIRL(missingASID);
+    }
+
+    missingSegment = oldState -> s_entryHI >> SHIFT_SEG;
+    missingPage = oldState -> s_entryHI >> SHIFT_PFN;
+
+    if (missingPage >= KUSEGSIZE) {
+        missingPage = KUSEGSIZE - 1;
+    }
+
+    SYSCALL(PASSEREN,
+            (int)&swapSem,
+            0,0);
+
+    newFrame = spinTheBottle();
+
+    memaddr swapAddress = SWAPPOOL + (newFrame * PAGESIZE);
+
+    swap_t *swapFrame = &swapPool[newFrame];
+
+    if (swapFrame -> sw_asid != -1) {
+        Interrupts(FALSE);
+
+        swapFrame -> sw_pte -> pte_entryLO = swapFrame -> sw_pte -> pte_entryLO & nVALID;
+
+        TLBCLR();
+        Interrupts(TRUE);
+
+        currentASID = swapFrame -> sw_asid;
+        currentPage = swapFrame -> sw_pageNo;
+
+        readWriteBacking(currentPage, currentASID, DISK0, DISK_WRITEBLK, swapAddress);
+    }
+
+    readWriteBacking(missingPage, missingASID, DISK0, DISK_READBLK, swapAddress);
+
+    Interrupts(FALSE);
+
+    swapFrame -> sw_asid = missingASID;
+    swapFrame -> sw_segNo = missingSegment;
+    swapFrame -> sw_pageNo = missingPage;
+
+    if (missingSegment == SEG3) {
+        swapFrame -> sw_pte = &(kUSeg3.pteTable[missingPage]);
+        swapFrame -> sw_pte -> pte_entryLO = swapAddress | VALID | DIRTY | GLOBAL;
+    } else {
+        swapFrame -> sw_pte = &(uprocs[missingASID - 1].uProc_pte.pteTable[missingPage]);
+        swapFrame -> sw_pte -> pte_entryLO = swapAddress | VALID | DIRTY;
+    }
+
+    TLBCLR();
+    Interrupts(TRUE);
+
+    SYSCALL(VERHOGEN,
+            (int)&swapSem,
+            0, 0);
+
+    putALoadInMeDaddy(oldState);
+}
 
 void vmSysHandler()
 {
@@ -133,7 +211,7 @@ void meIRL(int ID)
     int index;
     int kill = FALSE;
 
-    SYSCALL(PASSEREN, (int)&swap, 0, 0);
+    SYSCALL(PASSEREN, (int)&swapSem, 0, 0);
 
     Interrupts(FALSE);
     for(index = 0; index < SWAPSIZE; index++)
@@ -150,8 +228,8 @@ void meIRL(int ID)
         TLBCLR();
     }
     Interrupts(TRUE);
-    SYSCALL(VERHOGEN, (int)&swap, 0, 0);
-    SYSCALL(VERHOGEN, (int)&sem, 0, 0);
+    SYSCALL(VERHOGEN, (int)&swapSem, 0, 0);
+    SYSCALL(VERHOGEN, (int)&masterSem, 0, 0);
 
     SYSCALL(TERMINATE_PROCESS, 0, 0, 0);
 }

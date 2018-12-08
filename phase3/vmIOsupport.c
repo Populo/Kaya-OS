@@ -16,8 +16,6 @@ extern int mutexArray[MAXPROC];
 extern int masterSem;
 extern swap_t swapPool[SWAPSIZE];
 
-extern pte_t kuSeg3;
-
 /* syscalls */
 /* ?? */
 HIDDEN void readWriteBacking(int cylinder, int sector, int head, int readWriteComm, memaddr address);
@@ -31,6 +29,8 @@ HIDDEN void readTerminal(char* addr, int procID);
 HIDDEN void writePrinter(char* virtAddr, int len, int procID);
 /* read/write to disk */
 HIDDEN void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int procID);
+
+extern putALoadInMeDaddy(state_PTR state);
 
 void vmPrgmHandler() {
     int asid = getCurrentASID();
@@ -101,10 +101,10 @@ void vmMemHandler() {
     swapFrame -> sw_pgNum = missingPage;
 
     if (missingSegment == SEG3) {
-        swapFrame -> sw_pte = &(kUSeg3.pteTable[missingPage]);
+        swapFrame -> sw_pte = &(kuSeg3.pteTable[missingPage]);
         swapFrame -> sw_pte -> entryLO = swapAddress | VALID | DIRTY | GLOBAL;
     } else {
-        swapFrame -> sw_pte = &(uprocs[missingASID - 1].uProc_pte.pteTable[missingPage]);
+        swapFrame -> sw_pte = &(uProcs[missingASID - 1].uProc_pte.pteTable[missingPage]);
         swapFrame -> sw_pte -> entryLO = swapAddress | VALID | DIRTY;
     }
 
@@ -190,7 +190,7 @@ void vmSysHandler()
             diskIO((int *) old -> s_a1, old -> s_a2, old -> s_a3, DISK_WRITEBLK, ID);
             break;
         case DISK_GET:
-            diskIO((int *) old -> s_a1, old -> s_a2, old -> s_a3, READBLK, ID);
+            diskIO((int *) old -> s_a1, old -> s_a2, old -> s_a3, DISK_READBLK, ID);
             break;
         case WRITEPRINTER:
             writePrinter((char *) old -> s_a1, old -> s_a2, ID);

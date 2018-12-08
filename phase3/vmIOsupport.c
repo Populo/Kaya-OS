@@ -16,6 +16,8 @@ extern int mutexArray[MAXPROC];
 extern int masterSem;
 extern swap_t swapPool[SWAPSIZE];
 
+extern pte_t kuSeg3;
+
 /* syscalls */
 /* ?? */
 HIDDEN void readWriteBacking(int cylinder, int sector, int head, int readWriteComm, memaddr address);
@@ -79,13 +81,13 @@ void vmMemHandler() {
     if (swapFrame -> sw_asid != -1) {
         Interrupts(FALSE);
 
-        swapFrame -> sw_pte -> pte_entryLO = swapFrame -> sw_pte -> pte_entryLO & nVALID;
+        swapFrame -> sw_pte -> entryLO = swapFrame -> sw_pte -> entryLO & nVALID;
 
         TLBCLR();
         Interrupts(TRUE);
 
         currentASID = swapFrame -> sw_asid;
-        currentPage = swapFrame -> sw_pageNo;
+        currentPage = swapFrame -> sw_pgNum;
 
         readWriteBacking(currentPage, currentASID, DISK0, DISK_WRITEBLK, swapAddress);
     }
@@ -95,15 +97,15 @@ void vmMemHandler() {
     Interrupts(FALSE);
 
     swapFrame -> sw_asid = missingASID;
-    swapFrame -> sw_segNo = missingSegment;
-    swapFrame -> sw_pageNo = missingPage;
+    swapFrame -> sw_segNum = missingSegment;
+    swapFrame -> sw_pgNum = missingPage;
 
     if (missingSegment == SEG3) {
         swapFrame -> sw_pte = &(kUSeg3.pteTable[missingPage]);
-        swapFrame -> sw_pte -> pte_entryLO = swapAddress | VALID | DIRTY | GLOBAL;
+        swapFrame -> sw_pte -> entryLO = swapAddress | VALID | DIRTY | GLOBAL;
     } else {
         swapFrame -> sw_pte = &(uprocs[missingASID - 1].uProc_pte.pteTable[missingPage]);
-        swapFrame -> sw_pte -> pte_entryLO = swapAddress | VALID | DIRTY;
+        swapFrame -> sw_pte -> entryLO = swapAddress | VALID | DIRTY;
     }
 
     TLBCLR();

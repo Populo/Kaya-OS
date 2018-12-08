@@ -275,7 +275,7 @@
 #define nNOCACHE                            (0 << SHIFT_NOCACHE)
 
 
-#define READTERMINAL                        1
+/*#define READTERMINAL                        1*/
 #define PRINTDEV                            24
 #define PRINTCHAR                           2
 

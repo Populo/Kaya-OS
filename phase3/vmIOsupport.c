@@ -265,7 +265,7 @@ void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int ID)
     sectNo = (sectNo / 8);
     cyl = sectNo;
 
-    if(readWrite != DISK_WRITEBLK || readWrite != READBLK)
+    if(readWrite != DISK_WRITEBLK || readWrite != DISK_READBLK)
     {
         PANIC();
     }
@@ -290,7 +290,7 @@ void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int ID)
         status = SYSCALL(WAITIO, DISKINT, diskNo, 0);
         Interrupts(TRUE);
     }
-    if(readWrite == READBLK)
+    if(readWrite == DISK_READBLK)
     {
         copy(diskbuff, blockAddr);
     }

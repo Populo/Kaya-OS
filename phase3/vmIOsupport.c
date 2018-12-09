@@ -448,16 +448,16 @@ void readWriteBacking(int cylinder, int sector, int head,
 	SYSCALL(PASSEREN, (int)&mutexArray[DISK0], 0, 0);
 	
 	/*Perform atomic operation and seek to correct cylinder*/
-	enableInterrupts(FALSE);
+	Interrupts(FALSE);
 	
 	diskDevice->d_command = (cylinder << SHIFT_SEEK) | DISK_SEEKCYL;
 	diskStatus = SYSCALL(WAITIO, DISKINT, DISK0, 0);
-	enableInterrupts(TRUE);
+	Interrupts(TRUE);
 			
 	/*If the device finished seeking...*/
 	if(diskStatus == READY){
 		
-		enableInterrupts(FALSE);
+		Interrupts(FALSE);
 		/*Initialize where to read from and set command to write*/
 		diskDevice->d_data0 = address;
 		diskDevice->d_command = (head << SHIFT_HEAD) | 
@@ -465,7 +465,7 @@ void readWriteBacking(int cylinder, int sector, int head,
 														   
 		/*Wait for disk write I/O*/
 		diskStatus = SYSCALL(WAITIO, DISKINT, DISK0, 0);
-		enableInterrupts(TRUE);
+		Interrupts(TRUE);
 	}
 	
 	/*Release mutex on backing store*/

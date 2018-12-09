@@ -440,7 +440,7 @@ void readWriteBacking(int cylinder, int sector, int head,
 	device_t* diskDevice = &(devReg->devreg[DISK0]);
 	
 	/*Error case*/
-	if(readWriteComm != DISK_WRITEBLK && isRead != DISK_READBLK){
+	if(isRead != DISK_WRITEBLK && isRead != DISK_READBLK){
 		PANIC();
 	}
 	

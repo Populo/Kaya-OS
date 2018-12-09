@@ -431,3 +431,44 @@ HIDDEN int spinTheBottle()
     return (int) seed % SWAPSIZE;
 }
 
+void readWriteBacking(int cylinder, int sector, int head, 
+									int isRead, memaddr address){
+	
+	/*Local Variable Declarations*/
+	unsigned int diskStatus;
+	devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
+	device_t* diskDevice = &(devReg->devreg[DISK0]);
+	
+	/*Error case*/
+	if(readWriteComm != DISK_WRITEBLK && isRead != DISK_READBLK){
+		PANIC();
+	}
+	
+	/*Gain mutex on backing store*/
+	SYSCALL(PASSEREN, (int)&mutexArray[DISK0], 0, 0);
+	
+	/*Perform atomic operation and seek to correct cylinder*/
+	enableInterrupts(FALSE);
+	
+	diskDevice->d_command = (cylinder << SHIFT_SEEK) | DISKSEEK;
+	diskStatus = SYSCALL(WAITIO, DISKINT, DISK0, 0);
+	enableInterrupts(TRUE);
+			
+	/*If the device finished seeking...*/
+	if(diskStatus == READY){
+		
+		enableInterrupts(FALSE);
+		/*Initialize where to read from and set command to write*/
+		diskDevice->d_data0 = address;
+		diskDevice->d_command = (head << SHIFT_HEAD) | 
+							((sector-1) << SHIFT_SECTOR) | isRead;
+														   
+		/*Wait for disk write I/O*/
+		diskStatus = SYSCALL(WAITIO, DISKINT, DISK0, 0);
+		enableInterrupts(TRUE);
+	}
+	
+	/*Release mutex on backing store*/
+	SYSCALL(VERHOGEN, (int)&mutexArray[DISK0], 0, 0);
+
+}

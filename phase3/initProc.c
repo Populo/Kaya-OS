@@ -65,20 +65,20 @@ void test()
         kuSeg3.pteTable[i].entryHI = ((0xC0000 + i) << SHIFT_VPN);
         kuSeg3.pteTable[i].entryLO = ALLOFF | DIRTY | GLOBAL;
     }
-
+    debugA(4);
     for(i = 0; i < SWAPSIZE; i++)
     {
         swapPool[i].sw_asid = -1;
         swapPool[i].sw_pte = NULL;
     }
-
+    debugA(5);
     swap = 1;
 
     for(i = 0; i < TOTALSEM; i++)
     {
         mutexArray[i] = 1;
     }
-
+    debugA(6);
     masterSem = 0;
 
     for(i = 0; i < MAXUSERPROC + 1; i++)

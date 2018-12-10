@@ -68,7 +68,7 @@ void test()
 
     swap = 1;
 
-    for(i = 0; i < MAXPROC; i++)
+    for(i = 0; i < TOTALSEM; i++)
     {
         mutexArray[i] = 1;
     }
@@ -79,7 +79,7 @@ void test()
     {
         uProcs[i-1] -> uProc_pte.header = (PTEMAGICNO << 24) | 32;
 
-        for(j = 0; j < 24; j++)
+        for(j = 0; j < KUSEGSIZE; j++)
         {
             uProcs[i-1] -> uProc_pte.pteTable[j].entryHI = ((0x80000 + j) << SHIFT_VPN) | (i << SHIFT_ASID);
             uProcs[i-1] -> uProc_pte.pteTable[j].entryLO = ALLOFF | DIRTY;
@@ -100,7 +100,7 @@ void test()
 
         uProcs[i-1] -> uProc_semAdd = 0;
 
-        SYSCALL(CREATE_PROCESS, procState, 0, 0);
+        SYSCALL(CREATE_PROCESS, (int)&procState, 0, 0);
     }
 
     initADL();
@@ -111,7 +111,7 @@ void test()
     delayState -> s_pc = delayState -> s_t9 = (memaddr) delayDaemon();
     delayState -> s_status = ALLOFF | IEON | IMON | LTON;
 
-    SYSCALL(CREATE_PROCESS, delayState, 0, 0);
+    SYSCALL(CREATE_PROCESS, (int)&delayState, 0, 0);
 
     for(i = 0; i < MAXUSERPROC; i++)
     {

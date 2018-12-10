@@ -105,10 +105,10 @@ void test()
         procState -> s_status = ALLOFF | IEON | IMON | LTON;
 
         uProcs[i-1] -> uProc_semAdd = 0;
+        debugA(3);
 
         SYSCALL(CREATE_PROCESS, (int)&procState, 0, 0);
     }
-    debugA(3);
     initADL();
     initAVSL();
 

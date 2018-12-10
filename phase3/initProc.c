@@ -51,14 +51,14 @@ void test()
     segTbl_t* segTable;
 
     kuSegOS.header = (PTEMAGICNO << 24) | KSEGSIZE;
-    debugA(3);
+    
     for(i = 0; i < KSEGSIZE; i++)
     {
         kuSegOS.pteTable[i].entryHI = ((0x20000 + i) << SHIFT_VPN);
         kuSegOS.pteTable[i].entryLO = ((0x20000 + i) << SHIFT_VPN) | DIRTY | GLOBAL | VALID;
 
     }
-
+    debugA(3);
     kuSeg3.header = (PTEMAGICNO << 24) | 32;
     for(i = 0; i < 32; i++)
     {

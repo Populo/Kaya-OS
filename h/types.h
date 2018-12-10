@@ -63,7 +63,7 @@ typedef struct pteEntry_t {
 
 typedef struct pte_t{
 	int				header;
-	pteEntry_t		pteTable[KSEGSIZE];
+	pteEntry_t		pteTable[KUSEGSIZE];
 } pte_t;
 
 typedef struct pteOS_t{

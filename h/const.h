@@ -260,6 +260,7 @@
 #define SHIFT_DIRTY                         10
 #define SHIFT_NOCACHE                       11
 #define SHIFT_PFN                           12
+#define SHIFT_MAGIC                         24
 
 
 

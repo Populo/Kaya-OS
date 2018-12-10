@@ -51,7 +51,7 @@ void test()
     segTbl_t* segTable;
 
     kuSegOS.header = (PTEMAGICNO << 24) | KSEGSIZE;
-
+    debugA(3);
     for(i = 0; i < KSEGSIZE; i++)
     {
         kuSegOS.pteTable[i].entryHI = ((0x20000 + i) << SHIFT_VPN);
@@ -105,7 +105,7 @@ void test()
         procState -> s_status = ALLOFF | IEON | IMON | LTON;
 
         uProcs[i-1] -> uProc_semAdd = 0;
-        debugA(3);
+        
 
         SYSCALL(CREATE_PROCESS, (int)&procState, 0, 0);
     }

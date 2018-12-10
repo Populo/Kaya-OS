@@ -78,7 +78,7 @@
 
 /* IO Device Commands */
 #define DISK_SEEKCYL    2
-#define READBLK         3
+#define DISK_READBLK    3
 #define DISK_WRITEBLK   4
 #define TAPE_SKIPBLK    2
 #define TAPE_BACKBLK    4
@@ -231,6 +231,7 @@
 
 #define uProcStart                          0x800000B0
 
+#define INTCAUSEMASK                        0x7C
 
 #define KSEGSIZE                            64
 #define KUSEGSIZE                           32
@@ -268,8 +269,13 @@
 #define DIRTY		                        (1 << SHIFT_DIRTY)
 #define NOCACHE                             (1 << SHIFT_NOCACHE)
 
+#define nGLOBAL                             (0 << SHIFT_GLOBAL)
+#define nVALID		                        (0 << SHIFT_VALID)
+#define nDIRTY		                        (0 << SHIFT_DIRTY)
+#define nNOCACHE                            (0 << SHIFT_NOCACHE)
 
-#define READTERMINAL                        1
+
+/*#define READTERMINAL                        1*/
 #define PRINTDEV                            24
 #define PRINTCHAR                           2
 

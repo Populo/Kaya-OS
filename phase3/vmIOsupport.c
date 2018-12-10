@@ -10,25 +10,22 @@
 
 HIDDEN int spinTheBottle();
 
-extern uProc_PTR uProcs[8];
-extern int swap;
-extern int mutexArray[MAXPROC];
-extern int sem;
-extern swap_t swapPool[SWAPSIZE];
 
 /* syscalls */
 /* ?? */
-extern void readWriteBacking(int cylinder, int sector, int head, int readWriteComm, memaddr address);
+HIDDEN void readWriteBacking(int cylinder, int sector, int head, int readWriteComm, memaddr address);
 /* sys 2 but virtual */
-extern void meIRL(int procID);
+HIDDEN void meIRL(int procID);
 /* write to terminal */
-extern void writeTerminal(char* virtAddr, int len, int procID);
+HIDDEN void writeTerminal(char* virtAddr, int len, int procID);
 /* read from terminal */
-extern void readTerminal(char* addr, int procID);
+HIDDEN void readTerminal(char* addr, int procID);
 /* print stuff */
-extern void writePrinter(char* virtAddr, int len, int procID);
+HIDDEN void writePrinter(char* virtAddr, int len, int procID);
 /* read/write to disk */
-extern void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int procID);
+HIDDEN void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int procID);
+
+extern putALoadInMeDaddy(state_PTR state);
 
 void vmPrgmHandler() {
     int asid = getCurrentASID();
@@ -37,6 +34,84 @@ void vmPrgmHandler() {
     meIRL(asid);
 }
 
+void vmMemHandler() {
+    int missingSegment,
+        missingPage,
+        newFrame,
+        currentPage,
+        currentASID,
+        missingASID;
+    
+    devregarea_t *device = (devregarea_t *)RAMBASEADDR;
+    memaddr RAMTOP = device -> rambase + device -> ramsize;
+    memaddr SWAPPOOL = RAMTOP - (2 * PAGESIZE) - (SWAPSIZE * PAGESIZE);
+
+    missingASID = getCurrentASID();
+
+    state_PTR oldState = (state_PTR) &(uProcs[missingASID-1] -> uProc_states[TLBTRAP][OLD]);
+
+    int cause = (oldState -> s_cause & INTCAUSEMASK) >> 2;
+
+    if ((cause != TLBL) && (cause != TLBS)) {
+        meIRL(missingASID);
+    }
+
+    missingSegment = oldState -> s_entryHI >> SHIFT_SEG;
+    missingPage = oldState -> s_entryHI >> SHIFT_PFN;
+
+    if (missingPage >= KUSEGSIZE) {
+        missingPage = KUSEGSIZE - 1;
+    }
+
+    SYSCALL(PASSEREN,
+            (int)&swapSem,
+            0,0);
+
+    newFrame = spinTheBottle();
+
+    memaddr swapAddress = SWAPPOOL + (newFrame * PAGESIZE);
+
+    swap_t *swapFrame = &swapPool[newFrame];
+
+    if (swapFrame -> sw_asid != -1) {
+        Interrupts(FALSE);
+
+        swapFrame -> sw_pte -> entryLO = swapFrame -> sw_pte -> entryLO & nVALID;
+
+        TLBCLR();
+        Interrupts(TRUE);
+
+        currentASID = swapFrame -> sw_asid;
+        currentPage = swapFrame -> sw_pgNum;
+
+        readWriteBacking(currentPage, currentASID, DISK0, DISK_WRITEBLK, swapAddress);
+    }
+
+    readWriteBacking(missingPage, missingASID, DISK0, DISK_READBLK, swapAddress);
+
+    Interrupts(FALSE);
+
+    swapFrame -> sw_asid = missingASID;
+    swapFrame -> sw_segNum = missingSegment;
+    swapFrame -> sw_pgNum = missingPage;
+
+    if (missingSegment == SEG3) {
+        swapFrame -> sw_pte = &(kuSeg3.pteTable[missingPage]);
+        swapFrame -> sw_pte -> entryLO = swapAddress | VALID | DIRTY | GLOBAL;
+    } else {
+        swapFrame -> sw_pte = &(uProcs[missingASID - 1] -> uProc_pte.pteTable[missingPage]);
+        swapFrame -> sw_pte -> entryLO = swapAddress | VALID | DIRTY;
+    }
+
+    TLBCLR();
+    Interrupts(TRUE);
+
+    SYSCALL(VERHOGEN,
+            (int)&swapSem,
+            0, 0);
+
+    putALoadInMeDaddy(oldState);
+}
 
 void vmSysHandler()
 {
@@ -110,7 +185,7 @@ void vmSysHandler()
             diskIO((int *) old -> s_a1, old -> s_a2, old -> s_a3, DISK_WRITEBLK, ID);
             break;
         case DISK_GET:
-            diskIO((int *) old -> s_a1, old -> s_a2, old -> s_a3, READBLK, ID);
+            diskIO((int *) old -> s_a1, old -> s_a2, old -> s_a3, DISK_READBLK, ID);
             break;
         case WRITEPRINTER:
             writePrinter((char *) old -> s_a1, old -> s_a2, ID);
@@ -133,7 +208,7 @@ void meIRL(int ID)
     int index;
     int kill = FALSE;
 
-    SYSCALL(PASSEREN, (int)&swap, 0, 0);
+    SYSCALL(PASSEREN, (int)&swapSem, 0, 0);
 
     Interrupts(FALSE);
     for(index = 0; index < SWAPSIZE; index++)
@@ -150,8 +225,8 @@ void meIRL(int ID)
         TLBCLR();
     }
     Interrupts(TRUE);
-    SYSCALL(VERHOGEN, (int)&swap, 0, 0);
-    SYSCALL(VERHOGEN, (int)&sem, 0, 0);
+    SYSCALL(VERHOGEN, (int)&swapSem, 0, 0);
+    SYSCALL(VERHOGEN, (int)&masterSem, 0, 0);
 
     SYSCALL(TERMINATE_PROCESS, 0, 0, 0);
 }
@@ -185,7 +260,7 @@ void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int ID)
     sectNo = (sectNo / 8);
     cyl = sectNo;
 
-    if(readWrite != DISK_WRITEBLK || readWrite != READBLK)
+    if(readWrite != DISK_WRITEBLK || readWrite != DISK_READBLK)
     {
         PANIC();
     }
@@ -210,7 +285,7 @@ void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int ID)
         status = SYSCALL(WAITIO, DISKINT, diskNo, 0);
         Interrupts(TRUE);
     }
-    if(readWrite == READBLK)
+    if(readWrite == DISK_READBLK)
     {
         copy(diskbuff, blockAddr);
     }
@@ -356,3 +431,44 @@ HIDDEN int spinTheBottle()
     return (int) seed % SWAPSIZE;
 }
 
+void readWriteBacking(int cylinder, int sector, int head, 
+									int isRead, memaddr address){
+	
+	/*Local Variable Declarations*/
+	unsigned int diskStatus;
+	devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
+	device_t* diskDevice = &(devReg->devreg[DISK0]);
+	
+	/*Error case*/
+	if(isRead != DISK_WRITEBLK && isRead != DISK_READBLK){
+		PANIC();
+	}
+	
+	/*Gain mutex on backing store*/
+	SYSCALL(PASSEREN, (int)&mutexArray[DISK0], 0, 0);
+	
+	/*Perform atomic operation and seek to correct cylinder*/
+	Interrupts(FALSE);
+	
+	diskDevice->d_command = (cylinder << SHIFT_SEEK) | DISK_SEEKCYL;
+	diskStatus = SYSCALL(WAITIO, DISKINT, DISK0, 0);
+	Interrupts(TRUE);
+			
+	/*If the device finished seeking...*/
+	if(diskStatus == READY){
+		
+		Interrupts(FALSE);
+		/*Initialize where to read from and set command to write*/
+		diskDevice->d_data0 = address;
+		diskDevice->d_command = (head << SHIFT_HEAD) | 
+							((sector-1) << SHIFT_SECTOR) | isRead;
+														   
+		/*Wait for disk write I/O*/
+		diskStatus = SYSCALL(WAITIO, DISKINT, DISK0, 0);
+		Interrupts(TRUE);
+	}
+	
+	/*Release mutex on backing store*/
+	SYSCALL(VERHOGEN, (int)&mutexArray[DISK0], 0, 0);
+
+}

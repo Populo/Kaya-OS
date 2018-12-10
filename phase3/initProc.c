@@ -169,6 +169,7 @@ void uProcInit()
         }
         
         new -> s_pc = new -> s_t9 = newLocation;
+        new -> s_sp = stackPointer;
 
         SYSCALL(SESV,                    /* syscall number (5) */
                 i,                              /* trap type */

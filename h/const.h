@@ -11,7 +11,8 @@
 #define PAGESIZE		4096	/* page size in bytes */
 #define WORDLEN			4		/* word size in bytes */
 #define PTEMAGICNO		0x2A
-#define SWAPSIZE        10      /* frames in swap */
+#define MAXUSERPROC     8
+#define SWAPSIZE        (2 * MAXUSERPROC)   /* frames in swap */
 #define UPROCSTCKSIZE   2 * PAGESIZE
 
 
@@ -285,7 +286,7 @@
 
 #define TERMREADSEM                         32
 
-#define MAXUSERPROC                         8
+
 
 #define SEGTBLWIDTH                         0x0000000C
 #define SEGTBLSTART                         0x20000500

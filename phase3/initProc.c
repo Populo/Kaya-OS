@@ -58,8 +58,8 @@ void test()
         kuSegOS.pteTable[i].entryLO = ((0x20000 + i) << SHIFT_VPN) | DIRTY | GLOBAL | VALID;
 
     }
-    kuSeg3.header = (PTEMAGICNO << SHIFT_MAGIC) | 32;
-    for(i = 0; i < 32; i++)
+    kuSeg3.header = (PTEMAGICNO << SHIFT_MAGIC) | KUSEGSIZE;
+    for(i = 0; i < KUSEGSIZE; i++)
     {
         kuSeg3.pteTable[i].entryHI = ((0xC0000 + i) << SHIFT_VPN);
         kuSeg3.pteTable[i].entryLO = ALLOFF | DIRTY | GLOBAL;
@@ -80,7 +80,7 @@ void test()
     for(i = 1; i < MAXUSERPROC + 1; i++)
     {
         debugA(6);
-        uProcs[i-1] -> uProc_pte.header = (PTEMAGICNO << SHIFT_MAGIC) | 32;
+        uProcs[i-1] -> uProc_pte.header = (PTEMAGICNO << SHIFT_MAGIC) | KUSEGSIZE;
         debugA(7);
         for(j = 0; j < KUSEGSIZE; j++)
         {

@@ -14,8 +14,6 @@
 
 #include "/usr/local/include/umps2/umps/libumps.e"
 
-#include "../phase2/p2test.c"
-
 /* Globals */ 
 
 pteOS_t kuSegOS;
@@ -36,6 +34,12 @@ int getCurrentASID() {
 
 HIDDEN int setASID(int asid) {
     return SET_ASID | (asid << SHIFT_ASID);
+}
+
+void debugA(int i)
+{
+    int a;
+    i = a;
 }
 
 void test()
@@ -104,7 +108,7 @@ void test()
 
         SYSCALL(CREATE_PROCESS, (int)&procState, 0, 0);
     }
-    print("h");
+    debugA(3);
     initADL();
     initAVSL();
 

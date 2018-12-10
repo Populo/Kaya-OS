@@ -77,7 +77,7 @@ void test()
     }
     masterSem = 0;
     debugA(6);
-    for(i = 0; i < MAXUSERPROC + 1; i++)
+    for(i = 1; i < MAXUSERPROC + 1; i++)
     {
         debugA(6);
         uProcs[i-1] -> uProc_pte.header = (PTEMAGICNO << 24) | 32;

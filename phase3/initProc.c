@@ -14,6 +14,8 @@
 
 #include "/usr/local/include/umps2/umps/libumps.e"
 
+#include "../phase2/p2test.c"
+
 /* Globals */ 
 
 pteOS_t kuSegOS;
@@ -102,7 +104,7 @@ void test()
 
         SYSCALL(CREATE_PROCESS, (int)&procState, 0, 0);
     }
-
+    print("h");
     initADL();
     initAVSL();
 

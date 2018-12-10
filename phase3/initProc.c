@@ -76,9 +76,10 @@ void test()
         mutexArray[i] = 1;
     }
     masterSem = 0;
-
+    debugA(6);
     for(i = 0; i < MAXUSERPROC + 1; i++)
     {
+        debugA(6)
         uProcs[i-1] -> uProc_pte.header = (PTEMAGICNO << 24) | 32;
         debugA(7);
         for(j = 0; j < KUSEGSIZE; j++)
@@ -95,14 +96,14 @@ void test()
         segTable -> ksegOS = &kuSegOS;
         segTable -> kuseg2 = &(uProcs[i-1] -> uProc_pte);
         segTable -> kuseg3 = &kuSeg3;
-
+        debugA(9);
         procState -> s_entryHI = (i << SHIFT_ASID);
         procState -> s_sp = EXECTOP - ((i - 1) * UPROCSTCKSIZE);
         procState -> s_pc = procState -> s_t9 = (memaddr) uProcInit();
         procState -> s_status = ALLOFF | IEON | IMON | LTON;
-
+        debugA(10);
         uProcs[i-1] -> uProc_semAdd = 0;
-        
+        debugA(11);
 
         SYSCALL(CREATE_PROCESS, (int)&procState, 0, 0);
     }

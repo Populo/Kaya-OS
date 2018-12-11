@@ -26,7 +26,7 @@ HIDDEN void writePrinter(char* virtAddr, int len, int procID);
 HIDDEN void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int procID);
 
 
-extern putALoadInMeDaddy(state_PTR state);
+extern void putALoadInMeDaddy(state_PTR state);
 
 void vmPrgmHandler() {
     int asid = getCurrentASID();
@@ -73,9 +73,7 @@ void vmMemHandler() {
         missingPage = KUSEGSIZE - 1;
     }
 
-    SYSCALL(PASSEREN,
-            (int)&swap,
-            0,0);
+    SYSCALL(PASSEREN, (int)&swap, 0, 0);
 
     newFrame = spinTheBottle();
 
@@ -85,7 +83,7 @@ void vmMemHandler() {
     if (swapPool[newFrame].sw_asid != -1) {
         Interrupts(FALSE);
 
-        swapPool[newFrame].sw_pte -> entryLO = swapPool[newFrame].sw_pte -> entryLO & nVALID;
+        swapPool[newFrame].sw_pte -> entryLO = swapPool[newFrame].sw_pte -> entryLO & ~VALID;
 
         TLBCLR();
         Interrupts(TRUE);
@@ -115,9 +113,7 @@ void vmMemHandler() {
     TLBCLR();
     Interrupts(TRUE);
 
-    SYSCALL(VERHOGEN,
-            (int)&swap,
-            0, 0);
+    SYSCALL(VERHOGEN, (int)&swap, 0, 0);
 
     putALoadInMeDaddy(oldState);
 }
@@ -158,7 +154,7 @@ void vmSysHandler()
                     meIRL(ID);
                 }
 
-                SYSCALL(VERHOGEN, &(uProcs[ID-1].uProc_semAdd), 0, 0);
+                SYSCALL(VERHOGEN, &(uProcs[theGivingID-1].uProc_semAdd), 0, 0);
             }
             break;
         case PSEMVIRT:
@@ -173,15 +169,11 @@ void vmSysHandler()
             }
             break;
         case DELAY:
-            delay = old->s_a1;
+            delay = old->s_a1 * 1000000;
             
             if(delay < 0)
             {
                 meIRL(ID); /* can't delay negative time */
-            }
-            else if(delay == 0)
-            {
-                break;    /*Need to ask, but this seems like it would be a waste of fucking time */
             }
 
             vInsertBlocked(&(uProcs[ID-1].uProc_semAdd), ID);
@@ -189,7 +181,7 @@ void vmSysHandler()
             delay = STCK(current) + delay;
             insertDelay(delay, ID);
 
-            SYSCALL(PASSEREN, &(uProcs[ID-1].uProc_semAdd), 0, 0);
+            SYSCALL(PASSEREN,(int) &(uProcs[ID-1].uProc_semAdd), 0, 0);
             break;
         case DISK_PUT:
             diskIO((int *) old->s_a1, old->s_a2, old->s_a3, DISK_WRITEBLK, ID);
@@ -266,7 +258,7 @@ void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int ID)
 
     head = sectNo % 2;
     sectNo = (sectNo / 2);
-    sec = sectNo % 2;
+    sec = sectNo % 8;
     sectNo = (sectNo / 8);
     cyl = sectNo;
 
@@ -424,7 +416,8 @@ HIDDEN int spinTheBottle()
 }
 
 void readWriteBacking(int cylinder, int sector, int head, 
-									int isRead, memaddr address){
+									int isRead, memaddr address)
+{
 	
 	/*Local Variable Declarations*/
 	unsigned int diskStatus;

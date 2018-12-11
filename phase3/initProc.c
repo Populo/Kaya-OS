@@ -165,7 +165,7 @@ void uProcInit()
         new.s_pc = new.s_t9 = newLocation;
         new.s_sp = stackPointer;
 
-        SYSCALL(SESV, i, (int)uProc.uProc_states[i][OLD], (int)new);
+        SYSCALL(SESV, i, (int)uProc.uProc_states[i][OLD], &new);
     }
     /* read contents of tape device onto disk0 */
 

@@ -25,6 +25,7 @@ HIDDEN void writePrinter(char* virtAddr, int len, int procID);
 /* read/write to disk */
 HIDDEN void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int procID);
 
+
 extern putALoadInMeDaddy(state_PTR state);
 
 void vmPrgmHandler() {
@@ -33,6 +34,8 @@ void vmPrgmHandler() {
     /* end it all */
     meIRL(asid);
 }
+
+
 
 void vmMemHandler() {
     int missingSegment,
@@ -48,7 +51,7 @@ void vmMemHandler() {
 
     missingASID = getCurrentASID();
 
-    state_PTR oldState = (state_PTR) &(uProcs[missingASID-1] -> uProc_states[TLBTRAP][OLD]);
+    state_PTR oldState = (state_PTR) &(uProcs[missingASID-1].uProc_states[TLBTRAP][OLD]);
 
     int cause = (oldState -> s_cause & INTCAUSEMASK) >> 2;
 
@@ -99,7 +102,7 @@ void vmMemHandler() {
         swapFrame -> sw_pte = &(kuSeg3.pteTable[missingPage]);
         swapFrame -> sw_pte -> entryLO = swapAddress | VALID | DIRTY | GLOBAL;
     } else {
-        swapFrame -> sw_pte = &(uProcs[missingASID - 1] -> uProc_pte.pteTable[missingPage]);
+        swapFrame -> sw_pte = &(uProcs[missingASID - 1].uProc_pte.pteTable[missingPage]);
         swapFrame -> sw_pte -> entryLO = swapAddress | VALID | DIRTY;
     }
 
@@ -123,7 +126,7 @@ void vmSysHandler()
     int ID = getCurrentASID();
     int *semAdd;
 
-    old = (state_PTR) &(uProcs[ID-1] -> uProc_states[SYSTRAP][OLD]);
+    old = (state_PTR) &(uProcs[ID-1].uProc_states[SYSTRAP][OLD]);
 
     callNumber = old -> s_a0;
 
@@ -148,7 +151,7 @@ void vmSysHandler()
                     meIRL(ID);
                 }
 
-                SYSCALL(VERHOGEN, &(uProcs[ID-1] -> uProc_semAdd), 0, 0);
+                SYSCALL(VERHOGEN, &(uProcs[ID-1].uProc_semAdd), 0, 0);
             }
             break;
         case PSEMVIRT:
@@ -159,7 +162,7 @@ void vmSysHandler()
             if(*semAdd < 0)
             {
                 vInsertBlocked(semAdd, ID);
-                SYSCALL(PASSEREN, (int) &(uProcs[ID-1] -> uProc_semAdd), 0, 0);
+                SYSCALL(PASSEREN, (int) &(uProcs[ID-1].uProc_semAdd), 0, 0);
             }
             break;
         case DELAY:
@@ -174,12 +177,12 @@ void vmSysHandler()
                 break;    /*Need to ask, but this seems like it would be a waste of fucking time */
             }
 
-            vInsertBlocked(&(uProcs[ID-1] -> uProc_semAdd), ID);
+            vInsertBlocked(&(uProcs[ID-1].uProc_semAdd), ID);
 
             delay = STCK(current) + delay;
             insertDelay(delay, ID);
 
-            SYSCALL(PASSEREN, &(uProcs[ID-1] -> uProc_semAdd), 0, 0);
+            SYSCALL(PASSEREN, &(uProcs[ID-1].uProc_semAdd), 0, 0);
             break;
         case DISK_PUT:
             diskIO((int *) old -> s_a1, old -> s_a2, old -> s_a3, DISK_WRITEBLK, ID);
@@ -244,7 +247,7 @@ void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int ID)
     device_t* disk;
 
     diskbuff = (int *)(OSCODEEND + (diskNo * PAGESIZE));
-    old = (state_PTR) &(uProcs[ID-1] -> uProc_states[SYSTRAP][OLD]);
+    old = (state_PTR) &(uProcs[ID-1].uProc_states[SYSTRAP][OLD]);
     devReg = (devregarea_t *) RAMBASEADDR;
     disk = &(devReg -> devreg[diskNo]);
 
@@ -341,7 +344,7 @@ void readTerminal(char* addr, int ID)
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
     device_t* terminal;
 
-    old = (state_PTR) &uProcs[ID-1] -> uProc_states[SYSTRAP][OLD];
+    old = (state_PTR) &uProcs[ID-1].uProc_states[SYSTRAP][OLD];
     terminal = &(devReg -> devreg[devNum]);
 
     SYSCALL(PASSEREN, (int)&mutexArray[TERMREADSEM + (ID -1)], READTERM, 0);
@@ -387,7 +390,7 @@ void writeTerminal(char* virtAddr, int len, int ID)
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
     device_t* terminal;
 
-    old = (state_PTR) &uProcs[ID-1] -> uProc_states[SYSTRAP][OLD];
+    old = (state_PTR) &uProcs[ID-1].uProc_states[SYSTRAP][OLD];
     terminal = &(devReg -> devreg[devNum]);
 
     SYSCALL(PASSEREN, (int)&mutexArray[KUSEGSIZE + (ID -1)], WRITETERM, 0);

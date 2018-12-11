@@ -1,8 +1,8 @@
 #ifndef INITPROC
 #define INITPROC
 
-uProc_PTR uProcs[8];
-int swapSem;
+uProc_t uProcs[MAXUSERPROC];
+int swap;
 int mutexArray[MAXPROC];
 int masterSem;
 swap_t swapPool[SWAPSIZE]; 

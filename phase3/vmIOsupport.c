@@ -133,18 +133,18 @@ void vmSysHandler()
 
     old = (state_t) &(uProcs[ID-1].uProc_states[SYSTRAP][OLD]);
 
-    callNumber = old -> s_a0;
+    callNumber = old.s_a0;
 
     switch(callNumber)
     {
         case READTERMINAL:
-            readTerminal((char *) old -> s_a1, ID);
+            readTerminal((char *) old.s_a1, ID);
             break;
         case WRITETERMINAL:
-            writeTerminal((char *) old -> s_a1, old -> s_a2, ID);
+            writeTerminal((char *) old.s_a1, old.s_a2, ID);
             break;
         case VSEMVIRT:
-            semAdd = (int *) old -> s_a1;
+            semAdd = (int *) old.s_a1;
             (*semAdd)++;
 
             if(*semAdd <= 0)
@@ -160,7 +160,7 @@ void vmSysHandler()
             }
             break;
         case PSEMVIRT:
-            semAdd = (int *) old -> s_a1;
+            semAdd = (int *) old.s_a1;
 
             (*semAdd)--;
 
@@ -171,7 +171,7 @@ void vmSysHandler()
             }
             break;
         case DELAY:
-            delay = old -> s_a1;
+            delay = old.s_a1;
             
             if(delay < 0)
             {
@@ -190,17 +190,17 @@ void vmSysHandler()
             SYSCALL(PASSEREN, &(uProcs[ID-1].uProc_semAdd), 0, 0);
             break;
         case DISK_PUT:
-            diskIO((int *) old -> s_a1, old -> s_a2, old -> s_a3, DISK_WRITEBLK, ID);
+            diskIO((int *) old.s_a1, old.s_a2, old.s_a3, DISK_WRITEBLK, ID);
             break;
         case DISK_GET:
-            diskIO((int *) old -> s_a1, old -> s_a2, old -> s_a3, DISK_READBLK, ID);
+            diskIO((int *) old.s_a1, old.s_a2, old.s_a3, DISK_READBLK, ID);
             break;
         case WRITEPRINTER:
-            writePrinter((char *) old -> s_a1, old -> s_a2, ID);
+            writePrinter((char *) old.s_a1, old.s_a2, ID);
             break;
         case GET_TOD:
             STCK(current);
-            old -> s_v0 = current;
+            old.s_v0 = current;
             break;
         case TERMINATE:
             meIRL(ID);
@@ -247,7 +247,7 @@ void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int ID)
     int cyl;
     unsigned int status;
     int* diskbuff;
-    state_PTR old;
+    state_t old;
     devregarea_t* devReg;
     device_t* disk;
 
@@ -298,7 +298,7 @@ void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int ID)
         copy(diskbuff, blockAddr);
     }
     
-    old -> s_v0 = status;
+    old.s_v0 = status;
 
     SYSCALL(VERHOGEN, (int)&mutexArray[diskNo], 0, 0);
 }
@@ -380,7 +380,7 @@ void readTerminal(char* addr, int ID)
         addr++;
     }
     
-    old -> s_v0 = i;
+    old.s_v0 = i;
 
     SYSCALL(VERHOGEN, (int)&mutexArray[TERMREADSEM + (ID -1)], 0, 0);
 
@@ -427,7 +427,7 @@ void writeTerminal(char* virtAddr, int len, int ID)
         *virtAddr++;
     }
     debugA(5);
-    old -> s_v0 = i;
+    old.s_v0 = i;
 
     SYSCALL(VERHOGEN, (int)&mutexArray[TERMREADSEM + (ID -1)], 0, 0);
 }

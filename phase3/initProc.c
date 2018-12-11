@@ -21,7 +21,7 @@ pte_t kuSeg3;
 swap_t swapPool[SWAPSIZE];
 
 int swap;
-int mutexArray[MAXPROC];
+int mutexArray[TOTALSEM];
 int masterSem;
 uProc_t uProcs[MAXUSERPROC];
 

@@ -408,7 +408,7 @@ void writeTerminal(char* virtAddr, int len, int ID)
         i++;
     }
 
-    old -> s_v0 = count;
+    old -> s_v0 = i;
 
     SYSCALL(VERHOGEN, (int)&mutexArray[TERMSEMSTART + (ID -1)], 0, 0);
 }

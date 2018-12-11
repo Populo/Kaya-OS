@@ -257,6 +257,7 @@ void uProcInit()
     new2.s_status = ALLOFF | IMON | IEON | VMON | KUON | LTON; /* interrupts on, vm on, user mode */
     new2.s_pc = new2.s_t9 = 0x800000B0; 
     /* load this new state */
+    debugA(100);
     putALoadInMeDaddy(&new2);
 }
 

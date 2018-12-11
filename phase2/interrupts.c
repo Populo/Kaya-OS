@@ -180,7 +180,7 @@ void ioTrapHandler()
             temp -> pcb_semAdd = NULL;
             /* return status from earlier */
             temp -> pcb_state.s_v0 = status;
-            debug(7);
+            debugC(7);
             softBlockCount--;
             /* insert to ready queue */
             insertProcQ(&(readyQueue), temp);

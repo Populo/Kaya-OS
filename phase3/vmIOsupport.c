@@ -343,7 +343,8 @@ void readTerminal(char* addr, int ID)
     state_PTR old;
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
     device_t* terminal;
-
+    
+    devNum = ID;
     old = (state_PTR) &uProcs[ID-1].uProc_states[SYSTRAP][OLD];
     terminal = &(devReg -> devreg[devNum]);
 

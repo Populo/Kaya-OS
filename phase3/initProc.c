@@ -132,7 +132,7 @@ void uProcInit()
     int asid = getCurrentASID(),
         i,
         /* tape device number */
-        deviceNumber = ((TAPEINT - DEVNOSEM) * DEVPERINT) + (asid + 1),
+        deviceNumber = ((TAPEINT - DEVNOSEM) * DEVPERINT) + (asid - 1),
         finished = FALSE;
 
     devregarea_t *device = (devregarea_t *) RAMBASEADDR;
@@ -251,7 +251,7 @@ void uProcInit()
 
         /* release mutual exclusion on disk */
         SYSCALL(VERHOGEN,               /* syscall number (3) */
-                &mutexArray[DISK0], 0, 0);    /* semaphore */
+                (int)&mutexArray[DISK0], 0, 0);    /* semaphore */
 
         /* if !EOT & !EOF */
         if (tape -> d_data1 != TAPE_EOB) {

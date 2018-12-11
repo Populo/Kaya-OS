@@ -273,7 +273,7 @@ void uProcInit()
     new -> s_sp = (memaddr) SEG3; /* last page of KUseg2 */
     new -> s_status = ALLOFF | IMON | IEON | VMON; /* interrupts on, vm on, user mode */
     new -> s_pc = (memaddr) 0; /* TODO - well known address from start of KUseg2? */
-
+    debugA(100);
     /* load this new state */
     putALoadInMeDaddy(new);
 }

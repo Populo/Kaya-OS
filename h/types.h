@@ -156,7 +156,7 @@ typedef struct avsl_t
 
 typedef struct uProc_t
 {
-	state_t		uProc_states[SECTIONS][OLDNEW]; /* 2D array of states for SYS5 */
+	state_t			uProc_states[SECTIONS][OLDNEW]; /* 2D array of states for SYS5 */
 	int				uProc_semAdd;		/* private semaphore */
 	pte_t			uProc_pte;		/* page table (kUseg2) */
 	int				uProc_backStoreAdd;	/* sector # for seg2 drum area */

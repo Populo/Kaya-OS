@@ -415,11 +415,9 @@ void writeTerminal(char* virtAddr, int len, int ID)
 
 HIDDEN int spinTheBottle() 
 {
-    cpu_t seed;
-
-    STCK(seed);
-
-    return (int) seed % SWAPSIZE;
+    static int next;
+    next = (next + 1) % SWAPSIZE;
+    return (next);
 }
 
 void readWriteBacking(int cylinder, int sector, int head, 

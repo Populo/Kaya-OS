@@ -291,5 +291,7 @@
 #define SEGTBLWIDTH                         0x0000000C
 #define SEGTBLSTART                         0x20000500
 
+#define TERM0DEV                            32
+
 
 #endif

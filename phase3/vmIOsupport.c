@@ -344,7 +344,7 @@ void readTerminal(char* addr, int ID)
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
     device_t* terminal;
     
-    devNum = ID;
+    devNum = TERM0DEV + (ID - 1);
     old = (state_PTR) &uProcs[ID-1].uProc_states[SYSTRAP][OLD];
     terminal = &(devReg -> devreg[devNum]);
 
@@ -385,7 +385,7 @@ void writeTerminal(char* virtAddr, int len, int ID)
 {
     unsigned int status;
     int i = 0;
-    int devNum;
+    int devNum = TERM0DEV + (ID - 1);
     int bootyCall = FALSE;
     state_PTR old;
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;

@@ -105,23 +105,17 @@ void test()
 
         SYSCALL(CREATE_PROCESS, (int)&procState, 0, 0);
     }
-    debugA(1);
     initADL();
-    debugA(2);
     initAVSL();
-    debugA(3);
     delayState.s_entryHI = MAXUSERPROC + 2;
     delayState.s_sp = EXECTOP - (MAXUSERPROC * UPROCSTCKSIZE);
     delayState.s_pc = delayState.s_t9 = (memaddr) delayDaemon;
     delayState.s_status = ALLOFF | IEON | IMON | LTON;
-    debugA(5);
     SYSCALL(CREATE_PROCESS, (int)&delayState, 0, 0);
-    debugA(6);
     for(i = 0; i < MAXUSERPROC; i++)
     {
         SYSCALL(PASSEREN, (int)&masterSem, 0, 0);
     }
-    debugA(7);
     SYSCALL(TERMINATE_PROCESS, 0, 0, 0);
 }
 
@@ -143,17 +137,14 @@ void uProcInit()
     uProc_t uProc = uProcs[asid-1];
     
     state_t new;
-    debugA(99);
     /* location is the only difference between these states */
     new.s_status = ALLOFF | IMON | IEON | LTON | VMON | KUON;
     new.s_entryHI = (asid << SHIFT_ASID);
-    debugA(asid);
     /* stack locations */
     PROGTOP = SYSTOP = EXECTOP - ((asid - 1) * UPROCSTCKSIZE);
     TLBTOP = PROGTOP - PAGESIZE;
 
     /* sys 5 the process */
-    debugA(52);
     for (i = 0; i < TRAPTYPES; ++i) 
     {
         switch (i)
@@ -180,7 +171,6 @@ void uProcInit()
                 uProc.uProc_states[i][OLD],  /* old state */
                 &new);                         /* new state */
     }
-    debugA(51);
     /* read contents of tape device onto disk0 */
 
     /* gain mutual exclusion on tape */
@@ -260,7 +250,6 @@ void uProcInit()
 
         currentBlock++;
     }
-    debugA(50);
     /* release mutual exclusion on tape device */
     SYSCALL(VERHOGEN,                   /* syscall number (3) */
             &mutexArray[deviceNumber], 0, 0); /* semaphore */
@@ -273,7 +262,6 @@ void uProcInit()
     new.s_sp = (memaddr) SEG3; /* last page of KUseg2 */
     new.s_status = ALLOFF | IMON | IEON | VMON; /* interrupts on, vm on, user mode */
     new.s_pc = new.s_t9 = (memaddr) 0x800000B0; /* TODO - well known address from start of KUseg2? */
-    debugA(100);
     /* load this new state */
     putALoadInMeDaddy(&new);
 }

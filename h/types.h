@@ -127,7 +127,7 @@ typedef struct pcb_t
 
 	cpu_t 			pcb_time; 		/* time the process has spent on the CPU in microseconds */
 
-	state_PTR		pcb_states[SECTIONS][OLDNEW]; /* 2D array for states */
+	state_t			pcb_states[SECTIONS][OLDNEW]; /* 2D array for states */
 
 } pcb_t, *pcb_PTR;
 

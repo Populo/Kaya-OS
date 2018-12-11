@@ -82,7 +82,7 @@ void test()
             uProcs[i-1].uProc_pte.pteTable[j].entryHI = ((0x80000 + j) << SHIFT_VPN) | (i << SHIFT_ASID);
             uProcs[i-1].uProc_pte.pteTable[j].entryLO = ALLOFF | DIRTY;  
         }
-        uProcs[i-1].uProc_pte.pteTable[KUSEGSIZE-1].entryHI = (0xBFFFF << SHIFT_VPN) | (i * SHIFT_ASID);
+        uProcs[i-1].uProc_pte.pteTable[KUSEGSIZE-1].entryHI = (0xBFFFF << SHIFT_VPN) | (i << SHIFT_ASID);
 
         segTable = (segTbl_t *) (SEGTBLSTART + (i * SEGTBLWIDTH));
 
@@ -99,12 +99,15 @@ void test()
 
         SYSCALL(CREATE_PROCESS, (int)&procState, 0, 0);
     }
+
     initADL();
     initAVSL();
+
     delayState.s_entryHI = MAXUSERPROC + 2;
     delayState.s_sp = EXECTOP - (MAXUSERPROC * UPROCSTCKSIZE);
     delayState.s_pc = delayState.s_t9 = (memaddr) delayDaemon;
     delayState.s_status = ALLOFF | IEON | IMON | LTON;
+
     SYSCALL(CREATE_PROCESS, (int)&delayState, 0, 0);
     for(i = 0; i < MAXUSERPROC; i++)
     {
@@ -132,7 +135,7 @@ void uProcInit()
     
     state_t new;
     /* location is the only difference between these states */
-    new.s_status = ALLOFF | IMON | IEON | LTON | VMON | KUON;
+    new.s_status = ALLOFF | IMON | IEON | LTON | VMON;
     new.s_entryHI = (asid << SHIFT_ASID);
     /* stack locations */
     PROGTOP = SYSTOP = EXECTOP - ((asid - 1) * UPROCSTCKSIZE);
@@ -144,15 +147,15 @@ void uProcInit()
         switch (i)
         {
             case SYSTRAP:
-                newLocation = (memaddr) sysCallHandler;
+                newLocation = (memaddr) vmSysHandler;
                 stackPointer = SYSTOP;
                 break;
             case TLBTRAP:
-                newLocation = (memaddr) tlbTrapHandler;
+                newLocation = (memaddr) vmMemHandler;
                 stackPointer = TLBTOP;
                 break;
             case PROGTRAP:
-                newLocation = (memaddr) pbgTrapHandler;
+                newLocation = (memaddr) vmPrgmHandler;
                 stackPointer = PROGTRAP;
                 break;
         }

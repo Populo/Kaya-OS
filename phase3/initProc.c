@@ -146,8 +146,8 @@ void uProcInit()
     debugA(99);
     /* location is the only difference between these states */
     new -> s_status = ALLOFF | IMON | IEON | LTON | VMON | KUON;
-    new -> s_entryHI = (new -> s_entryHI & setASID(asid));
-
+    new -> s_entryHI = (asid << SHIFT_ASID);
+    debugA(asid);
     /* stack locations */
     PROGTOP = SYSTOP = EXECTOP - ((asid - 1) * UPROCSTCKSIZE);
     TLBTOP = PROGTOP - PAGESIZE;

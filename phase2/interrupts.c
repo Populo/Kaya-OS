@@ -27,7 +27,7 @@ extern int sem[TOTALSEM];
 
 cpu_t TODStopped;
 
-debugC(int i)
+void debugC(int i)
 {
     int tmp;
     tmp = i;

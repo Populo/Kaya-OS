@@ -102,7 +102,9 @@ void test()
         debugA(9);
         procState -> s_entryHI = (i << SHIFT_ASID);
         procState -> s_sp = EXECTOP - ((i - 1) * UPROCSTCKSIZE);
-        procState -> s_pc = procState -> s_t9 = (memaddr) uProcInit();
+        debugA(12);
+        procState -> s_pc = procState -> s_t9 = (memaddr) uProcInit;
+        debugA(13);
         procState -> s_status = ALLOFF | IEON | IMON | LTON;
         debugA(10);
         uProcs[i-1].uProc_semAdd = 0;
@@ -115,7 +117,7 @@ void test()
 
     delayState -> s_entryHI = MAXUSERPROC + 2;
     delayState -> s_sp = EXECTOP - (MAXUSERPROC * UPROCSTCKSIZE);
-    delayState -> s_pc = delayState -> s_t9 = (memaddr) delayDaemon();
+    delayState -> s_pc = delayState -> s_t9 = (memaddr) delayDaemon;
     delayState -> s_status = ALLOFF | IEON | IMON | LTON;
 
     SYSCALL(CREATE_PROCESS, (int)&delayState, 0, 0);

@@ -79,7 +79,7 @@ void test()
     debugA(6);
     for(i = 1; i < MAXUSERPROC + 1; i++)
     {
-        debugA(6);
+        debugA(i);
         uProcs[i-1] -> uProc_pte.header = (PTEMAGICNO << SHIFT_MAGIC) | KUSEGSIZE;
         debugA(7);
         for(j = 0; j < KUSEGSIZE; j++)

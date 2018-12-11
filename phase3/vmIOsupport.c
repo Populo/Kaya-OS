@@ -120,7 +120,6 @@ void vmMemHandler() {
 
 void vmSysHandler()
 {
-    debugA(2);
     int callNumber;
     int theGivingID;
     state_PTR old;

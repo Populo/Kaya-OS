@@ -27,11 +27,6 @@ extern int sem[TOTALSEM];
 
 cpu_t TODStopped;
 
-void debugC(int i)
-{
-    int tmp;
-    tmp = i;
-}
 
 /* copy state method from exceptions */
 extern void copyState(state_PTR old, state_PTR new);
@@ -54,7 +49,6 @@ HIDDEN int getDeviceNumber(int lineNumber);
  *****************************************************************/
 void ioTrapHandler()
 {
-    debugC(1);
     cpu_t end;
     int deviceNum, interruptNum;
     device_t* devRegNum;
@@ -118,7 +112,6 @@ void ioTrapHandler()
     /* printer device */
     else if((old -> s_cause & LINESIX) == LINESIX)
     {
-        debugC(6);
         interruptNum = PRNTINT;
     }
     /* terminal device */
@@ -148,7 +141,6 @@ void ioTrapHandler()
         status = devRegNum -> d_status;
         /* acknowledgee interrupt */
         devRegNum -> d_command = ACK;
-        debugC(6);
     }
     else /* it is a terminal */ 
     {
@@ -180,8 +172,6 @@ void ioTrapHandler()
         {
             temp -> pcb_semAdd = NULL;
             /* return status from earlier */
-            temp -> pcb_state.s_v0 = status;
-            debugC(7);
             softBlockCount--;
             /* insert to ready queue */
             insertProcQ(&(readyQueue), temp);

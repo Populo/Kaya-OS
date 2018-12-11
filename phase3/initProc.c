@@ -153,7 +153,7 @@ void uProcInit()
     TLBTOP = PROGTOP - PAGESIZE;
 
     /* sys 5 the process */
-
+    debugA(52);
     for (i = 0; i < TRAPTYPES; ++i) 
     {
         switch (i)
@@ -180,7 +180,7 @@ void uProcInit()
                 uProc.uProc_states[i][OLD],  /* old state */
                 new);                         /* new state */
     }
-
+    debugA(51);
     /* read contents of tape device onto disk0 */
 
     /* gain mutual exclusion on tape */
@@ -260,7 +260,7 @@ void uProcInit()
 
         currentBlock++;
     }
-
+    debugA(50);
     /* release mutual exclusion on tape device */
     SYSCALL(VERHOGEN,                   /* syscall number (3) */
             &mutexArray[deviceNumber], 0, 0); /* semaphore */

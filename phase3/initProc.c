@@ -267,7 +267,7 @@ void uProcInit()
 
     /* new state to load */
 
-    STST(new);
+    STST(&new);
 
     new.s_entryHI = (asid << SHIFT_ASID);
     new.s_sp = (memaddr) SEG3; /* last page of KUseg2 */
@@ -275,7 +275,7 @@ void uProcInit()
     new.s_pc = new.s_t9 = (memaddr) 0x800000B0; /* TODO - well known address from start of KUseg2? */
     debugA(100);
     /* load this new state */
-    putALoadInMeDaddy(new);
+    putALoadInMeDaddy(&new);
 }
 
 

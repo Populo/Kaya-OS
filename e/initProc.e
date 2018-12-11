@@ -3,7 +3,7 @@
 
 uProc_t uProcs[MAXUSERPROC];
 int swap;
-int mutexArray[MAXPROC];
+int mutexArray[TOTALSEM];
 int masterSem;
 swap_t swapPool[SWAPSIZE]; 
 

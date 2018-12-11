@@ -400,7 +400,7 @@ void writeTerminal(char* virtAddr, int len, int ID)
     while(i < len)
     {
         Interrupts(FALSE);
-        terminal -> t_transm_command = TRANSCHAR | ((unsigned int *virtAddr) << SHIFT_CHAR);
+        terminal -> t_transm_command = TRANSCHAR | (((unsigned int) *virtAddr) << SHIFT_CHAR);
         status = SYSCALL(WAITIO, TERMINT, (ID -1), WRITETERM);
         Interrupts(TRUE);
 

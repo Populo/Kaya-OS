@@ -160,7 +160,7 @@ typedef struct uProc_t
 	int				uProc_semAdd;		/* private semaphore */
 	pte_t			uProc_pte;		/* page table (kUseg2) */
 	int				uProc_backStoreAdd;	/* sector # for seg2 drum area */
-} uProc_t, *uProc_PTR;
+} uProc_t;
 
 typedef struct swap_t
 {

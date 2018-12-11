@@ -23,7 +23,7 @@ swap_t swapPool[SWAPSIZE];
 int swap;
 int mutexArray[MAXPROC];
 int masterSem;
-uProc_PTR uProcs[MAXUSERPROC];
+uProc_t uProcs[MAXUSERPROC];
 
 
 /* INIT's KUSEGOS / 2 / 3 page tables. */
@@ -80,23 +80,21 @@ void test()
     for(i = 1; i < MAXUSERPROC + 1; i++)
     {
         debugA(i);
-        uProcs[i-1] -> uProc_pte.header;
-        debugA(2);
-        uProcs[i-1] -> uProc_pte.header = (PTEMAGICNO << SHIFT_MAGIC) | KUSEGSIZE;
+        uProcs[i-1].uProc_pte.header = (PTEMAGICNO << SHIFT_MAGIC) | KUSEGSIZE;
         debugA(7);
         for(j = 0; j < KUSEGSIZE; j++)
         {
             debugA(j);
-            uProcs[i-1] -> uProc_pte.pteTable[j].entryHI = ((0x80000 + j) << SHIFT_VPN) | (i << SHIFT_ASID);
-            uProcs[i-1] -> uProc_pte.pteTable[j].entryLO = ALLOFF | DIRTY;  
+            uProcs[i-1].uProc_pte.pteTable[j].entryHI = ((0x80000 + j) << SHIFT_VPN) | (i << SHIFT_ASID);
+            uProcs[i-1].uProc_pte.pteTable[j].entryLO = ALLOFF | DIRTY;  
         }
         debugA(8);
-        uProcs[i-1] -> uProc_pte.pteTable[KUSEGSIZE-1].entryHI = (0xBFFFF << SHIFT_VPN) | (i * SHIFT_ASID);
+        uProcs[i-1].uProc_pte.pteTable[KUSEGSIZE-1].entryHI = (0xBFFFF << SHIFT_VPN) | (i * SHIFT_ASID);
 
         segTable = (segTbl_t *) (SEGTBLSTART + (i * SEGTBLWIDTH));
 
         segTable -> ksegOS = &kuSegOS;
-        segTable -> kuseg2 = &(uProcs[i-1] -> uProc_pte);
+        segTable -> kuseg2 = &(uProcs[i-1].uProc_pte);
         segTable -> kuseg3 = &kuSeg3;
         debugA(9);
         procState -> s_entryHI = (i << SHIFT_ASID);
@@ -104,7 +102,7 @@ void test()
         procState -> s_pc = procState -> s_t9 = (memaddr) uProcInit();
         procState -> s_status = ALLOFF | IEON | IMON | LTON;
         debugA(10);
-        uProcs[i-1] -> uProc_semAdd = 0;
+        uProcs[i-1].uProc_semAdd = 0;
         debugA(11);
 
         SYSCALL(CREATE_PROCESS, (int)&procState, 0, 0);
@@ -142,7 +140,7 @@ void uProcInit()
     memaddr newLocation, stackPointer;
     memaddr TLBTOP, PROGTOP, SYSTOP;
 
-    uProc_PTR uProc = uProcs[asid-1];
+    uProc_t uProc = uProcs[asid-1];
     
     state_PTR new;
 
@@ -179,7 +177,7 @@ void uProcInit()
 
         SYSCALL(SESV,                    /* syscall number (5) */
                 i,                              /* trap type */
-                uProc -> uProc_states[i][OLD],  /* old state */
+                uProc.uProc_states[i][OLD],  /* old state */
                 new);                         /* new state */
     }
 

@@ -6,7 +6,7 @@
 
 HIDDEN adl_PTR delaydFree_h;
 HIDDEN adl_PTR activeDelayd_h;
-extern uProc_PTR uProcs[8];
+extern uProc_t uProcs[MAXUSERPROC];
 
 /* search delaydFree for node before address we are looking for */
 HIDDEN adl_PTR searchDelayd(int *wake);
@@ -155,7 +155,7 @@ void delayDaemon()
                 PANIC();
             }
 
-            SYSCALL(VERHOGEN, (int) &(uProcs[ID-1] -> uProc_semAdd), 0, 0);
+            SYSCALL(VERHOGEN, (int) &(uProcs[ID-1].uProc_semAdd), 0, 0);
         }
     }
 }

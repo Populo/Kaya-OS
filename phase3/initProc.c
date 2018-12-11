@@ -98,7 +98,6 @@ void test()
 
         procState.s_entryHI = (i << SHIFT_ASID);
         procState.s_sp = EXECTOP - ((i - 1) * UPROCSTCKSIZE);
-        debugB(98);
         procState.s_pc = procState.s_t9 = (memaddr) uProcInit;
         procState.s_status = ALLOFF | IEON | IMON | LTON;
 
@@ -116,7 +115,6 @@ void test()
     delayState.s_status = ALLOFF | IEON | IMON | LTON;
 
     SYSCALL(CREATE_PROCESS, (int)&delayState, 0, 0);
-    debugB(99);
     for(i = 0; i < MAXUSERPROC; i++)
     {
         SYSCALL(PASSEREN, (int)&masterSem, 0, 0);
@@ -127,7 +125,6 @@ void test()
 void uProcInit()
 {
     /* stuff goes here to set up the procState pc/t9 */
-    debugB(97);
     int asid = getCurrentASID(),
         i,
         /* tape device number */
@@ -265,7 +262,6 @@ void uProcInit()
     new2.s_status = ALLOFF | IMON | IEON | VMON | KUON | LTON; /* interrupts on, vm on, user mode */
     new2.s_pc = new2.s_t9 = 0x800000B0; 
     /* load this new state */
-    debugB(100);
     putALoadInMeDaddy(&new2);
 }
 

@@ -242,7 +242,7 @@
 #define GET_VPN                             0x1FFFF000
 #define GET_ASID                            0x00000FC0
 
-#define SHIFT_SEG                           29
+#define SHIFT_SEG                           30
 #define SHIFT_VPN                           12
 #define SHIFT_ASID                          6
 

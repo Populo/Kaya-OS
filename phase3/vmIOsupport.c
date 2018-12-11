@@ -57,16 +57,16 @@ void vmMemHandler() {
 
     missingASID = getCurrentASID();
 
-    state_PTR oldState = (state_PTR) &(uProcs[missingASID-1].uProc_states[TLBTRAP][OLD]);
+    state_t oldState = (state_t) &(uProcs[missingASID-1].uProc_states[TLBTRAP][OLD]);
 
-    int cause = (oldState -> s_cause & INTCAUSEMASK) >> 2;
+    int cause = (oldState.s_cause & INTCAUSEMASK) >> 2;
 
     if ((cause != TLBL) && (cause != TLBS)) {
         meIRL(missingASID);
     }
 
-    missingSegment = oldState -> s_entryHI >> SHIFT_SEG;
-    missingPage = oldState -> s_entryHI >> SHIFT_PFN;
+    missingSegment = (oldState.s_entryHI >> SHIFT_SEG);
+    missingPage = (oldState.s_entryHI & 0x3FFFF000) >> SHIFT_PFN);
 
     if (missingPage >= KUSEGSIZE) {
         missingPage = KUSEGSIZE - 1;
@@ -80,18 +80,17 @@ void vmMemHandler() {
 
     memaddr swapAddress = SWAPPOOL + (newFrame * PAGESIZE);
 
-    swap_t *swapFrame = &swapPool[newFrame];
 
-    if (swapFrame -> sw_asid != -1) {
+    if (swapPool[newFrame].sw_asid != -1) {
         Interrupts(FALSE);
 
-        swapFrame -> sw_pte -> entryLO = swapFrame -> sw_pte -> entryLO & nVALID;
+        swapPool[newFrame].sw_pte -> entryLO = swapPool[newFrame].sw_pte -> entryLO & nVALID;
 
         TLBCLR();
         Interrupts(TRUE);
 
-        currentASID = swapFrame -> sw_asid;
-        currentPage = swapFrame -> sw_pgNum;
+        currentASID = swapPool[newFrame].sw_asid;
+        currentPage = swapPool[newFrame].sw_pgNum;
 
         readWriteBacking(currentPage, currentASID, DISK0, DISK_WRITEBLK, swapAddress);
     }
@@ -100,16 +99,16 @@ void vmMemHandler() {
 
     Interrupts(FALSE);
 
-    swapFrame -> sw_asid = missingASID;
-    swapFrame -> sw_segNum = missingSegment;
-    swapFrame -> sw_pgNum = missingPage;
+    swapPool[newFrame].sw_asid = missingASID;
+    swapPool[newFrame].sw_segNum = missingSegment;
+    swapPool[newFrame].sw_pgNum = missingPage;
 
     if (missingSegment == SEG3) {
-        swapFrame -> sw_pte = &(kuSeg3.pteTable[missingPage]);
-        swapFrame -> sw_pte -> entryLO = swapAddress | VALID | DIRTY | GLOBAL;
+        swapPool[newFrame].sw_pte = &(kuSeg3.pteTable[missingPage]);
+        swapPool[newFrame].sw_pte -> entryLO = swapAddress | VALID | DIRTY | GLOBAL;
     } else {
-        swapFrame -> sw_pte = &(uProcs[missingASID - 1].uProc_pte.pteTable[missingPage]);
-        swapFrame -> sw_pte -> entryLO = swapAddress | VALID | DIRTY;
+        swapPool[newFrame].sw_pte = &(uProcs[missingASID - 1].uProc_pte.pteTable[missingPage]);
+        swapPool[newFrame].sw_pte -> entryLO = swapAddress | VALID | DIRTY;
     }
 
     TLBCLR();
@@ -126,13 +125,13 @@ void vmSysHandler()
 {
     int callNumber;
     int theGivingID;
-    state_PTR old;
+    state_t old;
     cpu_t current;
     cpu_t delay;
     int ID = getCurrentASID();
     int *semAdd;
 
-    old = (state_PTR) &(uProcs[ID-1].uProc_states[SYSTRAP][OLD]);
+    old = (state_t) &(uProcs[ID-1].uProc_states[SYSTRAP][OLD]);
 
     callNumber = old -> s_a0;
 

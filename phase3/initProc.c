@@ -25,6 +25,8 @@ int mutexArray[TOTALSEM];
 int masterSem;
 uProc_t uProcs[MAXUSERPROC];
 
+extern void putALoadInMeDaddy(state_PTR state);
+
 HIDDEN void memcpy(int *to, int *from) {
     copy(to, from);
 }
@@ -38,12 +40,6 @@ int getCurrentASID() {
 
 HIDDEN int setASID(int asid) {
     return SET_ASID | (asid << SHIFT_ASID);
-}
-
-void debugB(int i)
-{
-    int j;
-    j = i;
 }
 
 void test()
@@ -115,6 +111,7 @@ void test()
     delayState.s_status = ALLOFF | IEON | IMON | LTON;
 
     SYSCALL(CREATE_PROCESS, (int)&delayState, 0, 0);
+
     for(i = 0; i < MAXUSERPROC; i++)
     {
         SYSCALL(PASSEREN, (int)&masterSem, 0, 0);

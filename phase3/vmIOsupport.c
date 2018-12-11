@@ -44,6 +44,7 @@ void debugA(int i)
 
 
 void vmMemHandler() {
+    debugA(3);
     int missingSegment,
         missingPage,
         newFrame,
@@ -123,6 +124,7 @@ void vmMemHandler() {
 
 void vmSysHandler()
 {
+    debugA(2);
     int callNumber;
     int theGivingID;
     state_PTR old;

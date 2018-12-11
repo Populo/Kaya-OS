@@ -110,7 +110,7 @@ void vmMemHandler() {
     Interrupts(TRUE);
 
     SYSCALL(VERHOGEN,
-            (int)&swapSem,
+            (int)&swap,
             0, 0);
 
     putALoadInMeDaddy(oldState);
@@ -211,7 +211,7 @@ void meIRL(int ID)
     int index;
     int kill = FALSE;
 
-    SYSCALL(PASSEREN, (int)&swapSem, 0, 0);
+    SYSCALL(PASSEREN, (int)&swap, 0, 0);
 
     Interrupts(FALSE);
     for(index = 0; index < SWAPSIZE; index++)
@@ -228,7 +228,7 @@ void meIRL(int ID)
         TLBCLR();
     }
     Interrupts(TRUE);
-    SYSCALL(VERHOGEN, (int)&swapSem, 0, 0);
+    SYSCALL(VERHOGEN, (int)&swap, 0, 0);
     SYSCALL(VERHOGEN, (int)&masterSem, 0, 0);
 
     SYSCALL(TERMINATE_PROCESS, 0, 0, 0);

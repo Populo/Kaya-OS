@@ -165,14 +165,14 @@ void uProcInit()
 
         SYSCALL(SESV,                    /* syscall number (5) */
                 i,                              /* trap type */
-                uProc.uProc_states[i][OLD],  /* old state */
-                &new);                         /* new state */
+                (int)uProc.uProc_states[i][OLD],  /* old state */
+                (int)new);                         /* new state */
     }
     /* read contents of tape device onto disk0 */
 
     /* gain mutual exclusion on tape */
     SYSCALL(PASSEREN,                   /* syscall number (4) */
-            &mutexArray[deviceNumber], 0, 0);  /* device to P */
+            (int)&mutexArray[deviceNumber], 0, 0);  /* device to P */
 
     int currentBlock = 0;
 
@@ -203,7 +203,7 @@ void uProcInit()
 
         /* gain mutual exclusion on disk */
         SYSCALL(PASSEREN,               /* syscall number (4) */
-                &mutexArray[DISK0], 0, 0);    /* device to P */
+                (int)&mutexArray[DISK0], 0, 0);    /* device to P */
         
         /* turn off interrupts */
         Interrupts(FALSE);
@@ -249,7 +249,7 @@ void uProcInit()
     }
     /* release mutual exclusion on tape device */
     SYSCALL(VERHOGEN,                   /* syscall number (3) */
-            &mutexArray[deviceNumber], 0, 0); /* semaphore */
+            (int)&mutexArray[deviceNumber], 0, 0); /* semaphore */
 
     /* new state to load */
 
@@ -257,7 +257,7 @@ void uProcInit()
 
     new.s_entryHI = (asid << SHIFT_ASID);
     new.s_sp = (memaddr) SEG3; /* last page of KUseg2 */
-    new.s_status = ALLOFF | IMON | IEON | VMON; /* interrupts on, vm on, user mode */
+    new.s_status = ALLOFF | IMON | IEON | VMON | KUON | LTON; /* interrupts on, vm on, user mode */
     new.s_pc = new.s_t9 = (memaddr) 0x800000B0; /* TODO - well known address from start of KUseg2? */
     /* load this new state */
     putALoadInMeDaddy(&new);

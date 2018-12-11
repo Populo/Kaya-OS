@@ -50,8 +50,8 @@ void test()
 {
     int i;
     int j;
-    state_PTR procState;
-    state_PTR delayState;
+    state_t procState;
+    state_t delayState;
     segTbl_t* segTable;
 
     kuSegOS.header = (PTEMAGICNO << SHIFT_MAGIC) | KSEGSIZE;
@@ -100,13 +100,13 @@ void test()
         segTable -> kuseg2 = &(uProcs[i-1].uProc_pte);
         segTable -> kuseg3 = &kuSeg3;
         debugA(9);
-        *procState.s_entryHI = (i << SHIFT_ASID);
+        procState.s_entryHI = (i << SHIFT_ASID);
         debugA(14);
-        procState -> s_sp = EXECTOP - ((i - 1) * UPROCSTCKSIZE);
+        procState.s_sp = EXECTOP - ((i - 1) * UPROCSTCKSIZE);
         debugA(12);
-        procState -> s_pc = procState -> s_t9 = (memaddr) uProcInit();
+        procState.s_pc = procState.s_t9 = (memaddr) uProcInit();
         debugA(13);
-        procState -> s_status = ALLOFF | IEON | IMON | LTON;
+        procState.s_status = ALLOFF | IEON | IMON | LTON;
         debugA(10);
         uProcs[i-1].uProc_semAdd = 0;
         debugA(11);
@@ -116,10 +116,10 @@ void test()
     initADL();
     initAVSL();
 
-    delayState -> s_entryHI = MAXUSERPROC + 2;
-    delayState -> s_sp = EXECTOP - (MAXUSERPROC * UPROCSTCKSIZE);
-    delayState -> s_pc = delayState -> s_t9 = (memaddr) delayDaemon();
-    delayState -> s_status = ALLOFF | IEON | IMON | LTON;
+    delayState.s_entryHI = MAXUSERPROC + 2;
+    delayState.s_sp = EXECTOP - (MAXUSERPROC * UPROCSTCKSIZE);
+    delayState.s_pc = delayState.s_t9 = (memaddr) delayDaemon();
+    delayState.s_status = ALLOFF | IEON | IMON | LTON;
 
     SYSCALL(CREATE_PROCESS, (int)&delayState, 0, 0);
 

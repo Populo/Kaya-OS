@@ -249,15 +249,15 @@ void uProcInit()
             (int)&mutexArray[deviceNumber], 0, 0); /* semaphore */
 
     /* new state to load */
-
-    STST(&new);
-
-    new.s_entryHI = (asid << SHIFT_ASID);
-    new.s_sp = (memaddr) SEG3; /* last page of KUseg2 */
-    new.s_status = ALLOFF | IMON | IEON | VMON | KUON | LTON; /* interrupts on, vm on, user mode */
-    new.s_pc = new.s_t9 = (memaddr) 0x800000B0; /* TODO - well known address from start of KUseg2? */
+    state_t new2;
+    STST(&new2);
+    
+    new2.s_entryHI = (asid << SHIFT_ASID);
+    new2.s_sp = (memaddr) SEG3; /* last page of KUseg2 */
+    new2.s_status = ALLOFF | IMON | IEON | VMON | KUON | LTON; /* interrupts on, vm on, user mode */
+    new2.s_pc = new2.s_t9 = (memaddr) 0x800000B0; /* TODO - well known address from start of KUseg2? */
     /* load this new state */
-    putALoadInMeDaddy(&new);
+    putALoadInMeDaddy(&new2);
 }
 
 

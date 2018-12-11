@@ -308,6 +308,7 @@ void writePrinter(char* virtAddr, int len, int ID)
     devNum = PRINTDEV + (ID - 1);
     devReg = (devregarea_t *) RAMBASEADDR;
     printer = &(devReg -> devreg[devNum]);
+    state_PTR old = (state_PTR) &uProcs[ID-1].uProc_states[SYSTRAP][OLD];
 
     SYSCALL(PASSEREN, (int)&mutexArray[devNum], 0, 0);
 
@@ -327,6 +328,7 @@ void writePrinter(char* virtAddr, int len, int ID)
         virtAddr++;
         i++;
     }
+    old -> s_v0 = i;
 
     SYSCALL(VERHOGEN, (int)&mutexArray[devNum], 0, 0);
 }
@@ -365,7 +367,7 @@ void readTerminal(char* addr, int ID)
             i++;
         }
 
-        if((status & 0xFF) != RECVCHAR)
+        if((status & 0xFF) != 5) /* 5 is from blue book */
         {
             PANIC();
         }
@@ -387,7 +389,10 @@ void writeTerminal(char* virtAddr, int len, int ID)
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
     device_t* terminal;
     terminal = &(devReg -> devreg[devNum]);
+    state_PTR old = (state_PTR) &uProcs[ID-1].uProc_states[SYSTRAP][OLD];
+
     SYSCALL(PASSEREN, (int)&mutexArray[TERMSEMSTART + (ID -1)], WRITETERM, 0);
+
     while(i < len)
     {
         Interrupts(FALSE);
@@ -402,6 +407,9 @@ void writeTerminal(char* virtAddr, int len, int ID)
         virtAddr++;
         i++;
     }
+
+    old -> s_v0 = count;
+
     SYSCALL(VERHOGEN, (int)&mutexArray[TERMSEMSTART + (ID -1)], 0, 0);
 }
 

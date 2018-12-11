@@ -100,7 +100,7 @@ void test()
         segTable -> kuseg2 = &(uProcs[i-1].uProc_pte);
         segTable -> kuseg3 = &kuSeg3;
         debugA(9);
-        procState -> s_entryHI = (i << SHIFT_ASID);
+        *procState.s_entryHI = (i << SHIFT_ASID);
         debugA(14);
         procState -> s_sp = EXECTOP - ((i - 1) * UPROCSTCKSIZE);
         debugA(12);

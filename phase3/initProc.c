@@ -101,6 +101,7 @@ void test()
         segTable -> kuseg3 = &kuSeg3;
         debugA(9);
         procState -> s_entryHI = (i << SHIFT_ASID);
+        debugA(14);
         procState -> s_sp = EXECTOP - ((i - 1) * UPROCSTCKSIZE);
         debugA(12);
         procState -> s_pc = procState -> s_t9 = (memaddr) uProcInit();

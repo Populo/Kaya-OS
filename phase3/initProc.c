@@ -40,6 +40,12 @@ HIDDEN int setASID(int asid) {
     return SET_ASID | (asid << SHIFT_ASID);
 }
 
+void debugB(int i)
+{
+    int j;
+    j = i;
+}
+
 void test()
 {
     int i;
@@ -109,6 +115,7 @@ void test()
     delayState.s_status = ALLOFF | IEON | IMON | LTON;
 
     SYSCALL(CREATE_PROCESS, (int)&delayState, 0, 0);
+    debugB(99);
     for(i = 0; i < MAXUSERPROC; i++)
     {
         SYSCALL(PASSEREN, (int)&masterSem, 0, 0);
@@ -257,7 +264,7 @@ void uProcInit()
     new2.s_status = ALLOFF | IMON | IEON | VMON | KUON | LTON; /* interrupts on, vm on, user mode */
     new2.s_pc = new2.s_t9 = 0x800000B0; 
     /* load this new state */
-    debugA(100);
+    debugB(100);
     putALoadInMeDaddy(&new2);
 }
 

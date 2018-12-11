@@ -98,6 +98,7 @@ void test()
 
         procState.s_entryHI = (i << SHIFT_ASID);
         procState.s_sp = EXECTOP - ((i - 1) * UPROCSTCKSIZE);
+        debugB(98);
         procState.s_pc = procState.s_t9 = (memaddr) uProcInit;
         procState.s_status = ALLOFF | IEON | IMON | LTON;
 
@@ -126,7 +127,7 @@ void test()
 void uProcInit()
 {
     /* stuff goes here to set up the procState pc/t9 */
-
+    debugB(97);
     int asid = getCurrentASID(),
         i,
         /* tape device number */

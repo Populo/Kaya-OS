@@ -390,48 +390,28 @@ void readTerminal(char* addr, int ID)
 
 void writeTerminal(char* virtAddr, int len, int ID)
 {
-    debugA(1);
     unsigned int status;
     int i = 0;
     int devNum = TERM0DEV + (ID - 1);
-    int bootyCall = FALSE;
-    state_PTR old;
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
     device_t* terminal;
-    debugA(2);
-    old = (state_PTR) &uProcs[ID-1].uProc_states[SYSTRAP][OLD];
     terminal = &(devReg -> devreg[devNum]);
-    debugA(3);
-    SYSCALL(PASSEREN, (int)&mutexArray[KUSEGSIZE + (ID -1)], WRITETERM, 0);
-    debugA(4);
-    while(!bootyCall)
+    SYSCALL(PASSEREN, (int)&mutexArray[TERMSEMSTART + (ID -1)], WRITETERM, 0);
+    while(i < len)
     {
         Interrupts(FALSE);
-        terminal -> t_transm_command = TRANSCHAR;
+        terminal -> t_transm_command = TRANSCHAR | ((unsigned int *virtAddr) << CHARSHIFT);
         status = SYSCALL(WAITIO, TERMINT, (ID -1), WRITETERM);
         Interrupts(TRUE);
 
-        if(((status & 0XFF00) >> 8) == (0x0A))
-        {
-            bootyCall = TRUE;
-        }
-        else
-        {
-            *virtAddr = ((status & 0xFF00) >> 8);
-            i++;
-        }
-
-        if((status & 0xFF) != RECVCHAR)
+        if((status & 0XFF) != TRANSMITCHAR)
         {
             PANIC();
         }
-
-        *virtAddr++;
+        virtAddr++;
+        i++;
     }
-    debugA(5);
-    old->s_v0 = i;
-
-    SYSCALL(VERHOGEN, (int)&mutexArray[TERMREADSEM + (ID -1)], 0, 0);
+    SYSCALL(VERHOGEN, (int)&mutexArray[TERMSEMSTART + (ID -1)], 0, 0);
 }
 
 HIDDEN int spinTheBottle() 

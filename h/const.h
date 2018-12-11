@@ -92,6 +92,8 @@
 
 #define TRANSCHAR       2   /* transmit character */
 #define RECVCHAR        2   
+#define TRANSMITCHAR    5
+#define TERMSEMSTART    40
 
 /* Misc shifts */
 #define SHIFT_SEEK      8
@@ -257,6 +259,7 @@
 
 
 #define SHIFT_GLOBAL                        8
+#define SHIFT_CHAR                          8
 #define SHIFT_VALID                         9
 #define SHIFT_DIRTY                         10
 #define SHIFT_NOCACHE                       11

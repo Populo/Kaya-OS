@@ -35,6 +35,12 @@ void vmPrgmHandler() {
     meIRL(asid);
 }
 
+void debugA(int i)
+{
+    int temp;
+    temp = i;
+}
+
 
 
 void vmMemHandler() {
@@ -336,6 +342,7 @@ void writePrinter(char* virtAddr, int len, int ID)
 
 void readTerminal(char* addr, int ID)
 {
+    debugA(1);
     unsigned int status;
     int i = 0;
     int devNum;
@@ -343,13 +350,13 @@ void readTerminal(char* addr, int ID)
     state_PTR old;
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
     device_t* terminal;
-    
+    debugA(2);
     devNum = TERM0DEV + (ID - 1);
     old = (state_PTR) &uProcs[ID-1].uProc_states[SYSTRAP][OLD];
     terminal = &(devReg -> devreg[devNum]);
-
-    SYSCALL(PASSEREN, (int)&mutexArray[TERMREADSEM + (ID -1)], READTERM, 0);
-
+    debugA(3);
+    SYSCALL(PASSEREN, (int)&mutexArray[TERMREADSEM + (ID -1)], 0, 0);
+    debugA(4);
     while(!bootyCall)
     {
         Interrupts(FALSE);
@@ -374,7 +381,7 @@ void readTerminal(char* addr, int ID)
 
         addr++;
     }
-
+    debugA(5);
     old -> s_v0 = i;
 
     SYSCALL(VERHOGEN, (int)&mutexArray[TERMREADSEM + (ID -1)], 0, 0);

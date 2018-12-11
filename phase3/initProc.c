@@ -40,12 +40,6 @@ HIDDEN int setASID(int asid) {
     return SET_ASID | (asid << SHIFT_ASID);
 }
 
-void debugA(int i)
-{
-    int a;
-    i = a;
-}
-
 void test()
 {
     int i;

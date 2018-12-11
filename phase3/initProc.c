@@ -178,7 +178,7 @@ void uProcInit()
         SYSCALL(SESV,                    /* syscall number (5) */
                 i,                              /* trap type */
                 uProc.uProc_states[i][OLD],  /* old state */
-                new);                         /* new state */
+                &new);                         /* new state */
     }
     debugA(51);
     /* read contents of tape device onto disk0 */

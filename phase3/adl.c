@@ -146,7 +146,7 @@ void delayDaemon()
 
         STCK(theClock);
 
-        while((headDelayTime() <= theClock) && (headDelayTime != FAILURE))
+        while((headDelayTime() <= theClock) && (headDelayTime() != FAILURE))
         {
             ID = removeDelay();
 

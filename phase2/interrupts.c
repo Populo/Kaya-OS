@@ -54,6 +54,7 @@ HIDDEN int getDeviceNumber(int lineNumber);
  *****************************************************************/
 void ioTrapHandler()
 {
+    debugC(1);
     cpu_t end;
     int deviceNum, interruptNum;
     device_t* devRegNum;

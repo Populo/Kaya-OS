@@ -11,8 +11,8 @@
 #define PAGESIZE		4096	/* page size in bytes */
 #define WORDLEN			4		/* word size in bytes */
 #define PTEMAGICNO		0x2A
-#define MAXUSERPROC     1
-#define SWAPSIZE        10   /* frames in swap */
+#define MAXUSERPROC     8
+#define SWAPSIZE        (2 * MAXUSERPROC)   /* frames in swap */
 #define UPROCSTCKSIZE   2 * PAGESIZE
 
 

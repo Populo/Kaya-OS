@@ -57,7 +57,7 @@ void vmMemHandler() {
 
     missingASID = getCurrentASID();
 
-    state_t oldState = (state_t) &(uProcs[missingASID-1].uProc_states[TLBTRAP][OLD]);
+    state_t* oldState = (state_t*) &(uProcs[missingASID-1].uProc_states[TLBTRAP][OLD]);
 
     int cause = (oldState.s_cause & INTCAUSEMASK) >> 2;
 
@@ -65,8 +65,8 @@ void vmMemHandler() {
         meIRL(missingASID);
     }
 
-    missingSegment = (oldState.s_entryHI >> SHIFT_SEG);
-    missingPage = (oldState.s_entryHI & 0x3FFFF000) >> SHIFT_PFN);
+    missingSegment = (oldState->s_entryHI >> SHIFT_SEG);
+    missingPage = ((oldState->s_entryHI & 0x3FFFF000) >> SHIFT_PFN);
 
     if (missingPage >= KUSEGSIZE) {
         missingPage = KUSEGSIZE - 1;

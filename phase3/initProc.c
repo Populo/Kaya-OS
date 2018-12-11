@@ -23,7 +23,7 @@ swap_t swapPool[SWAPSIZE];
 int swap;
 int mutexArray[MAXPROC];
 int masterSem;
-uProc_PTR uProcs[8];
+uProc_PTR uProcs[MAXUSERPROC];
 
 
 /* INIT's KUSEGOS / 2 / 3 page tables. */
@@ -80,6 +80,8 @@ void test()
     for(i = 1; i < MAXUSERPROC + 1; i++)
     {
         debugA(i);
+        uProcs[i-1] -> uProc_pte.header;
+        debugA(2);
         uProcs[i-1] -> uProc_pte.header = (PTEMAGICNO << SHIFT_MAGIC) | KUSEGSIZE;
         debugA(7);
         for(j = 0; j < KUSEGSIZE; j++)

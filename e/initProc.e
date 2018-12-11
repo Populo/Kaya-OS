@@ -12,4 +12,6 @@ pte_t kuSeg3;
 
 extern int getCurrentASID();
 
+extern void uProcInit();
+
 #endif

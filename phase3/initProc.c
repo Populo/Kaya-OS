@@ -80,18 +80,14 @@ void test()
         mutexArray[i] = 1;
     }
     masterSem = 0;
-    debugA(6);
     for(i = 1; i < MAXUSERPROC + 1; i++)
     {
-        debugA(i);
         uProcs[i-1].uProc_pte.header = (PTEMAGICNO << SHIFT_MAGIC) | KUSEGSIZE;
-        debugA(7);
         for(j = 0; j < KUSEGSIZE; j++)
         {
             uProcs[i-1].uProc_pte.pteTable[j].entryHI = ((0x80000 + j) << SHIFT_VPN) | (i << SHIFT_ASID);
             uProcs[i-1].uProc_pte.pteTable[j].entryLO = ALLOFF | DIRTY;  
         }
-        debugA(8);
         uProcs[i-1].uProc_pte.pteTable[KUSEGSIZE-1].entryHI = (0xBFFFF << SHIFT_VPN) | (i * SHIFT_ASID);
 
         segTable = (segTbl_t *) (SEGTBLSTART + (i * SEGTBLWIDTH));
@@ -99,35 +95,33 @@ void test()
         segTable -> ksegOS = &kuSegOS;
         segTable -> kuseg2 = &(uProcs[i-1].uProc_pte);
         segTable -> kuseg3 = &kuSeg3;
-        debugA(9);
+
         procState.s_entryHI = (i << SHIFT_ASID);
-        debugA(14);
         procState.s_sp = EXECTOP - ((i - 1) * UPROCSTCKSIZE);
-        debugA(12);
         procState.s_pc = procState.s_t9 = (memaddr) uProcInit;
-        debugA(13);
         procState.s_status = ALLOFF | IEON | IMON | LTON;
-        debugA(10);
+
         uProcs[i-1].uProc_semAdd = 0;
-        debugA(11);
 
         SYSCALL(CREATE_PROCESS, (int)&procState, 0, 0);
     }
+    debugA(1);
     initADL();
+    debugA(2);
     initAVSL();
-
+    debugA(3);
     delayState.s_entryHI = MAXUSERPROC + 2;
     delayState.s_sp = EXECTOP - (MAXUSERPROC * UPROCSTCKSIZE);
     delayState.s_pc = delayState.s_t9 = (memaddr) delayDaemon;
     delayState.s_status = ALLOFF | IEON | IMON | LTON;
-
+    debugA(5);
     SYSCALL(CREATE_PROCESS, (int)&delayState, 0, 0);
-
+    debugA(6);
     for(i = 0; i < MAXUSERPROC; i++)
     {
         SYSCALL(PASSEREN, (int)&masterSem, 0, 0);
     }
-
+    debugA(7);
     SYSCALL(TERMINATE_PROCESS, 0, 0, 0);
 }
 

@@ -135,10 +135,10 @@ void uProcInit()
 
     uProc_t uProc = uProcs[asid-1];
     
-    state_PTR new;
+    state_t new;
     /* location is the only difference between these states */
-    new->s_status = ALLOFF | IMON | IEON | LTON | VMON;
-    new->s_entryHI = (asid << SHIFT_ASID);
+    new.s_status = ALLOFF | IMON | IEON | LTON | VMON;
+    new.s_entryHI = (asid << SHIFT_ASID);
     /* stack locations */
     PROGTOP = SYSTOP = EXECTOP - ((asid - 1) * UPROCSTCKSIZE);
     TLBTOP = PROGTOP - PAGESIZE;
@@ -162,10 +162,10 @@ void uProcInit()
                 break;
         }
         
-        new->s_pc = new->s_t9 = newLocation;
-        new->s_sp = stackPointer;
+        new.s_pc = new.s_t9 = newLocation;
+        new.s_sp = stackPointer;
 
-        SYSCALL(SESV, i, (int)uProc.uProc_states[i][OLD], (int)&new);
+        SYSCALL(SESV, i, (int)uProc.uProc_states[i][OLD], (int)new);
     }
     /* read contents of tape device onto disk0 */
 

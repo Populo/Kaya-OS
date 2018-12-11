@@ -127,7 +127,7 @@ typedef struct pcb_t
 
 	cpu_t 			pcb_time; 		/* time the process has spent on the CPU in microseconds */
 
-	state_t			pcb_states[SECTIONS][OLDNEW]; /* 2D array for states */
+	state_PTR		pcb_states[SECTIONS][OLDNEW]; /* 2D array for states */
 
 } pcb_t, *pcb_PTR;
 
@@ -156,7 +156,7 @@ typedef struct avsl_t
 
 typedef struct uProc_t
 {
-	state_PTR		uProc_states[SECTIONS][OLDNEW]; /* 2D array of states for SYS5 */
+	state_t		uProc_states[SECTIONS][OLDNEW]; /* 2D array of states for SYS5 */
 	int				uProc_semAdd;		/* private semaphore */
 	pte_t			uProc_pte;		/* page table (kUseg2) */
 	int				uProc_backStoreAdd;	/* sector # for seg2 drum area */

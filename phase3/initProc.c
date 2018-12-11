@@ -142,11 +142,11 @@ void uProcInit()
 
     uProc_t uProc = uProcs[asid-1];
     
-    state_PTR new;
+    state_t new;
     debugA(99);
     /* location is the only difference between these states */
-    new -> s_status = ALLOFF | IMON | IEON | LTON | VMON | KUON;
-    new -> s_entryHI = (asid << SHIFT_ASID);
+    new.s_status = ALLOFF | IMON | IEON | LTON | VMON | KUON;
+    new.s_entryHI = (asid << SHIFT_ASID);
     debugA(asid);
     /* stack locations */
     PROGTOP = SYSTOP = EXECTOP - ((asid - 1) * UPROCSTCKSIZE);
@@ -172,8 +172,8 @@ void uProcInit()
                 break;
         }
         
-        new -> s_pc = new -> s_t9 = newLocation;
-        new -> s_sp = stackPointer;
+        new.s_pc = new.s_t9 = newLocation;
+        new.s_sp = stackPointer;
 
         SYSCALL(SESV,                    /* syscall number (5) */
                 i,                              /* trap type */
@@ -269,10 +269,10 @@ void uProcInit()
 
     STST(new);
 
-    new -> s_entryHI = (new -> s_entryHI & setASID(asid));
-    new -> s_sp = (memaddr) SEG3; /* last page of KUseg2 */
-    new -> s_status = ALLOFF | IMON | IEON | VMON; /* interrupts on, vm on, user mode */
-    new -> s_pc = new -> s_t9 = (memaddr) 0x800000B0; /* TODO - well known address from start of KUseg2? */
+    new.s_entryHI = (asid << SHIFT_ASID);
+    new.s_sp = (memaddr) SEG3; /* last page of KUseg2 */
+    new.s_status = ALLOFF | IMON | IEON | VMON; /* interrupts on, vm on, user mode */
+    new.s_pc = new.s_t9 = (memaddr) 0x800000B0; /* TODO - well known address from start of KUseg2? */
     debugA(100);
     /* load this new state */
     putALoadInMeDaddy(new);

@@ -131,7 +131,7 @@ void vmSysHandler()
     int ID = getCurrentASID();
     int *semAdd;
 
-    old = (state_t) &(uProcs[ID-1].uProc_states[SYSTRAP][OLD]);
+    old = (state_PTR) &(uProcs[ID-1].uProc_states[SYSTRAP][OLD]);
 
     callNumber = old->s_a0;
 

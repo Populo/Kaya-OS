@@ -67,7 +67,7 @@ void vmMemHandler() {
     }
 
     SYSCALL(PASSEREN,
-            (int)&swapSem,
+            (int)&swap,
             0,0);
 
     newFrame = spinTheBottle();

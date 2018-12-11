@@ -25,6 +25,10 @@ int mutexArray[TOTALSEM];
 int masterSem;
 uProc_t uProcs[MAXUSERPROC];
 
+HIDDEN void memcpy(int *to, int *from) {
+    copy(to, from);
+}
+
 
 /* INIT's KUSEGOS / 2 / 3 page tables. */
 

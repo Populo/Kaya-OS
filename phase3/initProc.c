@@ -88,7 +88,6 @@ void test()
         debugA(7);
         for(j = 0; j < KUSEGSIZE; j++)
         {
-            debugA(j);
             uProcs[i-1].uProc_pte.pteTable[j].entryHI = ((0x80000 + j) << SHIFT_VPN) | (i << SHIFT_ASID);
             uProcs[i-1].uProc_pte.pteTable[j].entryLO = ALLOFF | DIRTY;  
         }

@@ -247,15 +247,15 @@ void uProcInit()
             (int)&mutexArray[deviceNumber], 0, 0); /* semaphore */
 
     /* new state to load */
-    state_t new2;
-    STST(&new2);
+    state_PTR new2;
+    STST(new2);
     
-    new2.s_entryHI = (asid << SHIFT_ASID);
-    new2.s_sp = SEG3; /* last page of KUseg2 */
-    new2.s_status = ALLOFF | IMON | IEON | VMON | KUON | LTON; /* interrupts on, vm on, user mode */
-    new2.s_pc = new2.s_t9 = 0x800000B0; 
+    new2 -> s_entryHI = (asid << SHIFT_ASID);
+    new2 -> s_sp = SEG3; /* last page of KUseg2 */
+    new2 -> s_status = ALLOFF | IMON | IEON | VMON | KUON | LTON; /* interrupts on, vm on, user mode */
+    new2 -> s_pc = new2 -> s_t9 = uProcStart; 
     /* load this new state */
-    putALoadInMeDaddy(&new2);
+    putALoadInMeDaddy(new2);
 }
 
 

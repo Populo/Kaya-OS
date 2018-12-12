@@ -1,6 +1,8 @@
 #include "../h/const.h"
 #include "../h/types.h"
 
+#include "../e/avsl.e"
+
 HIDDEN avsl_PTR vSem_h;
 HIDDEN avsl_PTR vSemFree_h;
 
@@ -64,7 +66,7 @@ int vInsertBlocked(int *vSemAdd, int ID)
 {
     avsl_PTR newSem = allocVSem();
 
-    if(newSem = NULL)
+    if(newSem == NULL)
     {
         return FALSE;
     }
@@ -72,7 +74,7 @@ int vInsertBlocked(int *vSemAdd, int ID)
     newSem -> v_sem = vSemAdd;
     newSem -> v_asid = ID;
 
-    if(vSem_h = NULL)
+    if(vSem_h == NULL)
     {
         vSem_h = newSem;
         vSem_h -> v_next = vSem_h;
@@ -96,7 +98,7 @@ int vRemoveBlocked(int *vSemAdd)
     avsl_PTR currentSem = NULL;
     avsl_PTR temp = NULL;
 
-    if(vSem_h = NULL)
+    if(vSem_h == NULL)
     {
         return FALSE;
     }
@@ -119,7 +121,23 @@ int vRemoveBlocked(int *vSemAdd)
         }
     }
 
-    currentSem = vSem_h;
+    if (vSem_h -> v_sem == vSemAdd) {
+        f = TRUE;
+    }
+
+    currentSem = vSem_h -> v_next;
+    while (!f && currentSem != vSem_h) {
+        if(currentSem -> v_sem == vSemAdd)
+        {
+            f = TRUE;
+        }
+        else
+        {
+            currentSem = currentSem -> v_next;
+        }
+    }
+
+    /* currentSem = vSem_h;
     if(currentSem -> v_sem == vSemAdd)
     {
 
@@ -129,7 +147,7 @@ int vRemoveBlocked(int *vSemAdd)
         currentSem = currentSem -> v_next;
         while(!f && currentSem != vSem_h)
         {
-            if(currentSem -> v_sem = vSemAdd)
+            if(currentSem -> v_sem == vSemAdd)
             {
                 f = TRUE;
             }
@@ -138,17 +156,23 @@ int vRemoveBlocked(int *vSemAdd)
                 currentSem = currentSem -> v_next;
             }
         }
-    }
-
+    } */
+/* 
     if(f == FALSE)
     {
         return f;
-    }
+    } */
 
-    returnMe = currentSem -> v_asid;
-    currentSem -> v_prev -> v_next = currentSem -> v_next;
-    currentSem -> v_next -> v_prev = currentSem -> v_prev;
-    freevSem(currentSem);
+    if (f) 
+    {
+        returnMe = currentSem -> v_asid;
+        currentSem -> v_prev -> v_next = currentSem -> v_next;
+        currentSem -> v_next -> v_prev = currentSem -> v_prev;
+        freevSem(currentSem);
 
-    return returnMe;
+        return returnMe;
+    } 
+
+    return FALSE;
+    
 }

@@ -27,19 +27,15 @@ uProc_t uProcs[MAXUSERPROC];
 
 extern void putALoadInMeDaddy(state_PTR state);
 
-HIDDEN void memcpy(int *to, int *from) {
+/* HIDDEN void memcpy(int *to, int *from) {
     copy(to, from);
-}
+} */
 
 
 /* INIT's KUSEGOS / 2 / 3 page tables. */
 
 int getCurrentASID() {
     return ((getENTRYHI() & GET_ASID) >> SHIFT_ASID);
-}
-
-HIDDEN int setASID(int asid) {
-    return SET_ASID | (asid << SHIFT_ASID);
 }
 
 void test()

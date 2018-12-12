@@ -68,7 +68,7 @@ HIDDEN adl_PTR allocDelayd()
 {
     adl_PTR returnMe;
 
-    if(delaydFree_h = NULL)
+    if(delaydFree_h == NULL)
     {
         return NULL;
     }
@@ -154,7 +154,7 @@ void delayDaemon()
         {
             ID = removeDelay();
 
-            if(ID = FAILURE)
+            if(ID == FAILURE)
             {
                 PANIC();
             }

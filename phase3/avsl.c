@@ -9,7 +9,7 @@ HIDDEN avsl_PTR vSemFree_h;
 
 HIDDEN void freevSem(avsl_PTR vSem)
 {
-    if(vSemFree_h = NULL)
+    if(vSemFree_h == NULL)
     {
         vSemFree_h = vSem;
         vSemFree_h -> v_next = NULL;
@@ -32,7 +32,7 @@ HIDDEN avsl_PTR allocVSem()
 
     returnMe = vSemFree_h;
 
-    if(vSemFree_h -> v_next = NULL)
+    if(vSemFree_h -> v_next == NULL)
     {
         vSemFree_h = NULL;
     }

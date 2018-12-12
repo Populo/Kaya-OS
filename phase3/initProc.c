@@ -131,10 +131,10 @@ void uProcInit()
 
     uProc_t uProc = uProcs[asid-1];
     
-    state_PTR new;
+    state_t new;
     /* location is the only difference between these states */
-    new -> s_status = ALLOFF | IMON | IEON | LTON | VMON;
-    new -> s_entryHI = (asid << SHIFT_ASID);
+    new.s_status = ALLOFF | IMON | IEON | LTON | VMON;
+    new.s_entryHI = (asid << SHIFT_ASID);
     /* stack locations */
     PROGTOP = SYSTOP = EXECTOP - ((asid - 1) * UPROCSTCKSIZE);
     TLBTOP = PROGTOP - PAGESIZE;
@@ -158,10 +158,10 @@ void uProcInit()
                 break;
         }
         
-        new -> s_pc = new -> s_t9 = newLocation;
-        new -> s_sp = stackPointer;
+        new.s_pc = new.s_t9 = newLocation;
+        new.s_sp = stackPointer;
 
-        SYSCALL(SESV, i, (int)&(uProc.uProc_states[i][OLD]), new);
+        SYSCALL(SESV, i, (int)&(uProc.uProc_states[i][OLD]), (int)&new);
     }
     /* read contents of tape device onto disk0 */
 
@@ -247,15 +247,15 @@ void uProcInit()
             (int)&mutexArray[deviceNumber], 0, 0); /* semaphore */
 
     /* new state to load */
-    state_PTR new2;
-    STST(new2);
+    state_t new2;
+    STST(&new2);
     
-    new2 -> s_entryHI = (asid << SHIFT_ASID);
-    new2 -> s_sp = SEG3; /* last page of KUseg2 */
-    new2 -> s_status = ALLOFF | IMON | IEON | VMON | KUON | LTON; /* interrupts on, vm on, user mode */
-    new2 -> s_pc = new2 -> s_t9 = uProcStart; 
+    new2.s_entryHI = (asid << SHIFT_ASID);
+    new2.s_sp = SEG3; /* last page of KUseg2 */
+    new2.s_status = ALLOFF | IMON | IEON | VMON | KUON | LTON; /* interrupts on, vm on, user mode */
+    new2.s_pc = new2 -> s_t9 = uProcStart; 
     /* load this new state */
-    putALoadInMeDaddy(new2);
+    putALoadInMeDaddy(&new2);
 }
 
 

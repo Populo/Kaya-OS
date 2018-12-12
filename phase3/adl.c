@@ -3,15 +3,17 @@
 #include "../h/const.h"
 
 #include "../e/adl.e"
+#include "../e/initProc.e"
 
 HIDDEN adl_PTR delaydFree_h;
 HIDDEN adl_PTR activeDelayd_h;
-extern uProc_t uProcs[MAXUSERPROC];
 
 /* search delaydFree for node before address we are looking for */
-HIDDEN adl_PTR searchDelayd(int *wake);
+HIDDEN adl_PTR searchDelayd(int wake);
 
-adl_PTR searchDelayd(int *wake)
+void freeDelayd(adl_PTR delay);
+
+adl_PTR searchDelayd(int wake)
 {
     adl_PTR searching = activeDelayd_h;
 
@@ -47,7 +49,7 @@ int headDelayTime()
     return activeDelayd_h -> d_wakeTime;
 }
 
-HIDDEN void freeDelayd(adl_PTR delay)
+void freeDelayd(adl_PTR delay)
 {
     if(delaydFree_h == NULL)
     {

@@ -274,7 +274,7 @@ void Interrupts(int amIFucked)
     setSTATUS(status);
 }
 
-void copy(int* from, int* to)
+/* void copy(int* from, int* to)
 {
     int index = 0;
     while(index < (PAGESIZE / WORDLEN))
@@ -285,4 +285,4 @@ void copy(int* from, int* to)
         to++;
         index++;
     }
-}
+} */

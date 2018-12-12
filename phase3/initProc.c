@@ -35,7 +35,7 @@ extern void putALoadInMeDaddy(state_PTR state);
 /* INIT's KUSEGOS / 2 / 3 page tables. */
 
 int getCurrentASID() {
-    return ((getENTRYHI() & GET_ASID) >> SHIFT_ASID);
+    return (int)((getENTRYHI() & GET_ASID) >> SHIFT_ASID);
 }
 
 void test()
@@ -131,10 +131,10 @@ void uProcInit()
 
     uProc_t uProc = uProcs[asid-1];
     
-    state_t new;
+    state_PTR new;
     /* location is the only difference between these states */
-    new.s_status = ALLOFF | IMON | IEON | LTON | VMON;
-    new.s_entryHI = (asid << SHIFT_ASID);
+    new -> s_status = ALLOFF | IMON | IEON | LTON | VMON;
+    new -> s_entryHI = (asid << SHIFT_ASID);
     /* stack locations */
     PROGTOP = SYSTOP = EXECTOP - ((asid - 1) * UPROCSTCKSIZE);
     TLBTOP = PROGTOP - PAGESIZE;
@@ -158,10 +158,10 @@ void uProcInit()
                 break;
         }
         
-        new.s_pc = new.s_t9 = newLocation;
-        new.s_sp = stackPointer;
+        new -> s_pc = new -> s_t9 = newLocation;
+        new -> s_sp = stackPointer;
 
-        SYSCALL(SESV, i, (int)&(uProc.uProc_states[i][OLD]), (int)&new);
+        SYSCALL(SESV, i, (int)&(uProc.uProc_states[i][OLD]), new);
     }
     /* read contents of tape device onto disk0 */
 
@@ -246,7 +246,16 @@ void uProcInit()
     SYSCALL(VERHOGEN,                   /* syscall number (3) */
             (int)&mutexArray[deviceNumber], 0, 0); /* semaphore */
 
-   
+    /* new state to load */
+    state_t new2;
+    STST(&new2);
+    
+    new2.s_entryHI = (asid << SHIFT_ASID);
+    new2.s_sp = SEG3; /* last page of KUseg2 */
+    new2.s_status = ALLOFF | IMON | IEON | VMON | KUON | LTON; /* interrupts on, vm on, user mode */
+    new2.s_pc = new2.s_t9 = 0x800000B0; 
+    /* load this new state */
+    putALoadInMeDaddy(&new2);
 }
 
 

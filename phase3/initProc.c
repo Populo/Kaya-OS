@@ -139,7 +139,30 @@ void uProcInit()
     PROGTOP = SYSTOP = EXECTOP - ((asid - 1) * UPROCSTCKSIZE);
     TLBTOP = PROGTOP - PAGESIZE;
 
+    /* sys 5 the process */
+    for (i = 0; i < TRAPTYPES; ++i) 
+    {
+        switch (i)
+        {
+            case SYSTRAP:
+                newLocation = (memaddr) vmSysHandler;
+                stackPointer = SYSTOP;
+                break;
+            case TLBTRAP:
+                newLocation = (memaddr) vmMemHandler;
+                stackPointer = TLBTOP;
+                break;
+            case PROGTRAP:
+                newLocation = (memaddr) vmPrgmHandler;
+                stackPointer = PROGTRAP;
+                break;
+        }
+        
+        new.s_pc = new.s_t9 = newLocation;
+        new.s_sp = stackPointer;
 
+        SYSCALL(SESV, i, (int)&(uProc.uProc_states[i][OLD]), (int)&new);
+    }
     /* read contents of tape device onto disk0 */
 
     /* gain mutual exclusion on tape */
@@ -223,16 +246,7 @@ void uProcInit()
     SYSCALL(VERHOGEN,                   /* syscall number (3) */
             (int)&mutexArray[deviceNumber], 0, 0); /* semaphore */
 
-    /* new state to load */
-    state_t new2;
-    STST(&new2);
-    
-    new2.s_entryHI = (asid << SHIFT_ASID);
-    new2.s_sp = SEG3; /* last page of KUseg2 */
-    new2.s_status = ALLOFF | IMON | IEON | VMON | KUON | LTON; /* interrupts on, vm on, user mode */
-    new2.s_pc = new2.s_t9 = 0x800000B0; 
-    /* load this new state */
-    putALoadInMeDaddy(&new2);
+   
 }
 
 
@@ -251,7 +265,7 @@ void Interrupts(int amIFucked)
     setSTATUS(status);
 }
 
-/* void copy(int* from, int* to)
+void copy(int* from, int* to)
 {
     int index = 0;
     while(index < (PAGESIZE / WORDLEN))
@@ -262,4 +276,4 @@ void Interrupts(int amIFucked)
         to++;
         index++;
     }
-} */
+}

@@ -139,34 +139,89 @@ void uProcInit()
     PROGTOP = SYSTOP = EXECTOP - ((asid - 1) * UPROCSTCKSIZE);
     TLBTOP = PROGTOP - PAGESIZE;
 
-    /* sys 5 the process */
-    for (i = 0; i < TRAPTYPES; ++i) 
-    {
-        switch (i)
-        {
-            case SYSTRAP:
-                newLocation = (memaddr) vmSysHandler;
-                stackPointer = SYSTOP;
-                break;
-            case TLBTRAP:
-                newLocation = (memaddr) vmMemHandler;
-                stackPointer = TLBTOP;
-                break;
-            case PROGTRAP:
-                newLocation = (memaddr) vmPrgmHandler;
-                stackPointer = PROGTRAP;
-                break;
-        }
-        
-        new.s_pc = new.s_t9 = newLocation;
-        new.s_sp = stackPointer;
 
-        SYSCALL(SESV, i, (int)&(uProc.uProc_states[i][OLD]), (int)&new);
-    }
     /* read contents of tape device onto disk0 */
 
     /* gain mutual exclusion on tape */
-   
+    SYSCALL(PASSEREN,                   /* syscall number (4) */
+            (int)&mutexArray[deviceNumber], 0, 0);  /* device to P */
+
+    int currentBlock = 0;
+
+    device_t *disk;
+    device_t *tape;
+    unsigned int diskStatus, tapeStatus;
+
+    disk = &(device -> devreg[DISK0]);
+    tape = &(device -> devreg[deviceNumber]);
+
+    diskStatus = tapeStatus = READY;
+
+    /* while tape is ready and we arent out of tape */
+    while ((tapeStatus == READY) && !finished) {
+        /* turn off interrupts */
+        Interrupts(FALSE);
+
+        /* set sector on tape to read */
+        tape -> d_data0 = OSCODEEND + ((asid - 1) * PAGESIZE);
+        tape -> d_command = DISK_READBLK;
+
+        /* execute */
+        tapeStatus = SYSCALL(WAITIO, /* syscall number (8) */
+                            TAPEINT,    /* interrupt line */
+                            asid - 1, 0);  /* device number */
+        /* turn interrupts back on */
+        Interrupts(TRUE);
+
+        /* gain mutual exclusion on disk */
+        SYSCALL(PASSEREN,               /* syscall number (4) */
+                (int)&mutexArray[DISK0], 0, 0);    /* device to P */
+        
+        /* turn off interrupts */
+        Interrupts(FALSE);
+
+        /* set sector to look for */
+        disk -> d_command = (currentBlock << SHIFT_SEEK) | DISK_SEEKCYL;
+        /* execute */
+        diskStatus = SYSCALL(WAITIO, /* syscall number (8) */
+                            DISKINT,    /* interrupt line */
+                            DISK0, 0);     /* device number */
+
+        /* turn interrupts back on */
+        Interrupts(TRUE);
+
+        /* done reading disk */
+        if (diskStatus == READY) {
+            /* turn off interrupts */
+            Interrupts(FALSE);
+
+            /* set sector to read */
+            disk -> d_data0 = OSCODEEND + ((asid - 1) * PAGESIZE);
+            disk -> d_command = ((asid - 1) << SHIFT_SECTOR) | DISK_WRITEBLK;
+
+            /* execute */
+            diskStatus = SYSCALL(WAITIO, /* syscall number (8) */
+                                DISKINT,    /* interrupt line */
+                                DISK0, 0);     /* device number */
+
+            /* turn interrupts back on */
+            Interrupts(TRUE);
+        }
+
+        /* release mutual exclusion on disk */
+        SYSCALL(VERHOGEN,               /* syscall number (3) */
+                (int)&mutexArray[DISK0], 0, 0);    /* semaphore */
+
+        /* if !EOT & !EOF */
+        if (tape -> d_data1 != TAPE_EOB) {
+            finished = TRUE;
+        }
+
+        currentBlock++;
+    }
+    /* release mutual exclusion on tape device */
+    SYSCALL(VERHOGEN,                   /* syscall number (3) */
+            (int)&mutexArray[deviceNumber], 0, 0); /* semaphore */
 
     /* new state to load */
     state_t new2;

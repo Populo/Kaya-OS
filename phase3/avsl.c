@@ -96,7 +96,6 @@ int vRemoveBlocked(int *vSemAdd)
     int f = FALSE;
     int returnMe;
     avsl_PTR currentSem = NULL;
-    avsl_PTR temp = NULL;
 
     if(vSem_h == NULL)
     {

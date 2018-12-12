@@ -5,6 +5,8 @@
 #include "../e/adl.e"
 #include "../e/initProc.e"
 
+#include "/usr/local/include/umps2/umps/libumps.e"
+
 HIDDEN adl_PTR delaydFree_h;
 HIDDEN adl_PTR activeDelayd_h;
 

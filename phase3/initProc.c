@@ -117,7 +117,9 @@ void test()
     debugA(1);
     for(i = 0; i < MAXUSERPROC; i++)
     {
+        debugA(2);
         SYSCALL(PASSEREN, (int)&masterSem, 0, 0);
+        debugA(3);
     }
     debugA(1);
     SYSCALL(TERMINATE_PROCESS, 0, 0, 0);

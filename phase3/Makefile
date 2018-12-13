@@ -117,3 +117,4 @@ asl.o: ../phase1/asl.c $(DEFS)
 	rm -f *.o *.umps kernel
  distclean: clean
 	-rm kernel.*.umps tape0.umps
+	

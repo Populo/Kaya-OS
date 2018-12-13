@@ -422,7 +422,7 @@ void writeTerminal(char* virtAddr, int len, int ID)
 
 HIDDEN int spinTheBottle() 
 {
-    static int next;
+    static int next = 0;
     next = (next + 1) % SWAPSIZE;
     return (next);
 }

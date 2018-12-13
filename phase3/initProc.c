@@ -130,7 +130,7 @@ void uProcInit()
     memaddr TLBTOP, PROGTOP, SYSTOP;
 
     uProc_t uProc = uProcs[asid-1];
-    state_t new, old;
+    state_PTR new, old;
     
     /* location is the only difference between these states */
     
@@ -158,12 +158,12 @@ void uProcInit()
                 stackPointer = PROGTRAP;
                 break;
         }
-        new.s_status = ALLOFF | IMON | IEON | LTON | VMON;
-        new.s_entryHI = (asid << SHIFT_ASID);
-        new.s_pc = new.s_t9 = newLocation;
-        new.s_sp = stackPointer;
+        new->s_status = ALLOFF | IMON | IEON | LTON | VMON;
+        new->s_entryHI = (asid << SHIFT_ASID);
+        new->s_pc = new->s_t9 = newLocation;
+        new->s_sp = stackPointer;
 
-        SYSCALL(SESV, i, (int)&old, (int)&new);
+        SYSCALL(SESV, i, (int)old, (int)new);
     }
     /* read contents of tape device onto disk0 */
 

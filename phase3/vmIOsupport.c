@@ -107,7 +107,7 @@ void vmMemHandler() {
     Interrupts(TRUE);
 
     SYSCALL(VERHOGEN, (int)&swap, 0, 0);
-
+    debugA(12);
     putALoadInMeDaddy(oldState);
 }
 

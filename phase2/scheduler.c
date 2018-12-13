@@ -81,6 +81,7 @@ void scheduler()
         /* start a timer for the job */
         setTIMER(QUANTUM);
         /* Context Switch - load the process */
+        debugA(13);
         putALoadInMeDaddy(&(newProc -> pcb_state));
     } 
 }

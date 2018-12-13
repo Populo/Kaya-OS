@@ -116,7 +116,7 @@ void sysCallHandler()
 	state_PTR state = (state_PTR) SYSCALLOLDAREA;
 	int call = state -> s_a0;
 	unsigned int temp;
-
+	debugC(call);
 	if((call >= CREATE_PROCESS && call <= WAITIO)) /* valid syscall */
 	{
 		if((state -> s_status & KUON) != ALLOFF) /* user mode */

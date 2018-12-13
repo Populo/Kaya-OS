@@ -116,7 +116,6 @@ void sysCallHandler()
 	state_PTR state = (state_PTR) SYSCALLOLDAREA;
 	int call = state -> s_a0;
 	unsigned int temp;
-	debugC(call);
 	if((call >= CREATE_PROCESS && call <= WAITIO)) /* valid syscall */
 	{
 		if((state -> s_status & KUON) != ALLOFF) /* user mode */
@@ -126,12 +125,12 @@ void sysCallHandler()
 			/* set cause to priviledged insruction, shift by 2 bits */
 			pgmOld -> s_cause = RI << 2;
 			/* call a program trap */
-			debugC(55);
 			pbgTrapHandler();
 		}
 	}
 	else
 	{
+		debugC(55);
 		/* pull up and die on systrap */
 		pullUpAndDie(SYSTRAP);
 	}

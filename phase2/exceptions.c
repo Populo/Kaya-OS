@@ -164,7 +164,7 @@ void sysCallHandler()
 			sysGoPowerRangers(state);
 			break;
 	}
-
+	debugA(20);
 	/* if syscall doesnt redirect, load the state */
 	putALoadInMeDaddy(state);
 }
@@ -339,6 +339,7 @@ void sysGetCPUTime(state_PTR state)
 	/* store starting clock */
 	STCK(TODStarted);
 	/* load current process */
+	debugA(21);
 	putALoadInMeDaddy(&(currentProcess -> pcb_state));
 }
 
@@ -511,6 +512,7 @@ void pullUpAndDie(int type)
 	copyState(location, currentProcess -> pcb_states[type][OLD]);
 	
 	/* load custom handler */
+	debugA(14);
 	putALoadInMeDaddy(lookingAt);
 }
 

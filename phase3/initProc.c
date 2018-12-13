@@ -254,6 +254,7 @@ void uProcInit()
     /* release mutual exclusion on tape device */
     SYSCALL(VERHOGEN,                   /* syscall number (3) */
             (int)&mutexArray[deviceNumber], 0, 0); /* semaphore */
+    debugA(2);
     /* new state to load */
     state_t new2;
     STST(&new2);
@@ -263,7 +264,7 @@ void uProcInit()
     new2.s_pc = uProcStart; 
     new2.s_t9 = uProcStart; 
     /* load this new state */
-    putALoadInMeDaddy(&new2);
+    LDST(&new2);
 }
 
 

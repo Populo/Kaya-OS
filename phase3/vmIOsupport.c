@@ -65,7 +65,7 @@ void vmMemHandler() {
     }
 
     missingSegment = (oldState->s_asid >> SHIFT_SEG);
-    missingPage = ((oldState->s_asid & GET_PFN) >> SHIFT_PFN);
+    missingPage = ((oldState->s_asid & GET_VPN) >> SHIFT_VPN);
 
     if (missingPage >= KUSEGSIZE) {
         missingPage = KUSEGSIZE - 1;

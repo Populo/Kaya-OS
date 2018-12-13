@@ -130,7 +130,7 @@ void uProcInit()
     memaddr TLBTOP, PROGTOP, SYSTOP;
 
     uProc_t uProc = uProcs[asid-1];
-    
+    state_t new, old;
     
     /* location is the only difference between these states */
     
@@ -141,7 +141,8 @@ void uProcInit()
     /* sys 5 the process */
     for (i = 0; i < TRAPTYPES; ++i) 
     {
-        state_t new = &(uProcs[asid-1].uProc_states[i][NEW]);
+        new = &(uProcs[asid-1].uProc_states[i][NEW]);
+        old = &(uProcs[asid-1].uProc_states[i][OLD]);
         switch (i)
         {
             case SYSTRAP:
@@ -162,7 +163,7 @@ void uProcInit()
         new.s_pc = new.s_t9 = newLocation;
         new.s_sp = stackPointer;
 
-        SYSCALL(SESV, i, (int)&(uProc.uProc_states[i][OLD]), (int)&new);
+        SYSCALL(SESV, i, (int)&old, (int)&new);
     }
     /* read contents of tape device onto disk0 */
 

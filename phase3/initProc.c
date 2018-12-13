@@ -147,7 +147,7 @@ void uProcInit()
         old = &(uProcs[asid-1].uProc_states[i][OLD]);
 
         new->s_status = ALLOFF | IMON | IEON | LTON | VMON;
-        new->s_entryHI = (asid << SHIFT_ASID);
+        new->s_entryHI = (asid);
 
         switch (i)
         {

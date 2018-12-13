@@ -104,16 +104,15 @@ void test()
 
         SYSCALL(CREATE_PROCESS, (int)&procState, 0, 0);
     }
-    debugA(3);
     initADL();
     initAVSL();
-    debugA(4);
+
     delayState.s_asid = MAXUSERPROC + 2;
     delayState.s_sp = EXECTOP - (MAXUSERPROC * UPROCSTCKSIZE);
     delayState.s_pc = (memaddr) delayDaemon;
     delayState.s_t9 = (memaddr) delayDaemon;
     delayState.s_status = ALLOFF | IEON | IMON | LTON;
-    debugA(5);
+
     SYSCALL(CREATE_PROCESS, (int)&delayState, 0, 0);
 
     for(i = 0; i < MAXUSERPROC; i++)
@@ -176,6 +175,7 @@ void uProcInit()
 
         SYSCALL(SESV, i, &old, &new);
     }
+    debugA(2);
     /* read contents of tape device onto disk0 */
 
     /* gain mutual exclusion on tape */
@@ -192,7 +192,7 @@ void uProcInit()
     tape = &(device -> devreg[deviceNumber]);
 
     diskStatus = tapeStatus = READY;
-
+    debugA(3);
     /* while tape is ready and we arent out of tape */
     while ((tapeStatus == READY) && !finished) {
         /* turn off interrupts */
@@ -255,6 +255,7 @@ void uProcInit()
 
         currentBlock++;
     }
+    debugA(4);
     /* release mutual exclusion on tape device */
     SYSCALL(VERHOGEN,                   /* syscall number (3) */
             (int)&mutexArray[deviceNumber], 0, 0); /* semaphore */
@@ -269,7 +270,7 @@ void uProcInit()
     new2->s_pc = uProcStart; 
     new2->s_t9 = uProcStart; 
     /* load this new state */
-    debugA(2);
+    debugA(5);
     putALoadInMeDaddy(new2);
 }
 

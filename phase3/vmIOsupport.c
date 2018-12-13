@@ -66,8 +66,8 @@ void vmMemHandler() {
         meIRL(missingASID);
     }
 
-    missingSegment = (oldState->s_entryHI >> SHIFT_SEG);
-    missingPage = ((oldState->s_entryHI & 0x3FFFF000) >> SHIFT_PFN);
+    missingSegment = (oldState->s_asid >> SHIFT_SEG);
+    missingPage = ((oldState->s_asid & 0x3FFFF000) >> SHIFT_PFN);
 
     if (missingPage >= KUSEGSIZE) {
         missingPage = KUSEGSIZE - 1;

@@ -48,7 +48,7 @@ typedef struct {
 
 #define STATEREGNUM	31
 typedef struct state_t {
-	unsigned int	s_entryHI;
+	unsigned int	s_asid;
 	unsigned int	s_cause;
 	unsigned int	s_status;
 	unsigned int 	s_pc;

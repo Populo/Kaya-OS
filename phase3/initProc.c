@@ -88,7 +88,7 @@ void test()
         segTable -> kuseg2 = &(uProcs[i-1].uProc_pte);
         segTable -> kuseg3 = &kuSeg3;
 
-        procState.s_entryHI = (i << SHIFT_ASID);
+        procState.s_asid = (i << SHIFT_ASID);
         procState.s_sp = EXECTOP - ((i - 1) * UPROCSTCKSIZE);
         procState.s_pc = (memaddr) uProcInit;
         procState.s_t9 = (memaddr) uProcInit;
@@ -102,7 +102,7 @@ void test()
     initADL();
     initAVSL();
 
-    delayState.s_entryHI = MAXUSERPROC + 2;
+    delayState.s_asid = MAXUSERPROC + 2;
     delayState.s_sp = EXECTOP - (MAXUSERPROC * UPROCSTCKSIZE);
     delayState.s_pc = (memaddr) delayDaemon;
     delayState.s_t9 = (memaddr) delayDaemon;
@@ -147,7 +147,7 @@ void uProcInit()
         old = &(uProcs[asid-1].uProc_states[i][OLD]);
 
         new->s_status = ALLOFF | IMON | IEON | LTON | VMON;
-        new->s_entryHI = (asid);
+        new->s_asid = (asid);
 
         switch (i)
         {
@@ -258,7 +258,7 @@ void uProcInit()
     state_PTR new2;
     STST(&new2);
     
-    new2->s_entryHI = (asid << SHIFT_ASID);
+    new2->s_asid = (asid << SHIFT_ASID);
     new2->s_sp = SEG3; /* last page of KUseg2 */
     new2->s_status = ALLOFF | IMON | IEON | VMON | KUON | LTON; /* interrupts on, vm on, user mode */
     new2->s_pc = uProcStart; 

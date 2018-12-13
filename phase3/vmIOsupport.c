@@ -97,7 +97,7 @@ void vmMemHandler() {
 
     debugVM(200);
 
-    readWriteBacking(missingPage, missingASID, DISK0, DISK_READBLK, swapAddress);
+    readWriteBacking(missingPage, missingASID-1, DISK0, DISK_READBLK, swapAddress);
 
     debugVM(250);
 
@@ -112,7 +112,7 @@ void vmMemHandler() {
         swapPool[newFrame].sw_pte -> entryLO = swapAddress | VALID | DIRTY | GLOBAL;
     } else {
         swapPool[newFrame].sw_pte = &(uProcs[missingASID - 1].uProc_pte.pteTable[missingPage]);
-        swapPool[newFrame].sw_pte -> entryLO = swapAddress | 0x00000200 | DIRTY;
+        swapPool[newFrame].sw_pte -> entryLO = swapAddress | VALID | DIRTY;
     }
 
     debugVM(300);

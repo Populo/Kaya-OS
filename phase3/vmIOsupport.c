@@ -91,7 +91,7 @@ void vmMemHandler() {
 
         currentASID = swapPool[newFrame].sw_asid;
         currentPage = swapPool[newFrame].sw_pgNum;
-
+        debugVM(1);
         readWriteBacking(currentASID, currentPage, DISK0, DISK_WRITEBLK, swapAddress);
     }
 

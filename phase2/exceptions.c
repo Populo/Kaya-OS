@@ -67,11 +67,7 @@ HIDDEN void sysWaitForClock(state_PTR state);
 /* SYS 8 - Wait For IO */
 HIDDEN void sysGoPowerRangers(state_PTR state);
 
-void debugC(int i)
-{
-	int j;
-	j = i;
-}
+
 
 
 

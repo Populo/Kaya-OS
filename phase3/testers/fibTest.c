@@ -14,10 +14,15 @@ int fib (int i) {
 	return(fib(i-1)+fib(i-2));
 }
 
+void debugC(int i)
+{
+	int j;
+	i =j;
+}
 
 void main() {
 	int i;
-	debugA(100);
+	debugC(100);
 	print(WRITETERMINAL, "Recursive Fibanaci Test starts\n");
 	
 	i = fib(7);

@@ -255,7 +255,7 @@
 #define GET_VALID                           0x00000200
 #define GET_DIRTY                           0x00000400
 #define GET_NOCACHE                         0x00000800
-#define GET_PFN                             0x7FFFF000
+#define GET_PFN                             0xFFFFF000
 
 
 #define SHIFT_GLOBAL                        8
@@ -263,7 +263,7 @@
 #define SHIFT_VALID                         9
 #define SHIFT_DIRTY                         10
 #define SHIFT_NOCACHE                       11
-#define SHIFT_PFN                           14
+#define SHIFT_PFN                           12
 #define SHIFT_MAGIC                         24
 
 

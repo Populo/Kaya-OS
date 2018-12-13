@@ -107,7 +107,7 @@ void test()
     initADL();
     initAVSL();
 
-    delayState.s_asid = MAXUSERPROC + 2;
+    delayState.s_asid = 10; /*MAXUSERPROC + 2 */
     delayState.s_sp = EXECTOP - (MAXUSERPROC * UPROCSTCKSIZE);
     delayState.s_pc = (memaddr) delayDaemon;
     delayState.s_t9 = (memaddr) delayDaemon;
@@ -254,7 +254,6 @@ void uProcInit()
     /* release mutual exclusion on tape device */
     SYSCALL(VERHOGEN,                   /* syscall number (3) */
             (int)&mutexArray[deviceNumber], 0, 0); /* semaphore */
-    debugA(2);
     /* new state to load */
     state_t new2;
     STST(&new2);
@@ -264,7 +263,6 @@ void uProcInit()
     new2.s_pc = uProcStart; 
     new2.s_t9 = uProcStart; 
     /* load this new state */
-    debugA(11);
     LDST(&new2);
 }
 

@@ -107,7 +107,7 @@ void test()
     initADL();
     initAVSL();
 
-    delayState.s_asid = 9; /*MAXUSERPROC + 2 */
+    delayState.s_asid = MAXUSERPROC + 2;
     delayState.s_sp = EXECTOP - (MAXUSERPROC * UPROCSTCKSIZE);
     delayState.s_pc = (memaddr) delayDaemon;
     delayState.s_t9 = (memaddr) delayDaemon;

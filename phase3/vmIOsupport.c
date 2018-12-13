@@ -77,7 +77,7 @@ void vmMemHandler() {
 
     newFrame = spinTheBottle();
 
-    memaddr swapAddress = SWAPPOOL + (newFrame * PAGESIZE);
+    memaddr swapAddress = SWAPPOOL - (newFrame * PAGESIZE);
 
     debugVM(150);
 

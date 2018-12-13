@@ -131,10 +131,9 @@ void uProcInit()
 
     uProc_t uProc = uProcs[asid-1];
     
-    state_t new;
+    
     /* location is the only difference between these states */
-    new.s_status = ALLOFF | IMON | IEON | LTON | VMON;
-    new.s_entryHI = (asid << SHIFT_ASID);
+    
     /* stack locations */
     PROGTOP = SYSTOP = EXECTOP - ((asid - 1) * UPROCSTCKSIZE);
     TLBTOP = PROGTOP - PAGESIZE;
@@ -142,6 +141,7 @@ void uProcInit()
     /* sys 5 the process */
     for (i = 0; i < TRAPTYPES; ++i) 
     {
+        state_t new = &(uProcs[asid-1].uProc_states[i][NEW]);
         switch (i)
         {
             case SYSTRAP:
@@ -157,7 +157,8 @@ void uProcInit()
                 stackPointer = PROGTRAP;
                 break;
         }
-        
+        new.s_status = ALLOFF | IMON | IEON | LTON | VMON;
+        new.s_entryHI = (asid << SHIFT_ASID);
         new.s_pc = new.s_t9 = newLocation;
         new.s_sp = stackPointer;
 

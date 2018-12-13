@@ -56,7 +56,7 @@ void vmMemHandler() {
 
     missingASID = getCurrentASID();
 
-    state_t* oldState = (state_t*) &(uProcs[missingASID-1].uProc_states[TLBTRAP][OLD]);
+    state_PTR oldState = (state_PTR) &(uProcs[missingASID-1].uProc_states[TLBTRAP][OLD]);
 
     int cause = (oldState->s_cause & INTCAUSEMASK) >> 2;
 

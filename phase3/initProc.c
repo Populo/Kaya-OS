@@ -90,7 +90,8 @@ void test()
 
         procState.s_entryHI = (i << SHIFT_ASID);
         procState.s_sp = EXECTOP - ((i - 1) * UPROCSTCKSIZE);
-        procState.s_pc = procState.s_t9 = (memaddr) uProcInit;
+        procState.s_pc = (memaddr) uProcInit;
+        procState.s_t9 = (memaddr) uProcInit;
         procState.s_status = ALLOFF | IEON | IMON | LTON;
 
         uProcs[i-1].uProc_semAdd = 0;
@@ -103,7 +104,8 @@ void test()
 
     delayState.s_entryHI = MAXUSERPROC + 2;
     delayState.s_sp = EXECTOP - (MAXUSERPROC * UPROCSTCKSIZE);
-    delayState.s_pc = delayState.s_t9 = (memaddr) delayDaemon;
+    delayState.s_pc = (memaddr) delayDaemon;
+    delayState.s_t9 = (memaddr) delayDaemon;
     delayState.s_status = ALLOFF | IEON | IMON | LTON;
 
     SYSCALL(CREATE_PROCESS, (int)&delayState, 0, 0);
@@ -143,25 +145,29 @@ void uProcInit()
     {
         new = &(uProcs[asid-1].uProc_states[i][NEW]);
         old = &(uProcs[asid-1].uProc_states[i][OLD]);
+
+        new->s_status = ALLOFF | IMON | IEON | LTON | VMON;
+        new->s_entryHI = (asid << SHIFT_ASID);
+        
         switch (i)
         {
             case SYSTRAP:
-                newLocation = (memaddr) vmSysHandler;
-                stackPointer = SYSTOP;
+                new -> s_pc = (memaddr) vmSysHandler;
+                new -> s_t9 = (memaddr) vmSysHandler;
+                new -> s_sp = SYSTOP;
                 break;
             case TLBTRAP:
-                newLocation = (memaddr) vmMemHandler;
-                stackPointer = TLBTOP;
+                new -> s_pc = (memaddr) vmMemHandler;
+                new -> s_t9 = (memaddr) vmMemHandler;
+                new -> s_sp = TLBTOP;
                 break;
             case PROGTRAP:
-                newLocation = (memaddr) vmPrgmHandler;
-                stackPointer = PROGTRAP;
+                new -> s_pc = (memaddr) vmPrgmHandler;
+                new -> s_t9 = (memaddr) vmPrgmHandler;
+                new -> s_sp = PROGTRAP;
                 break;
         }
-        new->s_status = ALLOFF | IMON | IEON | LTON | VMON;
-        new->s_entryHI = (asid << SHIFT_ASID);
-        new->s_pc = new->s_t9 = newLocation;
-        new->s_sp = stackPointer;
+
 
         SYSCALL(SESV, i, (int)old, (int)new);
     }

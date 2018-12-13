@@ -68,6 +68,7 @@ void vmMemHandler() {
     missingPage = ((oldState->s_asid & GET_VPN) >> SHIFT_VPN);
 
     if (missingPage >= KUSEGSIZE) {
+        debugVM(11);
         missingPage = KUSEGSIZE - 1;
     }
 

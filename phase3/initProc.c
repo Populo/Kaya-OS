@@ -31,6 +31,12 @@ extern void putALoadInMeDaddy(state_PTR state);
     copy(to, from);
 } */
 
+void debugA(int i)
+{
+    int j;
+    j = i;
+}
+
 
 /* INIT's KUSEGOS / 2 / 3 page tables. */
 
@@ -98,16 +104,16 @@ void test()
 
         SYSCALL(CREATE_PROCESS, (int)&procState, 0, 0);
     }
-
+    debugA(3);
     initADL();
     initAVSL();
-
+    debugA(4);
     delayState.s_asid = MAXUSERPROC + 2;
     delayState.s_sp = EXECTOP - (MAXUSERPROC * UPROCSTCKSIZE);
     delayState.s_pc = (memaddr) delayDaemon;
     delayState.s_t9 = (memaddr) delayDaemon;
     delayState.s_status = ALLOFF | IEON | IMON | LTON;
-
+    debugA(5);
     SYSCALL(CREATE_PROCESS, (int)&delayState, 0, 0);
 
     for(i = 0; i < MAXUSERPROC; i++)
@@ -138,7 +144,7 @@ void uProcInit()
     /* stack locations */
     PROGTOP = SYSTOP = EXECTOP - ((asid - 1) * UPROCSTCKSIZE);
     TLBTOP = PROGTOP - PAGESIZE;
-
+    debugA(1);
     /* sys 5 the process */
     for (i = 0; i < TRAPTYPES; ++i) 
     {
@@ -263,6 +269,7 @@ void uProcInit()
     new2->s_pc = uProcStart; 
     new2->s_t9 = uProcStart; 
     /* load this new state */
+    debugA(2);
     putALoadInMeDaddy(new2);
 }
 

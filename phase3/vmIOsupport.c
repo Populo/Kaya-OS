@@ -92,12 +92,12 @@ void vmMemHandler() {
         currentASID = swapPool[newFrame].sw_asid;
         currentPage = swapPool[newFrame].sw_pgNum;
         debugVM(1);
-        readWriteBacking(currentASID-1, currentPage, DISK0, DISK_WRITEBLK, swapAddress);
+        readWriteBacking(currentPage, currentASID, DISK0, DISK_WRITEBLK, swapAddress);
     }
 
     debugVM(200);
 
-    readWriteBacking(missingASID-1, missingPage, DISK0, DISK_READBLK, swapAddress);
+    readWriteBacking(missingPage, missingASID, DISK0, DISK_READBLK, swapAddress);
 
     debugVM(250);
 
@@ -447,7 +447,7 @@ void readWriteBacking(int cylinder, int sector, int head,
 	/*Perform atomic operation and seek to correct cylinder*/
 	Interrupts(FALSE);
 	
-	diskDevice->d_command = ((cylinder-1) << SHIFT_SEEK) | DISK_SEEKCYL;
+	diskDevice->d_command = (cylinder << SHIFT_SEEK) | DISK_SEEKCYL;
 	diskStatus = SYSCALL(WAITIO, DISKINT, DISK0, 0);
 	Interrupts(TRUE);
 			
@@ -458,7 +458,7 @@ void readWriteBacking(int cylinder, int sector, int head,
 		/*Initialize where to read from and set command to write*/
 		diskDevice->d_data0 = address;
 		diskDevice->d_command = (head << SHIFT_HEAD) | 
-							(sector << SHIFT_SECTOR) | isRead;
+							((sector-1) << SHIFT_SECTOR) | isRead;
 														   
 		/*Wait for disk write I/O*/
 		diskStatus = SYSCALL(WAITIO, DISKINT, DISK0, 0);

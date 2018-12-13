@@ -12,7 +12,7 @@
 #define WORDLEN			4		/* word size in bytes */
 #define PTEMAGICNO		0x2A
 #define MAXUSERPROC     1
-#define SWAPSIZE        16  /* frames in swap */
+#define SWAPSIZE        (2 * MAXUSERPROC)  /* frames in swap */
 #define UPROCSTCKSIZE   2 * PAGESIZE
 
 

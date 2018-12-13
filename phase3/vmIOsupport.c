@@ -28,6 +28,11 @@ HIDDEN void diskIO(int* blockAddr, int diskNo, int sectNo, int readWrite, int pr
 
 extern void putALoadInMeDaddy(state_PTR state);
 
+void debugVM(int a) {
+    int f;
+    f = a;
+}
+
 void vmPrgmHandler() {
     int asid = getCurrentASID();
 
@@ -66,12 +71,15 @@ void vmMemHandler() {
         missingPage = KUSEGSIZE - 1;
     }
 
+    debugVM(100);
+
     SYSCALL(PASSEREN, (int)&swap, 0, 0);
 
     newFrame = spinTheBottle();
 
     memaddr swapAddress = SWAPPOOL + (newFrame * PAGESIZE);
 
+    debugVM(150);
 
     if (swapPool[newFrame].sw_asid != -1) {
         Interrupts(FALSE);
@@ -87,7 +95,11 @@ void vmMemHandler() {
         readWriteBacking(currentPage, currentASID, DISK0, DISK_WRITEBLK, swapAddress);
     }
 
+    debugVM(200);
+
     readWriteBacking(missingPage, missingASID, DISK0, DISK_READBLK, swapAddress);
+
+    debugVM(250);
 
     Interrupts(FALSE);
 
@@ -102,6 +114,8 @@ void vmMemHandler() {
         swapPool[newFrame].sw_pte = &(uProcs[missingASID - 1].uProc_pte.pteTable[missingPage]);
         swapPool[newFrame].sw_pte -> entryLO = swapAddress | VALID | DIRTY;
     }
+
+    debugVM(300);
 
     TLBCLR();
     Interrupts(TRUE);

@@ -33,6 +33,12 @@ void debugVM(int a) {
     f = a;
 }
 
+void debugC(int i)
+{
+	int j;
+	j = i;
+}
+
 void vmPrgmHandler() {
     int asid = getCurrentASID();
 

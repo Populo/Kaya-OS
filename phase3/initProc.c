@@ -143,7 +143,6 @@ void uProcInit()
     /* stack locations */
     PROGTOP = SYSTOP = EXECTOP - ((asid - 1) * UPROCSTCKSIZE);
     TLBTOP = PROGTOP - PAGESIZE;
-    debugA(1);
     /* sys 5 the process */
     for (i = 0; i < TRAPTYPES; ++i) 
     {
@@ -175,7 +174,6 @@ void uProcInit()
 
         SYSCALL(SESV, i, &old, &new);
     }
-    debugA(2);
     /* read contents of tape device onto disk0 */
 
     /* gain mutual exclusion on tape */
@@ -192,7 +190,6 @@ void uProcInit()
     tape = &(device -> devreg[deviceNumber]);
 
     diskStatus = tapeStatus = READY;
-    debugA(3);
     /* while tape is ready and we arent out of tape */
     while ((tapeStatus == READY) && !finished) {
         /* turn off interrupts */
@@ -255,23 +252,22 @@ void uProcInit()
 
         currentBlock++;
     }
-    debugA(4);
     /* release mutual exclusion on tape device */
     SYSCALL(VERHOGEN,                   /* syscall number (3) */
             (int)&mutexArray[deviceNumber], 0, 0); /* semaphore */
-
+    debugA(1);
     /* new state to load */
-    state_PTR new2;
+    state_t new2;
     STST(&new2);
-    
-    new2->s_asid = (asid << SHIFT_ASID);
-    new2->s_sp = SEG3; /* last page of KUseg2 */
-    new2->s_status = ALLOFF | IMON | IEON | VMON | KUON | LTON; /* interrupts on, vm on, user mode */
-    new2->s_pc = uProcStart; 
-    new2->s_t9 = uProcStart; 
+    debugA(2);
+    new2.s_asid = (asid << SHIFT_ASID);
+    new2.s_sp = SEG3; /* last page of KUseg2 */
+    new2.s_status = ALLOFF | IMON | IEON | VMON | KUON | LTON; /* interrupts on, vm on, user mode */
+    new2.s_pc = uProcStart; 
+    new2.s_t9 = uProcStart; 
     /* load this new state */
     debugA(5);
-    putALoadInMeDaddy(new2);
+    putALoadInMeDaddy(&new2);
 }
 
 

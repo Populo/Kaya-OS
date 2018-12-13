@@ -16,7 +16,6 @@ int fib (int i) {
 
 void main() {
 	int i;
-	debugC(100);
 	print(WRITETERMINAL, "Recursive Fibanaci Test starts\n");
 	
 	i = fib(7);

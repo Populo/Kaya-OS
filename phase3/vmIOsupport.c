@@ -58,7 +58,7 @@ void vmMemHandler() {
     
     devregarea_t *device = (devregarea_t *)RAMBASEADDR;
     memaddr RAMTOP = device -> rambase + device -> ramsize;
-    memaddr SWAPPOOL = RAMTOP - (2 * PAGESIZE) - (SWAPSIZE * PAGESIZE);
+    memaddr SWAPPOOL = RAMTOP - (3 * PAGESIZE);/* - (SWAPSIZE * PAGESIZE);*/
 
     missingASID = getCurrentASID();
 
@@ -83,7 +83,7 @@ void vmMemHandler() {
 
     newFrame = spinTheBottle();
 
-    memaddr swapAddress = SWAPPOOL + (newFrame * PAGESIZE);
+    memaddr swapAddress = SWAPPOOL - (newFrame * PAGESIZE);
 
     debugVM(150);
 

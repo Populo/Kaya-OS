@@ -7,7 +7,7 @@ LIBDIR = /usr/local/lib/umps2
 
 DEFS = ../h/const.h ../h/types.h ../e/pcb.e ../e/asl.e ../e/initial.e ../e/interrupts.e ../e/scheduler.e ../e/exceptions.e ../e/adl.e ../e/initProc.e ../e/vmIOsupport.e ../e/avsl.e $(INCDIR)/libumps.e Makefile
 
-TDEFS = ./testers/print.e ./testers/h/tconst.h ../h/const.h ../h/types.h $(INCDIR)/libumps.e Makefile
+TDEFS = ./testers/print.e ../h/const.h ../h/types.h $(INCDIR)/libumps.e Makefile
 
 CFLAGS = -ansi -pedantic -Wall -c
 LDAOUTFLAGS = -T $(SUPDIR)/elf32ltsmip.h.umpsaout.x

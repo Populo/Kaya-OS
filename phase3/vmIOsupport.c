@@ -84,7 +84,7 @@ void vmMemHandler() {
     if (swapPool[newFrame].sw_asid != -1) {
         Interrupts(FALSE);
 
-        swapPool[newFrame].sw_pte -> entryLO = swapPool[newFrame].sw_pte -> entryLO & ~VALID;
+        swapPool[newFrame].sw_pte -> entryLO = swapPool[newFrame].sw_pte -> entryLO & nVALID;
 
         TLBCLR();
         Interrupts(TRUE);
@@ -223,7 +223,7 @@ void meIRL(int ID)
     {
         if(swapPool[index].sw_asid == ID)
         {
-            swapPool[index].sw_pte -> entryLO = (swapPool[index].sw_pte -> entryLO | ~VALID);
+            swapPool[index].sw_pte -> entryLO = (swapPool[index].sw_pte -> entryLO | nVALID);
             swapPool[index].sw_asid = -1;
             kill = TRUE;
         }

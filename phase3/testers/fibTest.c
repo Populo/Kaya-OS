@@ -14,12 +14,6 @@ int fib (int i) {
 	return(fib(i-1)+fib(i-2));
 }
 
-void debugC(int i)
-{
-	int j;
-	i =j;
-}
-
 void main() {
 	int i;
 	debugC(100);

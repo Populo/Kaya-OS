@@ -5,11 +5,6 @@
 
 #include "/usr/local/include/umps2/umps/libumps.e"
 
-void debugB(int i)
-{
-	int j;
-	j = i;
-}
 
 void print(int device, char *str) {
 
@@ -17,9 +12,7 @@ void print(int device, char *str) {
 	int leng, status;
 
 	for (leng = 0; str[leng] != '\0'; leng++);
-	debugB(200);
 	status = SYSCALL (device, (int)str, leng, 0);
-	debugB(201);
 	if (status < 0) {
 		status = SYSCALL (device, (int)s, 26, 0);
 		SYSCALL (TERMINATE, 0, 0, 0);

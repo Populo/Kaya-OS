@@ -112,7 +112,7 @@ void vmMemHandler() {
         swapPool[newFrame].sw_pte -> entryLO = swapAddress | VALID | DIRTY | GLOBAL;
     } else {
         swapPool[newFrame].sw_pte = &(uProcs[missingASID - 1].uProc_pte.pteTable[missingPage]);
-        swapPool[newFrame].sw_pte -> entryLO = swapAddress | VALID | DIRTY;
+        swapPool[newFrame].sw_pte -> entryLO = swapAddress | 0x00000200 | DIRTY;
     }
 
     debugVM(300);

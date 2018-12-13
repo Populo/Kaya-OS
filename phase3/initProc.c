@@ -253,7 +253,7 @@ void uProcInit()
     new2.s_entryHI = (asid << SHIFT_ASID);
     new2.s_sp = SEG3; /* last page of KUseg2 */
     new2.s_status = ALLOFF | IMON | IEON | VMON | KUON | LTON; /* interrupts on, vm on, user mode */
-    new2.s_pc = new2 -> s_t9 = uProcStart; 
+    new2.s_pc = new2.s_t9 = uProcStart; 
     /* load this new state */
     putALoadInMeDaddy(&new2);
 }

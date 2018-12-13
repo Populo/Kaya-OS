@@ -12,9 +12,9 @@ void print(int device, char *str) {
 	int leng, status;
 
 	for (leng = 0; str[leng] != '\0'; leng++);
-	
+	debugA(200);
 	status = SYSCALL (device, (int)str, leng, 0);
-	
+	debugA(201);
 	if (status < 0) {
 		status = SYSCALL (device, (int)s, 26, 0);
 		SYSCALL (TERMINATE, 0, 0, 0);

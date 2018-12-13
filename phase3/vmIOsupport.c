@@ -35,16 +35,9 @@ void vmPrgmHandler() {
     meIRL(asid);
 }
 
-void debugA(int i)
-{
-    int temp;
-    temp = i;
-}
-
 
 
 void vmMemHandler() {
-    debugA(3);
     int missingSegment,
         missingPage,
         newFrame,

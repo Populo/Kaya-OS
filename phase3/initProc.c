@@ -131,7 +131,6 @@ void uProcInit()
     memaddr newLocation, stackPointer;
     memaddr TLBTOP, PROGTOP, SYSTOP;
 
-    uProc_t uProc = uProcs[asid-1];
     state_PTR new, old;
     
     /* location is the only difference between these states */

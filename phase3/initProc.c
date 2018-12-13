@@ -114,11 +114,12 @@ void test()
     delayState.s_status = ALLOFF | IEON | IMON | LTON;
 
     SYSCALL(CREATE_PROCESS, (int)&delayState, 0, 0);
-
+    debugA(1);
     for(i = 0; i < MAXUSERPROC; i++)
     {
         SYSCALL(PASSEREN, (int)&masterSem, 0, 0);
     }
+    debugA(1);
     SYSCALL(TERMINATE_PROCESS, 0, 0, 0);
 }
 
@@ -255,18 +256,15 @@ void uProcInit()
     /* release mutual exclusion on tape device */
     SYSCALL(VERHOGEN,                   /* syscall number (3) */
             (int)&mutexArray[deviceNumber], 0, 0); /* semaphore */
-    debugA(1);
     /* new state to load */
     state_t new2;
     STST(&new2);
-    debugA(2);
     new2.s_asid = (asid << SHIFT_ASID);
     new2.s_sp = SEG3; /* last page of KUseg2 */
     new2.s_status = ALLOFF | IMON | IEON | VMON | KUON | LTON; /* interrupts on, vm on, user mode */
     new2.s_pc = uProcStart; 
     new2.s_t9 = uProcStart; 
     /* load this new state */
-    debugA(5);
     putALoadInMeDaddy(&new2);
 }
 

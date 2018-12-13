@@ -126,6 +126,7 @@ void sysCallHandler()
 			/* set cause to priviledged insruction, shift by 2 bits */
 			pgmOld -> s_cause = RI << 2;
 			/* call a program trap */
+			debugC(55);
 			pbgTrapHandler();
 		}
 	}

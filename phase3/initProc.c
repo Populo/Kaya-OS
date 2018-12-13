@@ -171,7 +171,7 @@ void uProcInit()
         }
 
 
-        SYSCALL(SESV, i, &old, &new);
+        SYSCALL(SESV, i, (int)old, (int)new);
     }
     /* read contents of tape device onto disk0 */
 

@@ -255,7 +255,7 @@
 #define GET_VALID                           0x00000200
 #define GET_DIRTY                           0x00000400
 #define GET_NOCACHE                         0x00000800
-#define GET_PFN                             0xFFFFF000
+#define GET_PFN                             0x7FFFF000
 
 
 #define SHIFT_GLOBAL                        8

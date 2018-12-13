@@ -485,7 +485,8 @@ void pullUpAndDie(int type)
 	state_PTR lookingAt, location;
 	/* grab correct state */
 	lookingAt = currentProcess -> pcb_states[type][NEW];
-
+	debugC(6969);
+	debugC(currentProcess -> pcb_states[type][OLD].s_cause >> 2);
 	/* handler has not been set */
 	if (lookingAt == NULL)
 	{

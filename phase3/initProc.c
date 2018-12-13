@@ -264,7 +264,7 @@ void uProcInit()
     new2->s_pc = uProcStart; 
     new2->s_t9 = uProcStart; 
     /* load this new state */
-    putALoadInMeDaddy(&new2);
+    putALoadInMeDaddy(new2);
 }
 
 

@@ -69,7 +69,7 @@ void test()
     for(i = 0; i < SWAPSIZE; i++)
     {
         swapPool[i].sw_asid = -1;
-        swapPool[i].sw_pte = NULL;
+        swapPool[i].sw_pte -> entryLO = ALLOFF | nVALID;
     }
     swap = 1;
 

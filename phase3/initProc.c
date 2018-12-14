@@ -57,19 +57,19 @@ void test()
     for(i = 0; i < KSEGSIZE; i++)
     {
         kuSegOS.pteTable[i].entryHI = ((0x20000 + i) << SHIFT_VPN);
-        kuSegOS.pteTable[i].entryLO = ((0x20000 + i) << SHIFT_VPN) | DIRTY | GLOBAL | VALID;
+        kuSegOS.pteTable[i].entryLO = ((0x20000 + i)) | DIRTY | GLOBAL | VALID;
 
     }
     kuSeg3.header = (PTEMAGICNO << SHIFT_MAGIC) | KUSEGSIZE;
     for(i = 0; i < KUSEGSIZE; i++)
     {
-        kuSeg3.pteTable[i].entryHI = ((0xC0000 + i) << SHIFT_VPN);
-        kuSeg3.pteTable[i].entryLO = ALLOFF | DIRTY | GLOBAL;
+        kuSeg3.pteTable[i].entryHI = ((0xC0000 + i)) | (0 << SHIFT_ASID) | (i << SHIFT_SEG);
+        kuSeg3.pteTable[i].entryLO = ALLOFF | GLOBAL | nVALID;
     }
     for(i = 0; i < SWAPSIZE; i++)
     {
         swapPool[i].sw_asid = -1;
-        swapPool[i].sw_pte -> entryLO = ALLOFF | nVALID;
+        swapPool[i].sw_pte  = NULL;
     }
     swap = 1;
 
@@ -83,10 +83,10 @@ void test()
         uProcs[i-1].uProc_pte.header = (PTEMAGICNO << SHIFT_MAGIC) | KUSEGSIZE;
         for(j = 0; j < KUSEGSIZE; j++)
         {
-            uProcs[i-1].uProc_pte.pteTable[j].entryHI = ((0x80000 + j) << SHIFT_VPN) | (i << SHIFT_ASID);
-            uProcs[i-1].uProc_pte.pteTable[j].entryLO = ALLOFF | DIRTY;  
+            uProcs[i-1].uProc_pte.pteTable[j].entryHI = ((0x80000 + j)) | (i << SHIFT_ASID);
+            uProcs[i-1].uProc_pte.pteTable[j].entryLO = ALLOFF | DIRTY;
         }
-        uProcs[i-1].uProc_pte.pteTable[KUSEGSIZE-1].entryHI = (0xBFFFF << SHIFT_VPN) | (i << SHIFT_ASID);
+        uProcs[i-1].uProc_pte.pteTable[KUSEGSIZE-1].entryHI = (0xBFFFF) | (i << SHIFT_ASID);
 
         segTable = (segTbl_t *) (SEGTBLSTART + (i * SEGTBLWIDTH));
 

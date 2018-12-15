@@ -240,7 +240,7 @@
 #define KUSEGSIZE                           32
 
 /* entryHi constants */
-#define GET_SEG                             0xD0000000
+#define GET_SEG                             0xC0000000
 #define GET_VPN                             0x3FFFF000
 #define GET_ASID                            0x00000FC0
 

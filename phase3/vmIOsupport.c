@@ -58,7 +58,7 @@ void vmMemHandler() {
     
     devregarea_t *device = (devregarea_t *)RAMBASEADDR;
     memaddr RAMTOP = device -> rambase + device -> ramsize;
-    memaddr SWAPPOOL = RAMTOP - (2 * PAGESIZE) - (SWAPSIZE * PAGESIZE);
+    memaddr SWAPPOOL = RAMTOP - ((SWAPSIZE + 3)*PAGESIZE);
 
     missingASID = getCurrentASID();
 
@@ -70,7 +70,7 @@ void vmMemHandler() {
         meIRL(missingASID);
     }
 
-    missingSegment = (oldState->s_asid >> SHIFT_SEG);
+    missingSegment = ((oldState->s_asid & GET_SEG) >> SHIFT_SEG);
     missingPage = ((oldState->s_asid & GET_VPN) >> SHIFT_VPN);
 
     if (missingPage >= KUSEGSIZE) {
@@ -452,7 +452,7 @@ void readWriteBacking(int cylinder, int sector, int head,
 	
 	/*Perform atomic operation and seek to correct cylinder*/
 	Interrupts(FALSE);
-	
+	`
 	diskDevice->d_command = (cylinder << SHIFT_SEEK) | DISK_SEEKCYL;
 	diskStatus = SYSCALL(WAITIO, DISKINT, DISK0, 0);
 	Interrupts(TRUE);

@@ -57,7 +57,7 @@ void test()
     for(i = 0; i < KSEGSIZE; i++)
     {
         kuSegOS.pteTable[i].entryHI = ((0x20000 + i) << SHIFT_VPN);
-        kuSegOS.pteTable[i].entryLO = ((0x20000 + i)) | DIRTY | GLOBAL | VALID;
+        kuSegOS.pteTable[i].entryLO = ((0x20000 + i) << SHIFT_VPN) | DIRTY | GLOBAL | VALID;
 
     }
     kuSeg3.header = (PTEMAGICNO << SHIFT_MAGIC) | KUSEGSIZE;

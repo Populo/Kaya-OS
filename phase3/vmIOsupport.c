@@ -452,7 +452,7 @@ void readWriteBacking(int cylinder, int sector, int head,
 	
 	/*Perform atomic operation and seek to correct cylinder*/
 	Interrupts(FALSE);
-	`
+	
 	diskDevice->d_command = (cylinder << SHIFT_SEEK) | DISK_SEEKCYL;
 	diskStatus = SYSCALL(WAITIO, DISKINT, DISK0, 0);
 	Interrupts(TRUE);

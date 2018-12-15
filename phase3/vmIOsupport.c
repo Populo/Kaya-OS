@@ -113,7 +113,7 @@ void vmMemHandler() {
     swapPool[newFrame].sw_segNum = missingSegment;
     swapPool[newFrame].sw_pgNum = missingPage;
 
-    if (missingSegment == SEG3) {
+    if (missingSegment == 3) { /* seg3 */
         swapPool[newFrame].sw_pte = &(kuSeg3.pteTable[missingPage]);
         swapPool[newFrame].sw_pte -> entryLO = swapAddress | VALID | DIRTY | GLOBAL;
     } else {
